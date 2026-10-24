@@ -94,6 +94,6 @@ for i,(name,shape) in enumerate(parts.items()):
  bb=shape.val().BoundingBox();cx=(bb.xmin+bb.xmax)/2;cy=(bb.ymin+bb.ymax)/2;cz=(bb.zmin+bb.zmax)/2;r=max(bb.xlen,bb.ylen,bb.zlen)/2*1.1
  ax.set(xlim=(cx-r,cx+r),ylim=(cy-r,cy+r),zlim=(cz-r,cz+r))
  ax.view_init(30,-60);ax.set_axis_off();ax.set_title(name.replace('_',' '),fontsize=10)
-fig.suptitle('ROBODOG v0.1 | FIT-TEST PARTS | mm | not an assembled robot',fontsize=18)
+fig.suptitle('ROBOCAT v0.1 | FIT-TEST PARTS | mm | not an assembled robot',fontsize=18)
 plt.tight_layout();fig.savefig(P/'preview.png',dpi=150)
 print(json.dumps(report,indent=2))
