@@ -1,0 +1,32 @@
+{
+  "CAT01_fixed_head_shell_x1": {
+    "valid": true,
+    "solids": 1,
+    "size_mm": [
+      118.0,
+      121.0,
+      42.0
+    ],
+    "solid_volume_cm3": 85.5
+  },
+  "CAT02_rear_lid_x1": {
+    "valid": true,
+    "solids": 1,
+    "size_mm": [
+      118.0,
+      90.0,
+      3.0
+    ],
+    "solid_volume_cm3": 30.4
+  },
+  "CAT03_vented_nose_x1": {
+    "valid": true,
+    "solids": 1,
+    "size_mm": [
+      42.0,
+      23.0,
+      12.0
+    ],
+    "solid_volume_cm3": 3.3
+  }
+}
