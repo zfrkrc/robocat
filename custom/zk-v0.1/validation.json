@@ -1,0 +1,72 @@
+{
+  "01_fixed_face_x1": {
+    "dimensions_mm": [
+      120.0,
+      60.0,
+      3.01
+    ],
+    "volume_mm3": 18643.0,
+    "valid": true,
+    "solids": 1
+  },
+  "02_camera_cradle_x3": {
+    "dimensions_mm": [
+      35.0,
+      48.0,
+      11.0
+    ],
+    "volume_mm3": 4938.8,
+    "valid": true,
+    "solids": 1
+  },
+  "03_shoulder_ultrasonic_x2": {
+    "dimensions_mm": [
+      54.0,
+      51.0,
+      24.01
+    ],
+    "volume_mm3": 10017.7,
+    "valid": true,
+    "solids": 1
+  },
+  "04_3s_cassette_body_x2": {
+    "dimensions_mm": [
+      112.0,
+      70.0,
+      27.0
+    ],
+    "volume_mm3": 58606.1,
+    "valid": true,
+    "solids": 1
+  },
+  "05_3s_cassette_lid_x2": {
+    "dimensions_mm": [
+      112.0,
+      70.0,
+      3.8
+    ],
+    "volume_mm3": 23579.0,
+    "valid": true,
+    "solids": 1
+  },
+  "06_strap_dock_x2": {
+    "dimensions_mm": [
+      118.0,
+      76.0,
+      13.0
+    ],
+    "volume_mm3": 33777.3,
+    "valid": true,
+    "solids": 1
+  },
+  "07_face_angle_adapter_x2": {
+    "dimensions_mm": [
+      30.0,
+      25.0,
+      31.0
+    ],
+    "volume_mm3": 4485.6,
+    "valid": true,
+    "solids": 1
+  }
+}
