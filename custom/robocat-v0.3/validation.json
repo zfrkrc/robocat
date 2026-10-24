@@ -1,0 +1,151 @@
+{
+  "CAT01_white_face_x1": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 1,
+    "color": "white",
+    "size_mm": [
+      118.02,
+      90.02,
+      3.02
+    ],
+    "solid_volume_cm3": 28.24
+  },
+  "CAT02_dark_head_shell_x1": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 1,
+    "color": "dark",
+    "size_mm": [
+      118.0,
+      90.02,
+      37.02
+    ],
+    "solid_volume_cm3": 50.92
+  },
+  "CAT03_dark_rear_lid_x1": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 1,
+    "color": "dark",
+    "size_mm": [
+      118.02,
+      90.02,
+      3.02
+    ],
+    "solid_volume_cm3": 30.35
+  },
+  "CAT04_white_ear_x2": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 2,
+    "color": "white",
+    "size_mm": [
+      34.0,
+      43.0,
+      4.0
+    ],
+    "solid_volume_cm3": 2.53
+  },
+  "CAT05_teal_ear_insert_x2": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 2,
+    "color": "teal",
+    "size_mm": [
+      20.0,
+      21.0,
+      1.2
+    ],
+    "solid_volume_cm3": 0.25
+  },
+  "CAT06_dark_eye_bezel_x2": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 2,
+    "color": "dark",
+    "size_mm": [
+      28.02,
+      28.03,
+      3.04
+    ],
+    "solid_volume_cm3": 0.89
+  },
+  "CAT07_white_vented_nose_x1": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 1,
+    "color": "white",
+    "size_mm": [
+      42.0,
+      23.0,
+      12.01
+    ],
+    "solid_volume_cm3": 3.33
+  },
+  "CAT08_camera_carrier_x2": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 2,
+    "color": "dark",
+    "size_mm": [
+      34.0,
+      44.0,
+      2.0
+    ],
+    "solid_volume_cm3": 1.46
+  },
+  "CAT09_camera_spacer_x8": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 8,
+    "color": "dark",
+    "size_mm": [
+      6.0,
+      6.01,
+      4.01
+    ],
+    "solid_volume_cm3": 0.08
+  },
+  "CAT10_strap_saddle_x1": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 1,
+    "color": "dark",
+    "size_mm": [
+      100.0,
+      40.0,
+      14.0
+    ],
+    "solid_volume_cm3": 21.55
+  },
+  "BAT01_teal_cartridge_lid_x2": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 2,
+    "color": "teal",
+    "size_mm": [
+      112.0,
+      70.0,
+      3.0
+    ],
+    "solid_volume_cm3": 23.27
+  },
+  "TEST01_lens_coupon_x1": {
+    "valid": true,
+    "solids": 1,
+    "quantity": 1,
+    "color": "teal",
+    "size_mm": [
+      88.0,
+      29.0,
+      2.03
+    ],
+    "solid_volume_cm3": 3.21
+  },
+  "_head_material": {
+    "solid_volume_cm3": 145.3,
+    "fully_solid_PETG_estimate_g": 184.5,
+    "note": "Not a slicer weight. Excludes screws, boards, lenses, straps and wiring."
+  }
+}
