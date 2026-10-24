@@ -1,4 +1,4 @@
-# Robodog ZK v0.1 — mekanik uyum prototipi
+# RoboCat ZK v0.1 — mekanik uyum prototipi
 
 2026-10-24. Birimler mm. Bu klasördeki yeni parçalar bağımsız parametrik CadQuery geometrisidir; Nova STL'lerinin değiştirilmiş sürümleri değildir. Repo kökündeki MIT lisansı geçerlidir; kaynak Nova dosyaları ve telif bildirimleri korunur.
 
