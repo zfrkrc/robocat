@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920" role="img" aria-label="RoboCat / kontrol ve görüş mimarisi">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L0 6 L8 3Z" fill="#5bb8c8"/></marker></defs>
+<rect width="1400" height="920" rx="24" fill="#0c1723"/>
+<text x="48" y="55" fill="#edf5fa" font-size="30" font-weight="700" font-family="DejaVu Sans,sans-serif">RoboCat / kontrol ve görüş mimarisi</text>
+<text x="48" y="89" fill="#9db4c5" font-size="17" font-family="DejaVu Sans,sans-serif">Planlanan bağlantılar • modüller mevcut • kablolama ve yazılım testleri bekliyor</text>
+<rect x="500" y="125" width="400" height="120" rx="16" fill="#142736" stroke="#345467" stroke-width="2"/>
+<text x="520" y="159" fill="#f2f6fa" font-family="DejaVu Sans,sans-serif" font-size="21" font-weight="700">MERKEZ SUNUCU</text>
+<text x="520" y="190" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Kişi / nesne tanıma, görev planı</text>
+<text x="520" y="215" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Hedef takip ve kartvizit görevi</text>
+<rect x="55" y="320" width="360" height="130" rx="16" fill="#142736" stroke="#345467" stroke-width="2"/>
+<text x="75" y="354" fill="#f2f6fa" font-family="DejaVu Sans,sans-serif" font-size="21" font-weight="700">3 × ESP32-CAM</text>
+<text x="75" y="385" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">2 sabit göz + 1 kol kamerası</text>
+<text x="75" y="410" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Görüntü Wi-Fi ile merkeze gider</text>
+<rect x="520" y="320" width="360" height="130" rx="16" fill="#2b251b" stroke="#d3a447" stroke-width="2"/>
+<text x="540" y="354" fill="#f2f6fa" font-family="DejaVu Sans,sans-serif" font-size="21" font-weight="700">ESP32-C3 köprüsü</text>
+<text x="540" y="385" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">UART ile Mega bağlantısı adayı</text>
+<text x="540" y="410" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Fiziksel ESP pinleri doğrulanacak</text>
+<rect x="985" y="320" width="360" height="130" rx="16" fill="#142736" stroke="#345467" stroke-width="2"/>
+<text x="1005" y="354" fill="#f2f6fa" font-family="DejaVu Sans,sans-serif" font-size="21" font-weight="700">HC-06 / manuel komut</text>
+<text x="1005" y="385" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Bluetooth Classic</text>
+<text x="1005" y="410" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Mega Serial1; lojik seviye uyumu</text>
+<rect x="55" y="550" width="360" height="145" rx="16" fill="#142736" stroke="#345467" stroke-width="2"/>
+<text x="75" y="584" fill="#f2f6fa" font-family="DejaVu Sans,sans-serif" font-size="21" font-weight="700">SENSÖRLER</text>
+<text x="75" y="615" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">MPU6050, HC-SR04, LCD</text>
+<text x="75" y="640" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Diğer sensörler aşamalı eklenecek</text>
+<text x="75" y="665" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Besleme / I²C seviyeleri kontrolü</text>
+<rect x="520" y="550" width="360" height="145" rx="16" fill="#142736" stroke="#345467" stroke-width="2"/>
+<text x="540" y="584" fill="#f2f6fa" font-family="DejaVu Sans,sans-serif" font-size="21" font-weight="700">ARDUINO MEGA 2560</text>
+<text x="540" y="615" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Yerel hareket döngüsü</text>
+<text x="540" y="640" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Servo kalibrasyonu, sensör okuma</text>
+<text x="540" y="665" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Bağlantı kaybında davranış</text>
+<rect x="985" y="550" width="360" height="145" rx="16" fill="#142736" stroke="#345467" stroke-width="2"/>
+<text x="1005" y="584" fill="#f2f6fa" font-family="DejaVu Sans,sans-serif" font-size="21" font-weight="700">PCA9685 / 16 PWM</text>
+<text x="1005" y="615" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">CH 0–11: bacaklar</text>
+<text x="1005" y="640" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">CH 12–15: kol için ayrılmış</text>
+<text x="1005" y="665" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">Servo gücü ayrı dağıtılır</text>
+<rect x="985" y="770" width="360" height="95" rx="16" fill="#142736" stroke="#345467" stroke-width="2"/>
+<text x="1005" y="804" fill="#f2f6fa" font-family="DejaVu Sans,sans-serif" font-size="21" font-weight="700">16 × MG996R</text>
+<text x="1005" y="835" fill="#bdd0dd" font-family="DejaVu Sans,sans-serif" font-size="16">12 bacak + 4 kol adayı</text>
+<path d="M235 320 L500 205" fill="none" stroke="#5bb8c8" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="255" y="270" fill="#83d7e1" font-family="DejaVu Sans,sans-serif" font-size="15">Wi-Fi görüntü</text>
+<path d="M700 245 L700 320" fill="none" stroke="#5bb8c8" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="715" y="285" fill="#83d7e1" font-family="DejaVu Sans,sans-serif" font-size="15">Wi-Fi komut</text>
+<path d="M700 450 L700 550" fill="none" stroke="#5bb8c8" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="715" y="505" fill="#83d7e1" font-family="DejaVu Sans,sans-serif" font-size="15">UART + seviye uyumu</text>
+<path d="M1120 450 L880 590" fill="none" stroke="#5bb8c8" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="1040" y="493" fill="#83d7e1" font-family="DejaVu Sans,sans-serif" font-size="15">UART</text>
+<path d="M415 620 L520 620" fill="none" stroke="#5bb8c8" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="421" y="603" fill="#83d7e1" font-family="DejaVu Sans,sans-serif" font-size="15">I²C / GPIO</text>
+<path d="M880 620 L985 620" fill="none" stroke="#5bb8c8" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="891" y="603" fill="#83d7e1" font-family="DejaVu Sans,sans-serif" font-size="15">I²C + OE</text>
+<path d="M1165 695 L1165 770" fill="none" stroke="#5bb8c8" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="1180" y="737" fill="#83d7e1" font-family="DejaVu Sans,sans-serif" font-size="15">PWM sinyali</text>
+<text x="48" y="785" fill="#d7ba7e" font-size="16" font-family="DejaVu Sans,sans-serif">Bu diyagram devre şeması / PCB değildir.</text>
+<text x="48" y="810" fill="#d7ba7e" font-size="16" font-family="DejaVu Sans,sans-serif">Kamera verisi Mega üzerinden taşınmaz.</text>
+<text x="48" y="835" fill="#d7ba7e" font-size="16" font-family="DejaVu Sans,sans-serif">Kol ve takip henüz tamamlanmış özellikler değildir.</text>
+</svg>

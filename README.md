@@ -1,34 +1,78 @@
 # RoboCat
 
-> **2026-10-25 — güncel baskı listesi:** [v0.4 tek-parça uyum işleri](custom/print-fit-v0.4/README.md) ve [manifest](custom/print-fit-v0.4/print_manifest.json). CAT10 ile eski 18650 kutuları basılmayacak. Önceden basılan CAT01/CAT02 tekrar otomatik kuyruğa alınmaz. Hot-swap iptal: tek 3S LiPo, kapalıyken pil değişimi. Profil/dilimleme ve montaj henüz doğrulanmadı; toplu üretim paketi değildir.
+**Dört ayaklı robot kedi · yerel hareket kontrolü · merkezde görüntü işleme**
 
-Kamera görüşü, merkez sunucu bağlantısı ve kartvizit sunabilen robot koluyla geliştirilen dört ayaklı robot kedi projesi.
+[Başlangıç](docs/README.md) · [Görsel galeri](docs/GALLERY.md) · [Baskı merkezi](docs/PRINTING.md) · [Donanım](hardware/README.md) · [Yol haritası](docs/ROADMAP.md)
 
-## Hedef görünüm — konsept
-![RoboCat konsept; STL montaj renderı değildir](docs/images/robocat-concept-v0.3.png)
-Bu AI görseli tasarım hedefidir. Görseldeki kol, bacak kaplamaları ve tüm gövde bağlantıları bitmiş CAD parçaları değildir.
+![RoboCat hedef konsepti](docs/images/robocat-concept-v0.3.png)
 
-## Güncel mekanik sürüm: v0.3
-![Gerçek v0.3 kafa CAD montajı](custom/robocat-v0.3/cad_head_v0.3.png)
+*Bu hedef konsepttir, bitmiş robot fotoğrafı veya STL montaj renderı değildir. Kol ve bacak kaplamalarının tamamı modellenmiş değildir.*
 
-[STL ve STEP parçaları](custom/robocat-v0.3/stl) · [Baskı adetleri ve montaj notları](custom/robocat-v0.3/README.md) · [Parametrik kaynak](custom/robocat-v0.3/generate.py) · [Kafa montajı STEP](custom/robocat-v0.3/head_assembly.step)
+## Bugünkü durum
 
-Beyaz yüz ve kulaklar, koyu kafa kasası ve göz çerçeveleri, turkuaz kulak içleri ve üç hücreli kartuş kapağı konseptle uyumlu ayrı baskı parçalarıdır. İki kamera kafada sabit, üçüncü kamera ileride kolda olacak. Burun hava girişidir; koku sensörü seçilmedi. Önce TEST01 lens ölçü parçası ve tek kamera taşıyıcısıyla uyum denemesi yapılacak.
+| Bölüm | Durum |
+|---|---|
+| Envanter | 16 MG996R, Mega R3, PCA9685, 3 kamera, 5 ultrasonik, 2 IMU sipariş listesinden kaydedildi |
+| Kafa | v0.3 CAD/STL/STEP var; gerçek kamera ve gövde uyumu bekliyor |
+| Baskı | v0.4 içinde 8 ayrı uyum işi; otomatik başlatma kapalı öneriliyor |
+| Batarya | Tek Tinylab 3S LiPo 2200 mAh / 40C hedefi; hot-swap iptal |
+| LiPo tepsisi | Yalnız boş/dummy deneme; gövde bağlantısı ve elektrik tamamlanmadı |
+| Yürüyüş / kol | Önce modüllerle masaüstü kalibrasyon; çalışan entegrasyon henüz doğrulanmadı |
+| PCB | Mimari ve pin planı; üretime hazır şematik/Gerber yok |
 
-**Durum: mekanik uyum prototipi.** Yeni CAD parçaları geçerli tek katı olarak kontrol edildi; modeldeki kafa parçaları ve temsili lensler arasında 0,1 mm³ üzerinde hacim çakışması bulunmadı. Gerçek PCB, vida boyu, kablo, lens mesafesi, gövde bağlantısı ve yük dayanımı fiziksel doğrulanmadı. Kayışlı kızak geçici deneme bağlantısıdır. v0.1/v0.2 kafa parçalarının delik düzenlerini v0.3 ile karıştırmayın.
+## Önce ne basılacak?
 
-Tam kaynak baskı paketini yeniden üretmek için gerekli Python ortamında önce `python custom/robocat-v0.3/generate.py`, sonra `python custom/robocat-v0.3/package.py` çalıştırılır. Paket orijinal STL'leri değiştirmeden yeni kafa parçaları, aksesuar prototipleri, baskı listesi ve isteğe bağlı kumandayı toplar. Orijinal parça adetleri montajda doğrulanacak başlangıç tahminleridir.
+**[v0.4 baskı talimatı](custom/print-fit-v0.4/README.md)** ve **[iş manifesti](custom/print-fit-v0.4/print_manifest.json)** güncel referanstır.
 
-## Geliştirme sırası
-1. Arduino Mega ile alt gövde, 12 servo, MPU6050 ve ultrasonik sensörlerin kurulumu ve kalibrasyonu. Nova-SM3 STL'lerinin gerçek MG996R'lerle uyumu önce tek parçada sınanacak.
-2. Sabit kedi kafası, iki ESP32-CAM ve sabit omuzlara sensör taşıma.
-3. Ayrı kontrolcüyle robot kol, bilekte üçüncü kamera ve yaylı kartvizit mekanizması.
-4. Merkezde görüntü işleme ve kişi takibi; hareket ve bağlantı kaybı davranışları yerelde.
+1. Lens kuponu ve tek kamera taşıyıcısıyla ölçü denemesi.
+2. Tek kulak ve iç parçasıyla tolerans denemesi.
+3. Yüz/kasa/arka kapakta kuru montaj; basılan CAT01/CAT02 yeniden otomatik sıraya eklenmez.
+4. Yeni LiPo tepsisinde boş/dummy ölçü denemesi.
 
-## Güncel batarya planı
-Tek Tinylab 3S 11.1 V 2200 mAh 40C LiPo (108×35×21 mm, XT60). Hot-swap iptal; robot kapatılarak pil değiştirilir. İkinci paket yalnız yedektir. Eski 18650 kutuları kullanılmaz. Yeni LiPo tepsisi yalnız boş/dummy uyum testidir; gövde bağlantısı ve titreşim doğrulanmadı. Sigorta, 6 V servo regülasyonu, ayrı elektronik beslemesi ve düşük hücre gerilimi koruması hâlâ gerekli; PCB henüz üretime hazır değil.
+**CAT10 kızak, eski 18650 kartuşları/kızağı, BAT01 eski pil kapağı ve nihai montajı doğrulanmamış omuz braketi basılmayacak.** Manifesti okumayan otomasyon bu listeyle kendiliğinden engellenmez; bütün STL klasörünü otomatik basmayın. Destekleri doğrulanmış G-code/3MF bu depoda yoktur.
 
-## Orijinal modeller / kaynak / lisans
-[Orijinal Nova-SM3 STL'leri](Nova-SM3/STL%20Files/SM3%20Files) ve [kumanda STL'leri](Nova-SM3/Remote%20Control/STL%20Files) korunmuştur.
+## Gerçek kafa modeli
 
-Bu depo [Chris Locke / cguweb-com Arduino-Projects](https://github.com/cguweb-com/Arduino-Projects) projesinden forklanmıştır. Nova-SM2 ve Nova-SM3 kaynak klasörleri, yazar bilgileri ve lisans bildirimleri korunur. Bu sürümlerin donanım/yazılım farkları vardır; kodları doğrudan birbirinin yerine yüklenmez. [MIT lisansı](LICENSE); dışarıdan eklenen mekanik tasarımların lisansları ayrıca geçerlidir.
+![Gerçek kafa CAD](custom/robocat-v0.3/cad_head_v0.3.png)
+
+[STL/STEP](custom/robocat-v0.3/stl) · [Kafa montajı STEP](custom/robocat-v0.3/head_assembly.step) · [Montaj kontrol kapsamı](custom/robocat-v0.3/assembly_check.json).
+
+Beyaz yüz/kulak/burun, koyu kasa/göz çerçeveleri ve turkuaz kulak içleri ayrı basılır. CAD kontrolü gerçek vidalar, lens/kart/ribbon veya robot gövdesini kapsamaz. Burun hava girişidir; gaz ölçüm sistemi henüz entegre değildir.
+
+## Sistem mimarisi
+
+![Kontrol ve görüş](docs/images/robocat-architecture.svg)
+
+Mega yerel hareket döngüsünü yürütür; PCA9685 16 PWM kanalı üretir. 12 bacak servosu ve dört kol adayı vardır. İki kafa kamerası ve bir kol kamerası görüntüyü merkeze Wi-Fi ile gönderir. Tanıma, yaklaşık 1 m takip ve kartvizit sunma hedef özelliklerdir; uygulanmış/test edilmiş kabul edilmez.
+
+## Tek LiPo / güç
+
+![Tek LiPo güç yolu](docs/images/robocat-power.svg)
+
+Hot-swap iptal: pil robot kapalıyken değiştirilir, ikinci paket yalnız yedektir. 3S paket servolara doğrudan bağlanmaz. 6 V servo ve ayrı 5 V elektronik regülasyonu, sigorta ve düşük hücre gerilimi koruması gerekiyor; kesin güç bileşenleri seçilmedi. Ayrıntı: [güç ve masaüstü test planı](hardware/PCB_PLAN_REV_A.md).
+
+## Dizinler ve kaynaklar
+
+| Dizin | İçerik |
+|---|---|
+| [docs](docs/README.md) | Güncel görseller, diyagramlar ve durum |
+| [hardware](hardware/README.md) | Envanter, pin önerileri ve test planı |
+| [custom](custom/README.md) | Yeni ve tarihsel mekanik prototipler |
+| [Nova-SM3](Nova-SM3) | Orijinal gövde/bacak/elektronik kaynakları |
+| [Nova-SM2](Nova-SM2) | Orijinal önceki sürüm kaynakları |
+
+[Kapsamlı kaynak haritası](docs/SOURCES.md). Upstream diğer projeler ve kumanda STL'leri RoboCat'in otomatik baskı listesi değildir. Nova-SM3'ün kaynak Gerber'i Mega/MG996R konfigürasyonumuz için onaylı değildir.
+
+## Yeniden üretme
+
+- Kafa: `python custom/robocat-v0.3/generate.py` (CadQuery, numpy, matplotlib).
+- Boş LiPo tepsisi: `python custom/print-fit-v0.4/generate_lipo_tray.py` (CadQuery).
+- Kontrollü paket: `python custom/print-fit-v0.4/build_pack.py` (standart Python).
+- Diyagramlar: `python docs/diagrams/render_diagrams.py` (standart Python).
+
+Eski v0.3 toplu paket ihracı kullanımdan kaldırıldı. Dosya içeriği kontrolleri başarılı baskı veya mekanik test yerine geçmez.
+
+## Atıf / lisans
+
+Bu depo [Chris Locke / cguweb-com Arduino-Projects](https://github.com/cguweb-com/Arduino-Projects) projesinden forklanmıştır. Orijinal kaynaklar, yazar bilgileri ve [MIT lisansı](LICENSE) korunur. Dışarıdan eklenen mekanik tasarımların ayrı lisansları geçerlidir; [kaynak notlarını](docs/SOURCES.md) okuyun.
+

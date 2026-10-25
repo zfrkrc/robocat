@@ -52,17 +52,15 @@ Felder ürününün elektronik lehimlemeye uygunluğu ve kalıntı temizleme ko�
 ## İlk aşama — seçilen ana set
 Mega + 12 MG996R + PCA9685 + bir GY-521 + iki ön HC-SR04 + HC-06 + LCD. İlk tek-servo denemesinde doğrulanmış haricî regüle besleme ve ortak GND kullanılacak. Kamera ve gaz sensörleri yürüyüş doğrulanınca eklenir. Kalan dört MG996R kol için ayrılır; bu ayrım mevcut kolun üretime hazır olduğu anlamına gelmez.
 
-## Bu listede görünmeyen / ayrıca doğrulanacaklar
-- Altı adet aynı model, uygun deşarj akımlı 18650 hücre; marka/model ve mevcut olup olmadığı bilinmiyor.
-- İki bağımsız 3S paket için iki uygun BMS, paket başına sigorta ve uygun 12,6 V CC/CV şarj sistemi.
-- İkinci üçlü yuva veya ölçü/akım açısından uygun iki bitmiş kartuş. Mevcut genel pil yuvasının yay/kontakları servo tepe akımına uygun sayılmayacak.
-- Servo için 6 V yüksek akım BEC/regülatör; elektronik/kameralar için kararlı ayrı besleme.
-- Hot-swap için ters akım engelleme ve ilk takma akımı sınırlaması; sıradan iki soketi doğrudan paralellemek yeterli değil.
-- Yüksek akıma uygun güç kablosu, dağıtım, konnektör, servo uzatma kabloları, acil servo güç kesmesi.
-- Mekanik sete uygun vida, somun, servo hornları ve rulmanlar.
-- Load cell kullanılacaksa uygun yükselteç/ADC, modeline göre seçilecek.
-- ESP ve HC-06 gibi 3,3 V lojikli girişler için gerekirse seviye dönüştürücüler/dirençler.
-- Motor, kart, pil yuvası, gaz modülü ve sabit gövde ölçüleri. Mevcut envanter STL yuvalarının fiziksel uyumunu onaylamaz.
+## Güncel eksikler / doğrulanacaklar — tek LiPo
+- Tinylab 3S 2200 mAh 40C LiPo hedefi netleşti; satın alma/adedi fiziksel teyit edilmedi. 18650 hücreler ve ikinci üçlü yuva artık bu mimarinin gereksinimi değildir.
+- Uygun 3S LiPo balanslı şarj, düşük hücre gerilimi izleme/koruma çözümü, DC sigorta ve uygun ana kesme.
+- 6 V servo regülatörü ve ayrı 5 V elektronik regülatörü; gerçek model, akım ve termal değerlendirme bekliyor.
+- Yüksek akım kablo/konnektör/dağıtım, servo uzatma ve güvenilir ortak GND.
+- Mekanik modele uygun vida, somun, servo hornu ve rulmanlar; gerçek MG996R ile tek yuva denemesi.
+- Load cell için HX711 veya uygun yükselteç/ADC; çıplak QRE/LDR için okuma devresi.
+- Modül pinleri, lojik seviyeler, PCB/gövde ölçüleri. Satın alma listesi fiziksel uyumu doğrulamaz.
+- Hot-swap iptal. İki bağımsız kartuş, iki BMS ve hot-swap devresi artık sipariş listesine otomatik eklenmez; tek LiPo'nun koruma gereksinimi ayrıca tasarlanacak.
 
 ## Burun tasarımına etkisi
 MQ sensörleri mevcut kedi burnuna doğrudan yerleştirilmeyecek. Örneğin Winsen MQ-8 5 V ısıtıcı kullanır ve üretici belgesinde ısıtıcı tüketimi 950 mW'a kadar belirtilir. Havalandırmalı, ısıl ayrımı olan ayrı sensör bölmesi ve besleme bütçesi gerekir. Üç farklı gaz sensörü genel koku tanıma ya da koku izini takip etme yeteneğini otomatik sağlamaz. Ölçümler kalibrasyonsuz ppm/güvenlik alarmı olarak sunulmayacak.
@@ -72,3 +70,4 @@ Kaynaklar:
 - MQ-8 üretici veri sayfası: https://www.winsen-sensor.com/d/files/manual/mq-8.pdf
 
 Bu güncelleme yalnız envanter belgesidir; baskı kuyruğu, STL, G-code veya yazıcı ayarı değiştirilmedi.
+
