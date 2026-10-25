@@ -1,52 +1,35 @@
-# RoboCat PCB bağlantı planı — rev A taslak
+# RoboCat PCB / masaüstü test planı — rev B
 
-2026-10-25. DURUM: bağlantı planı; henüz şematik, PCB yerleşimi, ERC/DRC raporu veya üretilebilir Gerber değildir. Bu belgeyi PCB üretimine göndermeyin.
+2026-10-25. Kullanıcı kararı: HOT-SWAP İPTAL. Tek Tinylab 3S LiPo 11.1 V 2200 mAh 40C, tam dolu 12.6 V. İkinci paket varsa kapalı robotta değiştirilen yedektir; paralel veya seri bağlanmaz. Eski rev A güç mimarisi bu belgeyle değiştirilmiştir.
 
-## Kesinleşen mimari
-- Arduino Mega 2560 R3 CH340 klon; mevcut modül kabloyla bağlanacak. Mega Pro footprinti kullanılmayacak.
-- Mevcut PCA9685 modülü: 16 PWM kanalı. 0–11 bacaklar, 12–15 kol için ayrılır. Kol motorlarının mekanik/tork uygunluğu ayrı doğrulanacak.
-- 3 ESP32-CAM kendi Wi-Fi bağlantılarıyla merkeze görüntü gönderir. Mega kamera veri yolu taşımaz.
-- Mevcut ESP32-C3, model/pinleri doğrulandıktan sonra merkez köprüsü olabilir; şimdilik sadece UART sinyalleri ayrılır.
-- 2 adet aynı model Tinylab 11.1 V 3S 2200 mAh 40C LiPo hedefi; satın alma/adet henüz kullanıcı tarafından açıkça teyit edilmedi. İki paket 3S olarak bağımsız kalır; 6S yapılmaz.
-- Satıcı verisi: paket 108×35×21 mm, 167.1 g, XT60, kablo 75 mm. Bu ölçüler kablo/konnektör hareket payı ve yumuşak LiPo muhafaza toleransı yerine geçmez. Kaynak: https://www.robotistan.com/tinylab-111v-3s-lipo-batarya-2200mah-40c
-- Eski 18650 kutuları bu LiPo için kullanılmayacak.
+DURUM: modüllerle masaüstü test öncesi bağlantı planı. Henüz şematik/PCB, ERC/DRC veya siparişe hazır Gerber değildir. Kaynak Nova-SM3 Teensy tabanlı Gerber arşivi mevcut olsa da Mega/MG996R RoboCat için onaylanmış kart değildir.
 
-## Kart sınırları
-KONTROL TAŞIYICISI: modül bağlantıları, lojik seviye eşleştirmeleri, giriş koruma/filtreleme ve test noktaları. İlk sürümde mevcut modülleri tekrar satın aldıran gömülü sensör tasarımı yapılmayacak.
-GÜÇ BÖLÜMÜ: paket başına sigorta/koruma; ters akım engelleme ve takma akımı sınırlamalı güç yolu; 6 V servo ve ayrı 5 V elektronik regülasyonu. Regülatör ve hot-swap parçaları seçilmediği için bu bölüm üretime hazır değildir. BMS, regülatör ve hot-swap aynı işlev değildir. RC LiPo'nun balans kablosu BMS bulunduğu anlamına gelmez; her hücreyi izleyen düşük gerilim koruması gereksinimi tasarımda açık tutulur. Haricî 3S LiPo balanslı şarj kullanılır.
+## Sistem
+- Mega 2560 R3 + mevcut PCA9685.
+- Toplam 16 MG996R: kanallar 0–11 bacaklar, 12–15 kol için aday. PINMAP_REV_A.csv sinyal önerisidir; orijinal Nova kanal sırasına otomatik uyumlu değildir.
+- Bir gövde MPU6050, ikinci opsiyonel; beş HC-SR04 için ayrı sırayla tetikleme.
+- Kafada iki ve kolda bir ESP32-CAM; görüntü Wi-Fi ile merkeze, Mega üzerinden değil.
+- LCD, HC-06 ve ek sensörler INVENTORY.md içinde.
 
-## Servo sinyal sırası
-| PCA9685 kanal | Görev |
-|---:|---|
-| 0,1,2 | Ön sağ: yana açılma, üst bacak, diz |
-| 3,4,5 | Ön sol: yana açılma, üst bacak, diz |
-| 6,7,8 | Arka sağ: yana açılma, üst bacak, diz |
-| 9,10,11 | Arka sol: yana açılma, üst bacak, diz |
-| 12 | Kol taban dönüşü |
-| 13 | Kol omuz |
-| 14 | Kol dirsek |
-| 15 | Kavrayıcı / yaylı mekanizma sürüşü |
+## Tek paket güç yolu
+LiPo XT60 → uygun DC sigorta → yük akımına uygun ana kesme → servo/elektronik kollarına ayrım.
+- Servo kolu: uygun 6 V yüksek akım regülatörü → güç dağıtımı → servo beslemeleri.
+- Elektronik kolu: ayrı uygun 5 V regülatör → kontrollü Mega beslemesi, kamera ve sensör dalları.
+- USB/haricî besleme geri akımı önlenecek; Mega VIN/5 V/USB rastgele birleştirilmeyecek.
+- Ortak GND, uygun kablo/konnektör ve yüksek akım dönüş yolu gerekiyor. Breadboard ve sinyal jumperları servo güç hattı değildir.
+- LiPo balanslı haricî şarj; balans kablosu BMS anlamına gelmez. Düşük hücre gerilimi izleme/koruma çözümü hâlâ gerekli.
+- 6S BMS bu 3S pakete uygun değildir. Sadece hot-swap iptal oldu; sigorta/regülasyon/düşük gerilim koruması iptal olmadı.
 
-Bu RoboCat için yeni önerilen sıralamadır; Nova yazılımındaki kanalların birebir karşılığı değildir. Orijinal yazılımı bu sıraya uyarlamadan kullanmayın. PCA9685 yalnız PWM üretir; servo akımını kendi entegresinden taşımaz. Tek sürücü tüm kanallarda ortak PWM frekansını kullanır; MG996R için gerçek örneklerle frekans/merkez/aralık kalibrasyonu gerekir.
+## Önce test
+1. Haricî doğrulanmış regüle beslemeyle tek servo/PCA/Mega. Servo merkez ve güvenli aralıklar.
+2. Tek bacak, sonra destek üstünde 12 bacak; akım, besleme düşümü, ısınma.
+3. Kol için ayrılan dört servo; ardından eşzamanlı güç ihtiyacı.
+4. Kamera/sensörler ve hareket sırasında reset/gürültü testi.
+5. Ölçülmüş akıma göre regülatör, sigorta, konnektör, PCB bakırı/ısı ve mekanik yerleşim seçimi.
+6. Şematik, footprint kontrolü, PCB, ERC/DRC, ardından küçük adet prototip siparişi.
 
-## Arayüz kuralları
-- Mega I²C: D20 SDA, D21 SCL. PCA9685/LCD ve 3.3 V sensörler için uygun gerilim bölgeleri; I²C pull-up'ları fiziksel modüller üzerinde incelenecek.
-- PCA9685 VCC lojik besleme; V+ servo besleme, birbirine karıştırılmaz. OE donanımsal pull-up ile başlangıçta devre dışı; D8 kontrollü etkinleştirme.
-- D9 servo güç talebi olarak ayrıldı; doğrudan yüksek akım yük sürmez. Donanımsal kesme elemanı henüz seçilmedi. OE tek başına fiziksel güç kesmesi değildir.
-- Mega 5 V TX çıkışları HC-06/ESP 3.3 V RX'e doğrudan bağlanmayacak. APDS/MPU modüllerinin besleme ve pull-up düzeni incelenecek.
-- MQ, mikrofon, alev ve ACS712 modüllerinin pin sırası/çıkış aralığı doğrulanacak; pin başlıkları tek bir tahmini A0/D0 dizilimine göre üretilmeyecek.
-- QRE1113GR çıplak eleman olabilir; LED direnci ve fototransistör okuma devresi gerekir. Load cell için uygun yükselteç/ADC (HX711 adayı) listede yok.
-- Beş ultrasonik sensör aynı anda tetiklenmez.
-- Ana servo beslemesi ve kamera beslemeleri haricî güç dağıtımından gelir. Breadboard/Dupont üzerinden servo akımı geçirilmez. Ortak toprak dönüşü servo gürültüsünü sensör referansına taşımayacak şekilde tasarlanır.
-- Gaz sensörleri ısıtıcıları için ayrı güç bütçesi/ısıl yerleşim gerekir; mevcut burun parçası ısıtıcı yuvası değildir.
-- USB ve haricî 5 V kaynaklarının geri beslemesi önlenecek; Arduino 5 V/VIN/USB rastgele birbirine bağlanmayacak.
+## Hâlâ açık
+6 V ve 5 V regülatör gerçek modelleri; sigorta/anahtar DC akım değerleri; düşük hücre gerilimi koruması; soket/header dizilimi; PCB gövde montajı; tam yük/ısıl testler. Donanım satın alma listesi bunların hepsinin tamamlandığı anlamına gelmez.
 
-## Üretim öncesi açık kalanlar — kullanıcıdan tekrar envanter istenmiyor
-1. Servo 6 V regülatörünün gerçek üretici/modeli, tam yük ve transient davranışı; 16 servo için ölçülmüş akım bütçesi.
-2. Elektronik 5 V regülatörünün gerçek modeli, kamera ve gaz ısıtıcıları dahil kapasitesi.
-3. Paket başına koruma, sigorta, hot-swap denetleyicisi, MOSFET ve akım sınırlaması seçimi; ters akım ve servodan geri gelen enerji değerlendirmesi.
-4. Gerçek modüllerin header/soket ve PCB montaj ölçüleri; mevcut liste bu ölçüleri sağlamaz. Modüller için kablolu arayüz kullanılarak yanlış footprint riski azaltılacak.
-5. PCB dış ölçüsü, sabit gövde montajı, yüksek akım kablo/konnektör ve soğutma hesabı.
-6. Şematik/PCB oluşturma, ERC/DRC, netlist-pin kontrolü, 3D çakışma ve düşük enerjili ilk çalıştırma testleri.
-
-Bu dosya tamamlanmış PCB yerine sunulmaz. Yazıcı otomasyonuna ait bir dosya değildir; STL/G-code değiştirmez.
+## 3D baskı
+Güncel kontrollü liste: ../custom/print-fit-v0.4/print_manifest.json . Bu liste fiziksel yazıcıya entegre edilmedikçe kuyruk üzerinde yaptırım uygulamaz. Orijinal tüm-klasör STL keşfiyle otomatik baskı kullanılmamalı. CAT10 ve eski 18650 parçaları basılmayacak. Yeni LiPo tepsisi yalnız boş uyum prototipidir.

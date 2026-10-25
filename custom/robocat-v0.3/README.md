@@ -1,3 +1,5 @@
+> **GÜNCELLEME 2026-10-25:** Bu sayfa v0.3 parça arşividir. Güncel baskı kararı [v0.4](../print-fit-v0.4/README.md) içindedir. **CAT10 ve BAT01 basılmayacak; eski 18650 kutuları kullanılmayacak.** Basılan yüz/kasa tekrar otomatik sıraya eklenmez.
+
 # RoboCat v0.3 — beğenilen konsepte uygun mekanik taslak
 
 Yeni parçalar orijinal Nova-SM3 gövde/bacak STL'lerini değiştirmez. Konsept görselindeki beyaz/koyu/turkuaz görünüm için kafa renk parçalarına ayrıldı. Bu bir üretim onayı veya görseldeki bütün robotun birebir CAD rekonstrüksiyonu değildir.

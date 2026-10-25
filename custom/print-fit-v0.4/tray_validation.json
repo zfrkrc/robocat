@@ -1,0 +1,22 @@
+{
+  "valid_solid": true,
+  "solid_count": 1,
+  "outside_mm": [
+    118.00481837517933,
+    45.00481837517932,
+    26.00481837517932
+  ],
+  "nominal_clearance_mm": [
+    112,
+    39,
+    23
+  ],
+  "battery_catalog_mm": [
+    108,
+    35,
+    21
+  ],
+  "status": "EMPTY_FIT_TEST_ONLY",
+  "chassis_mount_verified": false,
+  "electrical_design": false
+}

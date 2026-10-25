@@ -1,0 +1,139 @@
+{
+  "schema": "robocat.proposed.print_jobs.v1",
+  "revision": "0.4",
+  "auto_start": false,
+  "machine_profile_verified": false,
+  "filament_verified": false,
+  "sliced_gcode_included": false,
+  "warning": "This is a proposed manifest, not a verified integration with the printer automation. File discovery must not override blocked parts.",
+  "blocked_parts": [
+    {
+      "file": "CAT10_strap_saddle_x1",
+      "reason": "34mm channel and unverified chassis/head interface"
+    },
+    {
+      "file": "04_3s_cassette_body_x2",
+      "reason": "Obsolete 18650 geometry, not chosen LiPo"
+    },
+    {
+      "file": "05_3s_cassette_lid_x2",
+      "reason": "Obsolete 18650 geometry"
+    },
+    {
+      "file": "06_strap_dock_x2",
+      "reason": "Obsolete 18650 geometry"
+    },
+    {
+      "file": "BAT01_teal_cartridge_lid_x2",
+      "reason": "Obsolete 18650 geometry"
+    },
+    {
+      "file": "03_shoulder_ultrasonic_x2",
+      "reason": "Chassis mounting not verified"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "T01",
+      "file": "custom/robocat-v0.3/stl/TEST01_lens_coupon_x1.stl",
+      "sha256": "50ccce0220527774b4b1c763e42bc198c6a04b2b118352dd9cfebd87dd1cfc44",
+      "quantity": 1,
+      "status": "FIT_TEST_ONLY",
+      "already_reported_printing": false,
+      "skip_if_already_printed": true,
+      "orientation": "Source XY plane on bed; min Z=0",
+      "support": "NO_GENERAL_SUPPORT_EXPECTED_IN_SPECIFIED_ORIENTATION",
+      "requires_preview": true,
+      "auto_start": false
+    },
+    {
+      "id": "T02",
+      "file": "custom/robocat-v0.3/stl/CAT08_camera_carrier_x2.stl",
+      "sha256": "21a73707b7ac96574e13c0369a942f5db9633f995d12f7e6c87bd7f40225beea",
+      "quantity": 1,
+      "status": "FIT_TEST_ONLY",
+      "already_reported_printing": false,
+      "skip_if_already_printed": true,
+      "orientation": "Source XY plane on bed; min Z=0",
+      "support": "NO_GENERAL_SUPPORT_EXPECTED_IN_SPECIFIED_ORIENTATION",
+      "requires_preview": true,
+      "auto_start": false
+    },
+    {
+      "id": "T03",
+      "file": "custom/robocat-v0.3/stl/CAT04_white_ear_x2.stl",
+      "sha256": "ab5880d598e1059450b6ba22b055185f3df9171438abcd8e75a3d178dd4efd4f",
+      "quantity": 1,
+      "status": "FIT_TEST_ONLY",
+      "already_reported_printing": false,
+      "skip_if_already_printed": true,
+      "orientation": "Source XY plane on bed; min Z=0",
+      "support": "NO_GENERAL_SUPPORT_EXPECTED_IN_SPECIFIED_ORIENTATION",
+      "requires_preview": true,
+      "auto_start": false
+    },
+    {
+      "id": "T04",
+      "file": "custom/robocat-v0.3/stl/CAT05_teal_ear_insert_x2.stl",
+      "sha256": "b752ce7cb82820d7e128b4462f435ae8bbf075cf87dffe66e7cabc5f7b676736",
+      "quantity": 1,
+      "status": "FIT_TEST_ONLY",
+      "already_reported_printing": false,
+      "skip_if_already_printed": true,
+      "orientation": "Source XY plane on bed; min Z=0",
+      "support": "NO_GENERAL_SUPPORT_EXPECTED_IN_SPECIFIED_ORIENTATION",
+      "requires_preview": true,
+      "auto_start": false
+    },
+    {
+      "id": "P1_FACE",
+      "file": "custom/robocat-v0.3/stl/CAT01_white_face_x1.stl",
+      "sha256": "419c2c52a553339a9bbc9674a1690b46e090c8e21927756c9c3295cd190dccd7",
+      "quantity": 1,
+      "status": "FIT_TEST_ONLY",
+      "already_reported_printing": true,
+      "skip_if_already_printed": true,
+      "orientation": "Source XY plane on bed; min Z=0",
+      "support": "NO_GENERAL_SUPPORT_EXPECTED_IN_SPECIFIED_ORIENTATION",
+      "requires_preview": true,
+      "auto_start": false
+    },
+    {
+      "id": "P1_CASE",
+      "file": "custom/robocat-v0.3/stl/CAT02_dark_head_shell_x1.stl",
+      "sha256": "bf0c7b68741b0d575fc91dfd0385cdc34d6c8a206e1a7068d482c7fff1986bd4",
+      "quantity": 1,
+      "status": "FIT_TEST_ONLY",
+      "already_reported_printing": true,
+      "skip_if_already_printed": true,
+      "orientation": "Source XY plane on bed; min Z=0",
+      "support": "LOCAL_REVIEW_AT_TWO_14MM_WINDOWS",
+      "requires_preview": true,
+      "auto_start": false
+    },
+    {
+      "id": "P2_LID",
+      "file": "custom/robocat-v0.3/stl/CAT03_dark_rear_lid_x1.stl",
+      "sha256": "b7847ba876154c709dcd19008e0576081a846e606427c1f3c256a05dd14b6cf9",
+      "quantity": 1,
+      "status": "FIT_TEST_ONLY",
+      "already_reported_printing": false,
+      "skip_if_already_printed": true,
+      "orientation": "Source XY plane on bed; min Z=0",
+      "support": "NO_GENERAL_SUPPORT_EXPECTED_IN_SPECIFIED_ORIENTATION",
+      "requires_preview": true,
+      "auto_start": false
+    },
+    {
+      "id": "T05_BATTERY",
+      "file": "custom/print-fit-v0.4/BAT_TEST_3S_2200_TRAY_x1.stl",
+      "sha256": "44233aebe14c319442ceec00b53b0b817da705fadb1d0a2ccde3765f40e23975",
+      "quantity": 1,
+      "status": "EMPTY_DUMMY_FIT_TEST_ONLY",
+      "orientation": "Closed base down; open chamber up",
+      "support": "NO_GENERAL_SUPPORT_EXPECTED_IN_SPECIFIED_ORIENTATION",
+      "requires_preview": true,
+      "auto_start": false
+    }
+  ]
+}
