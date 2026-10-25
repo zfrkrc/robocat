@@ -1,0 +1,37 @@
+device,signal,mega_pin,notes
+PCA9685,SDA,D20,I2C voltage domains to verify
+PCA9685,SCL,D21,I2C voltage domains to verify
+PCA9685,OE,D8,Pull up to disabled at reset
+Servo_power,REQUEST,D9,Logic only switching hardware not selected
+HC06,TX_from_Mega,D18,5V to 3.3V conversion required
+HC06,RX_to_Mega,D19,Verify input thresholds and module output
+ESP_bridge,TX_from_Mega,D16,5V to 3.3V conversion required
+ESP_bridge,RX_to_Mega,D17,Physical ESP pins TBD
+MPU6050_A,INT,D2,Module level check
+MPU6050_B,INT,D3,Optional second IMU address differs
+DHT22,DATA,D4,Pullup and module level check
+Flame_module,DO,D5,Output polarity and level TBD
+HX711_candidate,DT,D6,Module not in inventory
+HX711_candidate,SCK,D7,Module not in inventory
+APDS9930,INT,D22,Voltage domain check
+HC_SR04_front_left,TRIG,D34,5V Mega domain
+HC_SR04_front_left,ECHO,D35,5V Mega domain
+HC_SR04_front_right,TRIG,D36,5V Mega domain
+HC_SR04_front_right,ECHO,D37,5V Mega domain
+HC_SR04_rear,TRIG,D38,5V Mega domain
+HC_SR04_rear,ECHO,D39,5V Mega domain
+HC_SR04_extra_1,TRIG,D40,Optional
+HC_SR04_extra_1,ECHO,D41,Optional
+HC_SR04_extra_2,TRIG,D42,Optional
+HC_SR04_extra_2,ECHO,D43,Optional
+MQ8,AO,A0,Output range and filtering TBD
+MQ3,AO,A1,Output range and filtering TBD
+MQ214,AO,A2,Sensor circuitry TBD
+Microphone,AO,A3,Actual module output TBD
+LDR,divider,A4,Divider resistor required
+Pulse_sensor,AO,A5,Optional experimental
+ACS712,AO,A6,Filter and 5V reference calibration
+QRE1113_1,phototransistor,A8,Analog interface required
+QRE1113_2,phototransistor,A9,Analog interface required
+QRE1113_3,phototransistor,A10,Analog interface required
+QRE1113_4,phototransistor,A11,Analog interface required
