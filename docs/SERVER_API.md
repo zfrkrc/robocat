@@ -123,7 +123,7 @@ POST /api/v1/device/{id}/findings      {"items":[{target,title,severity,port,...
 GET  /api/v1/findings?device_id=&severity=&limit=
 ```
 
-`role=pentest` cihazlar yalnız `scan/recon/report/pause/stop` alır; tarama hedefi `ROBO_PENTEST_SCOPE` içinde olmalı (değilse 403, kapsam tanımsızsa 409). Sözleşme: [PENTEST_PROTOCOL.md](PENTEST_PROTOCOL.md).
+`role=pentest` cihazlar yalnız `scan/recon/report/pause/stop` alır; tarama hedefi `ROBO_PENTEST_SCOPE` içinde olmalı (değilse 403, kapsam tanımsızsa 409). `scan` parametreleri: `target`, `ports` (≤1024), `mode` (`tcp`/`http_head`), `max_rate` (1–200), `timeout_ms` (100–5000). Sözleşme: [PENTEST_PROTOCOL.md](PENTEST_PROTOCOL.md).
 
 ## 6b) Görev (mission) uçları
 

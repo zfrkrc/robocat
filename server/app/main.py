@@ -225,18 +225,24 @@ def command_create(robot_id: str, body: CommandIn) -> CommandOut:
     if body.kind not in allowed:
         raise HTTPException(422, f"command '{body.kind}' is not valid for role '{role}'")
 
+    params = dict(body.params)
     if body.kind in ("scan", "recon"):
-        target = str(body.params.get("target", "")).strip()
+        target = str(params.get("target", "")).strip()
         if not target:
             raise HTTPException(422, "scan/recon needs params.target")
         if not _scope():
             raise HTTPException(409, "ROBO_PENTEST_SCOPE is not configured; scans are refused")
         if not _in_scope(target):
             raise HTTPException(403, f"target '{target}' is outside the authorised scope")
-    cid = db.command_enqueue(robot_id, body.kind, body.params)
+        if body.kind == "scan":
+            try:
+                params = _normalize_scan_params(params)
+            except ValueError as exc:
+                raise HTTPException(422, str(exc))
+    cid = db.command_enqueue(robot_id, body.kind, params)
     db.log_event("command.queued", body.kind, robot_id=robot_id)
     return CommandOut(id=cid, robot_id=robot_id, ts=time.time(), kind=body.kind,
-                      params=body.params, status="queued")
+                      params=params, status="queued")
 
 
 @app.get("/api/v1/robots/{robot_id}/commands/next", response_model=CommandOut | None)
@@ -321,6 +327,82 @@ def _in_scope(target: str) -> bool:
             except ValueError:
                 continue
     return False
+
+
+MAX_SCAN_PORTS = 1024
+SCAN_MODES = {"tcp", "http_head"}
+
+
+def _parse_ports(spec: str) -> list[int]:
+    """'22,80,443-445' -> [22,80,443,444,445]; en fazla 1024 port."""
+    ports: list[int] = []
+    for chunk in str(spec or "").split(","):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        if "-" in chunk:
+            a, b = chunk.split("-", 1)
+            try:
+                lo, hi = int(a), int(b)
+            except ValueError:
+                raise ValueError(f"bad port range '{chunk}'")
+            if not (1 <= lo <= hi <= 65535):
+                raise ValueError(f"port range out of bounds '{chunk}'")
+            ports.extend(range(lo, hi + 1))
+        else:
+            try:
+                prt = int(chunk)
+            except ValueError:
+                raise ValueError(f"bad port '{chunk}'")
+            if not (1 <= prt <= 65535):
+                raise ValueError(f"port out of bounds '{chunk}'")
+            ports.append(prt)
+    ports = sorted(set(ports))
+    if not ports:
+        raise ValueError("no ports given")
+    if len(ports) > MAX_SCAN_PORTS:
+        raise ValueError(f"too many ports ({len(ports)} > {MAX_SCAN_PORTS})")
+    return ports
+
+
+def _compact_ports(ports: list[int]) -> str:
+    out, start, prev = [], ports[0], ports[0]
+    for p in ports[1:]:
+        if p == prev + 1:
+            prev = p
+            continue
+        out.append(f"{start}-{prev}" if prev > start else str(start))
+        start = prev = p
+    out.append(f"{start}-{prev}" if prev > start else str(start))
+    return ",".join(out)
+
+
+def _normalize_scan_params(params: dict) -> dict:
+    """Tarama görevini doğrular ve cihaza küçük, sabit bir sözleşme yollar."""
+    target = str(params.get("target", "")).strip()
+    if not target:
+        raise ValueError("scan needs params.target")
+    ports = _parse_ports(params.get("ports", "22,80,443"))
+    mode = str(params.get("mode", "tcp")).lower()
+    if mode not in SCAN_MODES:
+        raise ValueError(f"mode must be one of {sorted(SCAN_MODES)}")
+    try:
+        rate = int(params.get("max_rate", 20))
+        timeout_ms = int(params.get("timeout_ms", 800))
+    except (TypeError, ValueError):
+        raise ValueError("max_rate/timeout_ms must be integers")
+    if not (1 <= rate <= 200):
+        raise ValueError("max_rate must be 1..200 connections/second")
+    if not (100 <= timeout_ms <= 5000):
+        raise ValueError("timeout_ms must be 100..5000")
+    return {
+        "target": target,
+        "ports": _compact_ports(ports),
+        "port_count": len(ports),
+        "mode": mode,
+        "max_rate": rate,
+        "timeout_ms": timeout_ms,
+    }
 
 
 def _client_ip(request: Request) -> str | None:
