@@ -13,12 +13,18 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
+#if USE_TLS
+#include <WiFiClientSecure.h>
+#endif
 #include <ArduinoJson.h>
 
 // ---- yapılandırma -------------------------------------------------
 static const char *WIFI_SSID = "CHANGE_ME";
 static const char *WIFI_PASS = "CHANGE_ME";
-static const char *SERVER_URL = "http://192.168.1.50:8080";   // LAN; TLS için altta nota bak
+// Üretim: https://esp32.zk.net.tr  (Cloudflare tüneli, TLS edge'de biter)
+// LAN testi: http://<sunucu-ip>:8090
+static const char *SERVER_URL = "https://esp32.zk.net.tr";
+#define USE_TLS 1                       // 1 = WiFiClientSecure, 0 = düz HTTP
 static const char *DEVICE_ID  = "robocat-1";
 static const char *DEVICE_KEY = "CHANGE_ME";                  // ROBO_DEVICE_KEYS ile aynı
 
@@ -78,7 +84,13 @@ void syncOnce() {
 
   String body; serializeJson(req, body);
 
+#if USE_TLS
+  WiFiClientSecure client;
+  client.setInsecure();          // TODO: setTrustAnchors() veya setFingerprint() ile sabitle
+  client.setBufferSizes(1024, 512);
+#else
   WiFiClient client;
+#endif
   HTTPClient http;
   http.setTimeout(4000);
   String url = String(SERVER_URL) + "/api/v1/device/" + DEVICE_ID + "/sync";
@@ -126,10 +138,9 @@ void loop() {
 }
 
 /*
- * TLS gerekiyorsa (dış ağ):
- *   #include <WiFiClientSecure.h>
- *   WiFiClientSecure tls; tls.setInsecure();          // yalnız test
- *   // üretim: tls.setFingerprint("SHA1"); veya setTrustAnchors(...)
- *   http.begin(tls, url);
- * ESP8266'da TLS yavaş ve RAM pahalıdır; tercihen LAN + ters vekil kullanın.
+ * TLS notu (Cloudflare):
+ *   - esp32.zk.net.tr Cloudflare proxy'li; TLS edge'de sonlanır, origin'e HTTP gider.
+ *   - ESP8266 BearSSL TLS 1.2 destekler; 2 sn'de bir sync için yeterli ama RAM/CPU pahalı.
+ *   - setInsecure() yalnız geliştirme içindir. Üretimde Cloudflare sertifikasını
+ *     setTrustAnchors() ile sabitle (kök değişimi nadirdir) veya kısa ömürlü fingerprint kullan.
  */

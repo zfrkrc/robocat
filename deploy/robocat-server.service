@@ -1,0 +1,17 @@
+[Unit]
+Description=RoboCat server (FastAPI, 127.0.0.1:8090)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/repos/robocat/server
+EnvironmentFile=/etc/robocat/server.env
+ExecStart=/usr/bin/python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8090 --proxy-headers
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=Cloudflare tunnel for RoboCat (esp32.zk.net.tr)
+After=network-online.target robocat-server.service
+
+[Service]
+ExecStart=/usr/bin/cloudflared --no-autoupdate --config /etc/cloudflared/robocat.yml tunnel run
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

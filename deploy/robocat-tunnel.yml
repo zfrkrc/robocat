@@ -1,0 +1,8 @@
+# /etc/cloudflared/robocat.yml  (üretim tünelinden AYRI tünel)
+# cloudflared tunnel create robocat
+tunnel: <TUNNEL_ID>
+credentials-file: /root/.cloudflared/<TUNNEL_ID>.json
+ingress:
+  - hostname: esp32.zk.net.tr
+    service: http://127.0.0.1:8090
+  - service: http_status:404
