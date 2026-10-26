@@ -5,6 +5,7 @@
 | **Adım adım uygulama** | **[Kılavuz](KILAVUZ.md)** |
 | **Kurulum (yazılım/elektronik/mekanik)** | **[Kurulum](KURULUM.md)** |
 | **Parça listesi + bağlantı matrisi** | **[Bağlantı şablonu](BAGLANTI.md)** |
+| Ürün ilanı metni ve görseller | [İlan paketi](SITE_ILAN.md) |
 | Hedef görünüm ve gerçek CAD | [Görsel galeri](GALLERY.md) |
 | Gerçek proje/donanım fotoğrafları | [20 kare + teşhis notları](BUILD_PHOTOS_2026-10-26.md) |
 | Güncel mimari / görev dağılımı | [Sistem](SYSTEM.md) |

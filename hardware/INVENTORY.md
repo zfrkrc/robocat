@@ -2,7 +2,7 @@
 
 > **Güncel batarya kararı (2026-10-25):** Tek Tinylab 3S 11.1 V 2200 mAh 40C LiPo hedefleniyor; 108×35×21 mm, XT60. Satın alındığı/adedi henüz doğrulanmadı. Hot-swap iptal, yedek pil robot kapalıyken değiştirilir. Aşağıdaki 18650 yuvası satın alınmış envanter olarak korunur ama güncel bataryada kullanılmaz; iki 3S kartuş/hot-swap için eski eksik listesi artık güncel mimari değildir. Sigorta, regülasyon ve LiPo düşük hücre gerilimi koruması hâlâ gerekli. Güncel güç planı PCB_PLAN_REV_A.md içindeki rev B'dir.
 
-Tarih: 2026-10-26. Kaynak: kullanıcının paylaştığı sipariş listesi. Adetler fiziksel sayım veya fotoğrafla doğrulanmadı. İki ayrı MG996R satırı 12+4=16, iki ayrı GY-521 satırı 1+1=2 olarak birleştirildi. Fiyatların satır toplamı/birim ayrımı kesin olmadığı için toplam maliyet hesaplanmadı. Sipariş listesindeki isimler gerçek PCB boyutunu ve pin dizilimini doğrulamaz.
+Tarih: 2026-10-26. Kaynak: kullanıcının paylaştığı sipariş listesi. Adetler fiziksel sayım veya fotoğrafla doğrulanmadı. İki ayrı MG996R satırı 12+4=16, iki ayrı GY-521 satırı 1+1=2 olarak birleştirildi. Sipariş listesindeki isimler gerçek PCB boyutunu ve pin dizilimini doğrulamaz.
 
 ## Elektronik ve hareket
 | Parça | Adet | Planlanan kullanım / durum |
