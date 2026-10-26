@@ -45,3 +45,22 @@ Burun yalnız hava girişidir; koku sensörü, gaz seçiciliği, pompa/fan ve ka
 Tüm yeni baskı parçaları geçerli tek CAD katısı olarak kontrol edildi. Kafa montajında basılı parçalar ve temsili lensler arasında 0,1 mm³ üzerindeki hacim kesişimleri assembly_check.json içine yazılır. Bu kontrol vida, elektronik, optik hizalama, kablo, gerçek gövde veya dayanım testi değildir. Kalan kesişim varsa montaj hatası olarak ele alınmalı, basmadan düzeltilmeli.
 
 Kaynak: Chris Locke / cguweb-com Arduino-Projects, Nova-SM3; telif ve lisanslar korunur. Yeni parçalar bağımsız CadQuery tasarımı, repo MIT lisansı altında. Beğenilen AI konsepti docs/images/robocat-concept-v0.3.png içinde; imalat modeli yerine kullanılmaz.
+
+## Varyant: CAT06B goz cercevesi (7x7 kare, yapistirmali)
+
+![CAT06B onizleme](../../docs/images/robocat-eye-bezel-7x7.png)
+
+`stl/CAT06B_eye_bezel_7x7_boss_x2.stl` — CAT06 yerine kullanilabilecek, **vidasiz/yapistirmali** goz cercevesi.
+
+| Olcu | Deger |
+|---|---|
+| Dis cap | 27,98 mm (CAT06 ile ayni ayak izi) |
+| On cerceve | 9 x 9 mm, 1 mm derinlik |
+| Gecis deligi | 7 x 7 mm kare |
+| Arka merkezleme bilezigi | 19,6 mm cap x 1,5 mm (yuzdeki 20 mm delige oturur) |
+| Toplam yukseklik | 4,5 mm |
+| Vida deligi | yok |
+
+Yapistirma onerisi: notr kürlenen silikon (sokulebilir) veya CA. Montaj oncesi yuzey IPA ile temizlenmeli, silikon ince surulmeli.
+
+Durum: yalniz CAD. Baski toleransi, yapisma dayanimi, sensor/lens derinligi ve isi testi yapilmadi. CAT06'nin yerine gecmesi icin gercek sensör/modul olcusu ve arka bosluk dogrulanmali. v0.4 manifestinde CAT06 x2 olarak listelenen is icin alternatif sayilir; manifest otomatik degismedi.
