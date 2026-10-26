@@ -92,6 +92,17 @@ CREATE TABLE IF NOT EXISTS mission (
     context    TEXT
 );
 
+CREATE TABLE IF NOT EXISTS devices (
+    id          TEXT PRIMARY KEY,
+    last_seen   REAL,
+    ip          TEXT,
+    rssi        INTEGER,
+    battery_v   REAL,
+    firmware    TEXT,
+    sensors     TEXT,
+    sync_count  INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS events (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     ts        REAL NOT NULL,
@@ -265,6 +276,35 @@ def mission_set(robot_id: str, state: str, context: dict | None = None, started_
 def mission_clear(robot_id: str) -> None:
     with connect() as conn:
         conn.execute("DELETE FROM mission WHERE robot_id=?", (robot_id,))
+
+
+def device_touch(device_id: str, ip: str | None, rssi: int | None, battery_v: float | None,
+                 firmware: str | None, sensors: dict | None) -> None:
+    with connect() as conn:
+        conn.execute(
+            """INSERT INTO devices (id, last_seen, ip, rssi, battery_v, firmware, sensors, sync_count)
+               VALUES (?,?,?,?,?,?,?,1)
+               ON CONFLICT(id) DO UPDATE SET
+                 last_seen=excluded.last_seen, ip=excluded.ip, rssi=excluded.rssi,
+                 battery_v=COALESCE(excluded.battery_v, devices.battery_v),
+                 firmware=COALESCE(excluded.firmware, devices.firmware),
+                 sensors=COALESCE(excluded.sensors, devices.sensors),
+                 sync_count=devices.sync_count+1""",
+            (device_id, time.time(), ip, rssi, battery_v, firmware,
+             json.dumps(sensors or {}, ensure_ascii=False)),
+        )
+
+
+def device_list() -> list[dict[str, Any]]:
+    with connect() as conn:
+        rows = conn.execute("SELECT * FROM devices ORDER BY id").fetchall()
+    out = []
+    for r in rows:
+        d = dict(r)
+        d["sensors"] = json.loads(d["sensors"] or "{}")
+        d["online"] = bool(d["last_seen"]) and (time.time() - float(d["last_seen"]) < 15)
+        out.append(d)
+    return out
 
 
 def flags_get(robot_id: str) -> bool:

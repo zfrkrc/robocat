@@ -121,3 +121,54 @@ class ScanOut(BaseModel):
     hits: int = 0
     mean_score: float | None = None
     window_s: float
+
+
+class DeviceEvent(BaseModel):
+    type: str = Field(min_length=2, max_length=24)
+    data: dict[str, Any] = {}
+
+
+class DeviceAck(BaseModel):
+    id: int
+    ok: bool = True
+    note: str | None = Field(default=None, max_length=120)
+
+
+class DeviceSyncIn(BaseModel):
+    """Tek turda durum bildirimi + komut alma (ESP8266 dostu)."""
+
+    ts: float | None = None
+    rssi: int | None = Field(default=None, ge=-120, le=0)
+    battery_v: float | None = Field(default=None, ge=0, le=30)
+    firmware: str | None = Field(default=None, max_length=40)
+    sensors: dict[str, float] = {}
+    events: list[DeviceEvent] = Field(default_factory=list, max_length=8)
+    ack: list[DeviceAck] = Field(default_factory=list, max_length=8)
+
+
+class DeviceCommandOut(BaseModel):
+    id: int
+    kind: str
+    params: dict[str, Any] = {}
+
+
+class DeviceSyncOut(BaseModel):
+    server_time: float
+    robot_id: str
+    next_poll_s: float
+    commands: list[DeviceCommandOut]
+    config: dict[str, Any]
+    events_applied: int = 0
+    acks_applied: int = 0
+
+
+class DeviceInfoOut(BaseModel):
+    id: str
+    last_seen: float | None = None
+    ip: str | None = None
+    rssi: int | None = None
+    battery_v: float | None = None
+    firmware: str | None = None
+    sensors: dict[str, Any] = {}
+    sync_count: int = 0
+    online: bool = False

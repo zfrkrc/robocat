@@ -13,6 +13,7 @@ Watch:
 """
 from __future__ import annotations
 
+import hmac
 import os
 import time
 from collections import Counter, defaultdict
@@ -27,6 +28,7 @@ from fastapi.staticfiles import StaticFiles
 from . import db, mission, pipeline
 from .config import settings
 from .schemas import (AckIn, CameraIn, CameraOut, CommandIn, CommandOut, DetectionOut,
+                      DeviceInfoOut, DeviceSyncIn, DeviceSyncOut, DeviceCommandOut,
                       EmergencyIn, FrameResult, MissionEventIn, MissionOut, ScanOut,
                       TelemetryIn, TelemetryOut)
 
@@ -217,6 +219,105 @@ def emergency_stop(robot_id: str, body: EmergencyIn) -> dict:
     db.flags_set(robot_id, body.engaged)
     db.log_event("robot.estop", f"engaged={body.engaged} {body.note or ''}".strip(), robot_id=robot_id)
     return {"robot_id": robot_id, "estopped": body.engaged}
+
+
+# ---------------------------------------------------------------- devices
+def _device_keys() -> dict[str, str]:
+    """ROBO_DEVICE_KEYS="esp32-1:secret,esp32-2:other" """
+    raw = os.environ.get("ROBO_DEVICE_KEYS", "").strip()
+    out: dict[str, str] = {}
+    for item in raw.split(","):
+        if ":" in item:
+            did, key = item.split(":", 1)
+            if did.strip() and key.strip():
+                out[did.strip()] = key.strip()
+    return out
+
+
+def _device_robots() -> dict[str, str]:
+    raw = os.environ.get("ROBO_DEVICE_ROBOTS", "").strip()
+    out: dict[str, str] = {}
+    for item in raw.split(","):
+        if ":" in item:
+            did, rid = item.split(":", 1)
+            if did.strip() and rid.strip():
+                out[did.strip()] = rid.strip()
+    return out
+
+
+_last_sync: dict[str, float] = {}
+MIN_INTERVAL_S = float(os.environ.get("ROBO_DEVICE_MIN_INTERVAL_S", 0.4))
+
+
+def _require_device(request: Request, device_id: str) -> None:
+    keys = _device_keys()
+    presented = request.headers.get("X-Device-Key", "")
+    if not keys:
+        host = request.client.host if request.client else ""
+        if host in ("127.0.0.1", "::1", "testclient"):
+            return  # development mode: loopback only
+        raise HTTPException(503, "device keys are not configured (ROBO_DEVICE_KEYS)")
+    expected = keys.get(device_id)
+    if not expected or not hmac.compare_digest(expected, presented):
+        raise HTTPException(401, "invalid device key")
+
+
+@app.post("/api/v1/device/{device_id}/sync", response_model=DeviceSyncOut)
+def device_sync(device_id: str, body: DeviceSyncIn, request: Request) -> DeviceSyncOut:
+    """Tek tur: durum bildir + komut al. ESP8266 için tasarlandı."""
+    _require_device(request, device_id)
+
+    now = time.time()
+    last = _last_sync.get(device_id, 0.0)
+    if now - last < MIN_INTERVAL_S:
+        raise HTTPException(429, f"poll too fast; wait {MIN_INTERVAL_S:.2f}s")
+    _last_sync[device_id] = now
+
+    robot_id = _device_robots().get(device_id, device_id)
+    ip = request.client.host if request.client else None
+    db.device_touch(device_id, ip, body.rssi, body.battery_v, body.firmware, body.sensors)
+    if body.battery_v is not None:
+        db.insert_telemetry(robot_id, body.battery_v, body.sensors.get("current_a"),
+                            {k: v for k, v in body.sensors.items() if k in ("pitch", "roll", "yaw")},
+                            {"source": "device", "device_id": device_id, **body.sensors})
+
+    applied_events = 0
+    for ev in body.events:
+        res = mission.for_robot(robot_id).handle(ev.type, ev.data)
+        if res.get("ok") is not False:
+            applied_events += 1
+
+    applied_acks = 0
+    for a in body.ack:
+        if db.command_ack(robot_id, a.id, a.ok, a.note):
+            applied_acks += 1
+
+    cmds: list[DeviceCommandOut] = []
+    for _ in range(2):  # en fazla 2 komut / tur: ESP8266 tamponu küçük kalsın
+        c = db.command_claim_next(robot_id, settings.command_ttl_s)
+        if not c:
+            break
+        cmds.append(DeviceCommandOut(id=c["id"], kind=c["kind"], params=c["params"]))
+
+    return DeviceSyncOut(
+        server_time=now,
+        robot_id=robot_id,
+        next_poll_s=float(os.environ.get("ROBO_DEVICE_POLL_S", 2)),
+        commands=cmds,
+        config={
+            "env_check_s": float(os.environ.get("ROBO_ENV_CHECK_S", 60)),
+            "answer_timeout_s": float(os.environ.get("ROBO_ANSWER_TIMEOUT_S", 8)),
+            "sensor_timeout_s": float(os.environ.get("ROBO_SENSOR_TIMEOUT_S", 20)),
+            "command_ttl_s": settings.command_ttl_s,
+        },
+        events_applied=applied_events,
+        acks_applied=applied_acks,
+    )
+
+
+@app.get("/api/v1/devices", response_model=list[DeviceInfoOut])
+def devices_list() -> list[DeviceInfoOut]:
+    return [DeviceInfoOut(**d) for d in db.device_list()]
 
 
 # ---------------------------------------------------------------- mission

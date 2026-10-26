@@ -107,6 +107,15 @@ POST /api/v1/robots/{robot_id}/emergency_stop  {"engaged":true,"note":"operatör
 - `engaged=false` ile açılır. Her iki geçiş `events` tablosuna yazılır.
 - **Bu sunucu tarafı bir kapıdır.** Gerçek güvenlik: robot üzerindeki yerel stop + güç kesme. Sunucu kapalıyken robot hareket etmemeli.
 
+## 6a) Cihaz (ESP8266) uçları
+
+```
+POST /api/v1/device/{device_id}/sync   {"rssi":..,"battery_v":..,"sensors":{},"events":[],"ack":[]}
+GET  /api/v1/devices                   cihaz listesi (online, rssi, firmware, sync_count)
+```
+
+Tek turda durum + komut alımı. Anahtar: `X-Device-Key`; sunucuda `ROBO_DEVICE_KEYS`. Ayrıntı: [DEVICE_PROTOCOL.md](DEVICE_PROTOCOL.md).
+
 ## 6b) Görev (mission) uçları
 
 ```
