@@ -26,3 +26,15 @@ Tek 108×35×21 mm katalog ölçülü LiPo için nominal 112×39×23 mm iç alan
 ![Güç düzeni](images/robocat-power.svg)
 
 Diyagramlar bağlantı mimarisini anlatır; kablo kesiti, pin numarası, komponent değeri veya şematik/ERC doğrulaması yerine geçmez.
+
+## PETG renk dagilimi — iki makara
+![PETG renk dagilimi](images/robocat-petg-colors.png)
+
+Iki renk PETG (beyaz + metalik) ile v0.4 uyum islerinin renk atamasi. Gorsel CAD geometrisinden uretilmistir; baski, montaj veya renk dogrulugu kaniti degildir. Guncel baskı listesi: [v0.4](../custom/print-fit-v0.4/README.md).
+
+| Renk | Parcalar | Adet |
+|---|---|---:|
+| Beyaz | CAT01 yuz, CAT04 kulak x2, CAT07 burun | 4 |
+| Metalik | CAT02 kasa, CAT03 arka kapak, CAT06 goz halkasi x2, CAT08 kamera tasiyici x2, CAT09 mesafe pulu x8, CAT05 kulak ici x2, BAT_TEST tepsi, TEST01 kupon | 18 |
+
+CAT10 kizak, BAT01 kartus kapagi ve eski 18650 parcalari bu dagilimda yoktur; v0.4 kontratinda engellidir. CAT05 kulak ici iki renkten birine atanmistir; konseptteki turkuaz rengin karsiligi yoktur.
