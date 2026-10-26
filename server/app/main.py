@@ -1,0 +1,234 @@
+"""RoboCat server API v1.
+
+Ingest:
+  ESP32-CAM / bridge  -> POST /api/v1/cameras/{camera_id}/frame   (image/jpeg body)
+Control:
+  robot bridge        -> GET  /api/v1/robots/{robot_id}/commands/next
+                         POST /api/v1/robots/{robot_id}/commands/{cmd_id}/ack
+  operator            -> POST /api/v1/robots/{robot_id}/commands
+                         POST /api/v1/robots/{robot_id}/emergency_stop
+Watch:
+  browser             -> GET  /api/v1/cameras/{camera_id}/stream.mjpg
+                         GET  /api/v1/cameras/{camera_id}/detections
+"""
+from __future__ import annotations
+
+import os
+import time
+from contextlib import asynccontextmanager
+from pathlib import Path
+
+from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
+
+from . import db, pipeline
+from .config import settings
+from .schemas import (AckIn, CameraIn, CameraOut, CommandIn, CommandOut, DetectionOut,
+                      EmergencyIn, FrameResult, TelemetryIn, TelemetryOut)
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    db.init_db()
+    pipeline.start()
+    yield
+
+
+app = FastAPI(title="RoboCat server", version=settings.version, lifespan=lifespan,
+              description="Camera ingest, vision results, telemetry and command queue.")
+
+_origins = [o for o in os.environ.get("ROBO_CORS_ORIGINS", "*").split(",") if o]
+app.add_middleware(CORSMiddleware, allow_origins=_origins, allow_methods=["*"], allow_headers=["*"])
+
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+
+
+def _camera_dir(camera_id: str) -> Path:
+    d = settings.frames_dir / camera_id
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def _camera_known(camera_id: str) -> dict:
+    for cam in db.camera_list():
+        if cam["id"] == camera_id:
+            return cam
+    raise HTTPException(404, f"camera '{camera_id}' is not registered")
+
+
+def _online(cam: dict) -> bool:
+    ts = cam.get("last_frame_at")
+    return bool(ts) and (time.time() - float(ts) < 5.0)
+
+
+# ---------------------------------------------------------------- health
+@app.get("/api/v1/health")
+def health() -> dict:
+    return {
+        "ok": True,
+        "version": settings.version,
+        "detector": pipeline.stats(),
+        "cameras": len(db.camera_list()),
+        "data_dir": str(settings.data_dir),
+    }
+
+
+# --------------------------------------------------------------- cameras
+@app.get("/api/v1/cameras", response_model=list[CameraOut])
+def cameras_list() -> list[CameraOut]:
+    return [CameraOut(**c, online=_online(c)) for c in db.camera_list()]
+
+
+@app.post("/api/v1/cameras", response_model=CameraOut, status_code=201)
+def camera_register(cam: CameraIn) -> CameraOut:
+    db.camera_upsert(cam.id, cam.name, cam.role, cam.width, cam.height)
+    row = _camera_known(cam.id)
+    db.log_event("camera.registered", f"{cam.id} ({cam.role})", camera_id=cam.id)
+    return CameraOut(**row, online=_online(row))
+
+
+@app.post("/api/v1/cameras/{camera_id}/frame", response_model=FrameResult, status_code=202)
+async def camera_frame(camera_id: str, request: Request, sync: int = Query(0, ge=0, le=1)) -> FrameResult:
+    _camera_known(camera_id)
+    body = await request.body()
+    if not body:
+        raise HTTPException(400, "empty body; send image/jpeg bytes")
+    if len(body) > settings.max_frame_bytes:
+        raise HTTPException(413, f"frame larger than {settings.max_frame_bytes} bytes")
+    if len(body) < 3 or body[:2] != b"\xff\xd8":
+        raise HTTPException(415, "expecting JPEG (SOI marker not found)")
+
+    seq = db.next_frame_seq(camera_id)
+    path = _camera_dir(camera_id) / f"{seq:08d}.jpg"
+    path.write_bytes(body)
+    (path.parent / "latest.jpg").write_bytes(body)
+    frame_id = db.insert_frame(camera_id, seq, str(path), len(body))
+
+    analysis = None
+    queued = False
+    if sync:
+        analysis = pipeline.analyze_inline(frame_id, camera_id, str(path))
+    else:
+        queued = pipeline.submit(frame_id, camera_id, str(path))
+
+    return FrameResult(camera_id=camera_id, frame_id=frame_id, seq=seq,
+                       ts=time.time(), bytes=len(body), queued=queued, analysis=analysis)
+
+
+@app.get("/api/v1/cameras/{camera_id}/latest.jpg")
+def camera_latest(camera_id: str) -> FileResponse:
+    _camera_known(camera_id)
+    p = settings.frames_dir / camera_id / "latest.jpg"
+    if not p.exists():
+        raise HTTPException(404, "no frame received yet")
+    return FileResponse(p, media_type="image/jpeg", headers={"Cache-Control": "no-store"})
+
+
+@app.get("/api/v1/cameras/{camera_id}/stream.mjpg")
+def camera_stream(camera_id: str, fps: float = Query(5.0, gt=0.2, le=30)) -> StreamingResponse:
+    _camera_known(camera_id)
+    latest = settings.frames_dir / camera_id / "latest.jpg"
+
+    def gen():
+        period = 1.0 / fps
+        while True:
+            try:
+                data = latest.read_bytes()
+            except OSError:
+                time.sleep(period)
+                continue
+            yield (b"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: "
+                   + str(len(data)).encode() + b"\r\n\r\n" + data + b"\r\n")
+            time.sleep(period)
+
+    return StreamingResponse(gen(), media_type="multipart/x-mixed-replace; boundary=frame")
+
+
+@app.get("/api/v1/cameras/{camera_id}/detections", response_model=list[DetectionOut])
+def camera_detections(camera_id: str, limit: int = Query(50, ge=1, le=500),
+                      since: float | None = None) -> list[DetectionOut]:
+    _camera_known(camera_id)
+    return [DetectionOut(**d) for d in db.detections_recent(camera_id, limit, since)]
+
+
+@app.get("/api/v1/detections", response_model=list[DetectionOut])
+def detections_all(limit: int = Query(50, ge=1, le=500), since: float | None = None) -> list[DetectionOut]:
+    return [DetectionOut(**d) for d in db.detections_recent(None, limit, since)]
+
+
+# -------------------------------------------------------------- telemetry
+@app.post("/api/v1/robots/{robot_id}/telemetry", response_model=TelemetryOut, status_code=201)
+def telemetry_post(robot_id: str, body: TelemetryIn) -> TelemetryOut:
+    tid = db.insert_telemetry(robot_id, body.battery_v, body.current_a, body.imu, body.extra)
+    db.telemetry_prune(robot_id, settings.telemetry_retention)
+    row = db.telemetry_latest(robot_id)
+    if not row:
+        raise HTTPException(500, "telemetry write failed")
+    return TelemetryOut(**row)
+
+
+@app.get("/api/v1/robots/{robot_id}/state")
+def robot_state(robot_id: str) -> dict:
+    latest = db.telemetry_latest(robot_id)
+    return {
+        "robot_id": robot_id,
+        "estopped": db.flags_get(robot_id),
+        "telemetry": latest,
+        "commands": db.commands_recent(robot_id, limit=10),
+    }
+
+
+# --------------------------------------------------------------- commands
+@app.post("/api/v1/robots/{robot_id}/commands", response_model=CommandOut, status_code=201)
+def command_create(robot_id: str, body: CommandIn) -> CommandOut:
+    if db.flags_get(robot_id) and body.kind != "stop":
+        raise HTTPException(409, "emergency stop engaged; only 'stop' is accepted")
+    cid = db.command_enqueue(robot_id, body.kind, body.params)
+    db.log_event("command.queued", body.kind, robot_id=robot_id)
+    return CommandOut(id=cid, robot_id=robot_id, ts=time.time(), kind=body.kind,
+                      params=body.params, status="queued")
+
+
+@app.get("/api/v1/robots/{robot_id}/commands/next", response_model=CommandOut | None)
+def command_next(robot_id: str) -> CommandOut | None:
+    cmd = db.command_claim_next(robot_id, settings.command_ttl_s)
+    return CommandOut(**cmd) if cmd else None
+
+
+@app.post("/api/v1/robots/{robot_id}/commands/{command_id}/ack")
+def command_ack(robot_id: str, command_id: int, body: AckIn) -> dict:
+    if not db.command_ack(robot_id, command_id, body.ok, body.note):
+        raise HTTPException(404, "command not found or already finished")
+    db.log_event("command.ack", f"id={command_id} ok={body.ok}", robot_id=robot_id)
+    return {"ok": True, "id": command_id}
+
+
+@app.get("/api/v1/robots/{robot_id}/commands", response_model=list[CommandOut])
+def commands_list(robot_id: str, limit: int = Query(50, ge=1, le=200)) -> list[CommandOut]:
+    return [CommandOut(**c) for c in db.commands_recent(robot_id, limit)]
+
+
+@app.post("/api/v1/robots/{robot_id}/emergency_stop")
+def emergency_stop(robot_id: str, body: EmergencyIn) -> dict:
+    db.flags_set(robot_id, body.engaged)
+    db.log_event("robot.estop", f"engaged={body.engaged} {body.note or ''}".strip(), robot_id=robot_id)
+    return {"robot_id": robot_id, "estopped": body.engaged}
+
+
+# -------------------------------------------------------------- dashboard
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+@app.get("/", response_class=HTMLResponse)
+def dashboard() -> HTMLResponse:
+    index = STATIC_DIR / "index.html"
+    if index.exists():
+        return HTMLResponse(index.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>RoboCat server</h1><p>See /docs for the API.</p>")
+
+
+@app.get("/favicon.ico")
+def favicon() -> Response:
+    return Response(status_code=204)

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RoboCat · kontrol</title>
+<style>
+  :root{--bg:#0f1418;--card:#171e24;--line:#26313a;--txt:#e6edf3;--mut:#8b9aa7;--ok:#3fb950;--warn:#d29922;--bad:#f85149;--blue:#58a6ff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 system-ui,Segoe UI,Roboto,sans-serif}
+  header{display:flex;gap:16px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+  header h1{font-size:16px;margin:0;letter-spacing:.3px}
+  .pill{font-size:12px;padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--mut)}
+  .pill.ok{color:var(--ok);border-color:#1f4d2b}
+  .pill.bad{color:var(--bad);border-color:#5a2220}
+  main{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;padding:16px 20px 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut)}
+  .cams{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .cam{background:#0b1014;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .cam img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#05080a}
+  .cam .meta{padding:8px 10px;font-size:12px;color:var(--mut);display:flex;justify-content:space-between}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  button{background:#1f2a33;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;font:inherit}
+  button:hover{border-color:#3d4d5a}
+  button.danger{background:#3a1d1c;border-color:#6b2a26;color:#ffb4b0}
+  button.primary{background:#14324d;border-color:#1f4f78;color:#cfe6ff}
+  input,select{background:#0b1014;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font:inherit}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--mut);font-weight:600}
+  code{color:#9cd1ff}
+  .kv{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1c252c;font-size:12.5px}
+  .kv span:first-child{color:var(--mut)}
+  .hint{color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>RoboCat · sunucu</h1>
+  <span class="pill" id="health">bağlanıyor…</span>
+  <span class="pill" id="detector"></span>
+  <span class="pill" id="estop-pill">e-stop: ?</span>
+  <span style="flex:1"></span>
+  <input id="robot" value="robocat-1" size="12" title="robot id">
+</header>
+
+<main>
+  <section>
+    <div class="card" style="margin-bottom:16px">
+      <h2>Kameralar</h2>
+      <div class="cams" id="cams"><div class="hint">kamera kaydı yok — <code>POST /api/v1/cameras</code></div></div>
+    </div>
+
+    <div class="card">
+      <h2>Son tespitler</h2>
+      <table><thead><tr><th>zaman</th><th>kamera</th><th>tip</th><th>etiket</th><th>skor</th><th>kutu (x,y,w,h)</th></tr></thead>
+      <tbody id="dets"><tr><td colspan="6" class="hint">veri yok</td></tr></tbody></table>
+    </div>
+  </section>
+
+  <aside>
+    <div class="card" style="margin-bottom:16px">
+      <h2>Komut</h2>
+      <div class="row">
+        <button class="primary" onclick="send('move',{linear:0.1,strafe:0,rotate:0})">ileri</button>
+        <button class="primary" onclick="send('move',{linear:-0.1,strafe:0,rotate:0})">geri</button>
+        <button class="primary" onclick="send('look',{pan:-10})">sola bak</button>
+        <button class="primary" onclick="send('look',{pan:10})">sağa bak</button>
+        <button onclick="send('greet',{})">selamla</button>
+        <button onclick="send('idle',{})">bekle</button>
+      </div>
+      <div class="row">
+        <button class="danger" onclick="send('stop',{})">DUR</button>
+        <button class="danger" onclick="estop(true)">E-STOP</button>
+        <button onclick="estop(false)">e-stop kaldır</button>
+      </div>
+      <div class="hint">Komutlar kuyruğa girer; robot <code>/commands/next</code> ile alır. E-stop açıkken yalnız <code>stop</code> kabul edilir.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h2>Telemetri</h2>
+      <div id="tel"><div class="hint">veri yok</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Komut kuyruğu</h2>
+      <table><thead><tr><th>#</th><th>tip</th><th>durum</th><th>not</th></tr></thead><tbody id="cmds">
+        <tr><td colspan="4" class="hint">boş</td></tr></tbody></table>
+    </div>
+  </aside>
+</main>
+
+<script>
+const api = (p, o) => fetch(p, o).then(r => r.ok ? r.json() : r.text().then(t => { throw new Error(t) }));
+const robot = () => document.getElementById('robot').value.trim() || 'robocat-1';
+
+async function health(){
+  try{
+    const h = await api('/api/v1/health');
+    document.getElementById('health').textContent = 'sunucu ' + h.version + ' ✓';
+    document.getElementById('health').className = 'pill ok';
+    document.getElementById('detector').textContent = 'detektör: ' + h.detector.detector +
+      ' · kuyruk ' + h.detector.queued + (h.detector.failed ? ' · hata ' + h.detector.failed : '');
+    const s = await api('/api/v1/robots/' + robot() + '/state');
+    const p = document.getElementById('estop-pill');
+    p.textContent = 'e-stop: ' + (s.estopped ? 'AÇIK' : 'kapalı');
+    p.className = 'pill ' + (s.estopped ? 'bad' : 'ok');
+    renderTel(s.telemetry); renderCmds(s.commands);
+  }catch(e){
+    document.getElementById('health').textContent = 'sunucu yok';
+    document.getElementById('health').className = 'pill bad';
+  }
+}
+function renderTel(t){
+  const el = document.getElementById('tel');
+  if(!t){ el.innerHTML = '<div class="hint">veri yok</div>'; return; }
+  const rows = [['batarya', (t.battery_v ?? '–') + ' V'], ['akım', (t.current_a ?? '–') + ' A'],
+                ['zaman', new Date(t.ts*1000).toLocaleTimeString()]];
+  if(t.imu && Object.keys(t.imu).length) rows.push(['imu', JSON.stringify(t.imu)]);
+  el.innerHTML = rows.map(([k,v])=>`<div class="kv"><span>${k}</span><span>${v}</span></div>`).join('');
+}
+function renderCmds(list){
+  const tb = document.getElementById('cmds');
+  if(!list || !list.length){ tb.innerHTML = '<tr><td colspan="4" class="hint">boş</td></tr>'; return; }
+  tb.innerHTML = list.slice(0,8).map(c =>
+    `<tr><td>${c.id}</td><td>${c.kind}</td><td>${c.status}</td><td>${c.note ?? ''}</td></tr>`).join('');
+}
+async function cams(){
+  const list = await api('/api/v1/cameras');
+  const box = document.getElementById('cams');
+  if(!list.length){ box.innerHTML = '<div class="hint">kamera kaydı yok — <code>POST /api/v1/cameras</code></div>'; return; }
+  box.innerHTML = list.map(c => `
+    <div class="cam">
+      <img src="/api/v1/cameras/${c.id}/stream.mjpg?fps=4" alt="${c.id}">
+      <div class="meta"><span>${c.name} · ${c.role}</span><span>${c.online ? 'çevrimiçi' : 'çevrimdışı'}</span></div>
+    </div>`).join('');
+}
+async function dets(){
+  const list = await api('/api/v1/detections?limit=12');
+  const tb = document.getElementById('dets');
+  if(!list.length){ tb.innerHTML = '<tr><td colspan="6" class="hint">veri yok</td></tr>'; return; }
+  tb.innerHTML = list.map(d => `<tr><td>${new Date(d.ts*1000).toLocaleTimeString()}</td>
+    <td>${d.camera_id}</td><td>${d.kind}</td><td>${d.label}</td><td>${d.score ?? ''}</td>
+    <td>${d.x ?? ''},${d.y ?? ''},${d.w ?? ''},${d.h ?? ''}</td></tr>`).join('');
+}
+async function send(kind, params){
+  try{
+    await api(`/api/v1/robots/${robot()}/commands`, {method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({kind, params})});
+    health();
+  }catch(e){ alert('komut reddedildi: ' + e.message); }
+}
+async function estop(engaged){
+  await api(`/api/v1/robots/${robot()}/emergency_stop`, {method:'POST',
+    headers:{'Content-Type':'application/json'}, body: JSON.stringify({engaged})});
+  health();
+}
+health(); cams(); dets();
+setInterval(health, 2000); setInterval(dets, 3000); setInterval(cams, 10000);
+</script>
+</body>
+</html>
