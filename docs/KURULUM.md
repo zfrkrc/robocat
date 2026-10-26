@@ -23,6 +23,10 @@ Bu iki kod değişikliği yapılmadan firmware olduğu gibi çalışmaz.
 
 ## B) Elektronik kurulum (öneri — fiziksel doğrulama bekliyor)
 
+![Bağlantı şeması](images/robocat-wiring.svg)
+
+*Renkler: güç, I²C, PWM, seri, GPIO. Şema blok seviyesindedir; kablo kesiti ve modül pinleri ayrıca doğrulanır.*
+
 Pin önerisi: [PINMAP_REV_A.csv](../hardware/PINMAP_REV_A.csv). Bu tablo **öneridir**, gerçek modül/pin kontrolü yapılmadı.
 
 ```
@@ -44,6 +48,10 @@ Pin önerisi: [PINMAP_REV_A.csv](../hardware/PINMAP_REV_A.csv). Bu tablo **öner
 Kurallar: servo gücü breadboard/Dupont'tan geçmez; ortak GND tek noktada; USB ile harici besleme aynı anda ters besleme yapmayacak.
 
 ## C) Mekanik montaj sırası
+
+![Montaj sırası](images/robocat-assembly.svg)
+
+*Sekiz adım, her adımda kuru deneme. Ölçüler kesitle doğrulanmış değerlerdir; baskı toleransı ayrıca denenir.*
 
 1. **Servo merkezleme:** horn takmadan önce her servoyu orta noktaya getir (≈1500 µs / 307 tick @60 Hz).
 2. **Horn:** 25T alüminyum hornu servo dişlisine oturt, merkez vidasını sık (vida boyu dibe vurmasın). Horn-parça delik deseni **10,0 mm** (ikincil 13,9 mm) — takmadan önce kuru dene.

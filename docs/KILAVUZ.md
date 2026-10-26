@@ -2,6 +2,12 @@
 
 Bu belge **bugünkü durumdan ilk yürüyüş testine** kadar sırayı anlatır. Ölçülmüş veri, varsayım ve henüz doğrulanmamış olan ayrı işaretlenmiştir. Tam çalışan robot, bitmiş kol veya üretime hazır PCB iddiası yoktur.
 
+## Akış
+
+![Uygulama akışı](images/robocat-build-flow.svg)
+
+*Beş aşama ve geçiş ölçütleri. Başarısız uyum/ısı testinde bir önceki aşamaya dönülür; adımlar atlanmaz.*
+
 ## 0) Bugün neredeyiz
 
 | Alan | Durum |
@@ -36,6 +42,8 @@ Yetkili liste: [v0.4 talimatı](../custom/print-fit-v0.4/README.md) + [manifest]
 ### İki renk PETG dağılımı
 
 ![Renk dağılımı](images/robocat-petg-colors.png)
+
+*v0.5 sırası: önce metalik (M01–M06), beyaz aşama sonra. CAT06B artık 7×7 kare çerçeve.*
 
 | Renk | Parçalar |
 |---|---|

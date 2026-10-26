@@ -44,3 +44,13 @@ CAT10 kizak, BAT01 kartus kapagi ve eski 18650 parcalari bu dagilimda yoktur; v0
 ![CAT06B tek katı, gerçek CAD](../custom/petg-stage-v0.5/eye_fixed.png)
 
 Üç kabuklu eski dosya yerine tek birleşik katı. Büyük ön yüz tabanda, merkezleme bileziği yukarı yönlendirilmiştir. Önce bir adet metalik PETG denemesi; gerçek kamera görüntüsü ve kuru uyum kontrolü yapılmadan yapıştırma yok. [Metalik aşama ve profil adayı](../custom/petg-stage-v0.5/README.md). Yukarıdaki renk dağılımı görseli eski yuvarlak CAT06'yı gösterir; CAT06B kare varyantının son geometrisi bu görseldedir.
+
+## Uygulama akışı ve montaj sırası
+![Uygulama akışı](images/robocat-build-flow.svg)
+![Montaj sırası](images/robocat-assembly.svg)
+
+Şemalar süreç sırasını anlatır; ölçüm ve testlerin yerine geçmez. Ölçü değerleri kesit tabanlıdır, baskı toleransı ayrıca doğrulanır.
+
+## Bağlantı şablonu
+![Bağlantı şeması](images/robocat-wiring.svg)
+
