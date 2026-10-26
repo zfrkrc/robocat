@@ -1,7 +1,9 @@
 # RoboCat — internete açık dağıtım (Cloudflare Tunnel)
 
 **Durum (2026-10-27):** yayında.
-`https://esp32.zk.net.tr` → Cloudflare (TLS edge) → **ayrı** tünel → `127.0.0.1:8090` (FastAPI).
+`https://esp32.zk.net.tr` ve yedek ad `https://robocat.zk.net.tr` → Cloudflare (TLS edge) → **ayrı** tünel → `127.0.0.1:8090` (FastAPI).
+
+> Kayıt eklendiğinde NXDOMAIN negatif önbelleği (SOA min 1800 s) yüzünden bazı istemciler 30 dk boyunca ismi çözemez. Yeni ad (`robocat`) bu önbelleği atlatır; kalıcı çözüm için istemci DNS önbelleğini temizle veya yerel resolver'ı yeniden başlat.
 Üretim tüneli (`insightmap`, 3742f166…) **değiştirilmedi**.
 
 ## Bileşenler
