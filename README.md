@@ -21,6 +21,8 @@
 | LiPo tepsisi | Yalnız boş/dummy deneme; gövde bağlantısı ve elektrik tamamlanmadı |
 | Yürüyüş / kol | Önce modüllerle masaüstü kalibrasyon; çalışan entegrasyon henüz doğrulanmadı |
 | PCB | Mimari ve pin planı; üretime hazır şematik/Gerber yok |
+| Mega / USB | CH340 portu görünüyor ama avrdude imza okuma 12/12 başarısız; fiziksel teyit bekliyor |
+| Fotoğraf kaydı | 20 gerçek kare: baskı, kart, sensör, süpürge parçaları; HW-373 geliştirme kartı değil |
 
 ## Önce ne basılacak?
 

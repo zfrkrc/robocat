@@ -7,7 +7,7 @@ Tarih: 2026-10-26. Kaynak: kullanıcının paylaştığı sipariş listesi. Adet
 ## Elektronik ve hareket
 | Parça | Adet | Planlanan kullanım / durum |
 |---|---:|---|
-| Arduino Mega 2560 R3 klon, CH340, USB kablolu | 1 | Ana yürüyüş kontrolcüsü; standart Mega R3 formu olarak sipariş edilmiş |
+| Arduino Mega 2560 R3 klon, CH340, USB kablolu | 1 | Ana yürüyüş kontrolcüsü; standart Mega R3 formu olarak sipariş edilmiş. **Fiziksel/USB teyidi yok** (2026-10-26: CH340 portu görünüyor ama avrdude sync 12/12 başarısız) |
 | MG996R 180 derece servo | 16 | 12 bacak, kalan 4 kol için aday; kol torku/kinematiği henüz doğrulanmadı |
 | PCA9685 16 kanal I²C PWM/servo sürücü shield | 1 | Önce 12 bacak sinyali. Shield mi bağımsız modül mü fotoğrafla doğrulanmalı. VCC ile servo V+ ayrılmalı |
 | GY-521 / MPU6050 | 2 | Bir gövde IMU'su; ikincisi yedek/kol için opsiyonel. İkisi aynı I²C hattındaysa adres düzeni gerekir |
@@ -48,6 +48,20 @@ Daha önce elinde olduğu belirtilen ESP32-C3 ve ESP8266 kartları da var; adet/
 | Proskit SN-394 büyüteçli/mıknatıslı tutacak | 1 |
 
 Felder ürününün elektronik lehimlemeye uygunluğu ve kalıntı temizleme koşulları ambalaj/teknik bilgiyle doğrulanmalı. Kesim matı ısıya dayanıklı lehim matı varsayılmamalı. Havya/reflow ekipmanı bu listede bulunmuyor; kullanıcıda ayrıca olabilir.
+
+## Fotoğrafla görülen, envanter dışı parçalar — 2026-10-26
+
+Aynı gün paylaşılan 20 fotoğraf ([albüm](../docs/BUILD_PHOTOS_2026-10-26.md)) sipariş listesinde olmayan parçaları da gösteriyor. Bunlar adet/teslim teyidi sayılmaz ve RoboCat BOM'una eklenmez:
+
+| Parça | Fotoğraf | Durum |
+|---|---|---|
+| **HW-373 V1.2** 1S Li-ion şarj + 5 V boost modülü | IMG_9230 | Geliştirme kartı değil. **1S** girişli; 3S LiPo planında kullanılmaz. Yalnız tek hücre masaüstü denemesi |
+| **T413** LDS/taret kartı | IMG_9238 | Robot süpürgeden sökülmüş lazer tarayıcı kartı; pinout bilinmiyor, RoboCat'te işlevi yok |
+| Dreame BLDC motor (019-200330 ZD / PRI-3605U-15260) | IMG_9248, IMG_9251 | **Servo değil.** PCA9685 servo sinyaliyle veya basit DC sürücüyle çalışmaz; 3 fazlı sürücü + Hall/enkoder + kapalı çevrim gerekir. Bacak eklemi için uygun değil |
+| Dreame `MOTOR_CONN_B0_v2` bağlantı kartı | IMG_9252, IMG_9253 | Süpürge motor/fırça bağlantı kartı; BOM dışı |
+| Süpürge redüktörü | IMG_9254–IMG_9256 | Mekanik inceleme parçası; RoboCat bacak/kol redüktörü değil |
+
+Fotoğraflarda **Arduino Mega görünmüyor.** Mega'nın USB teşhisi için [fotoğraf albümündeki 2026-10-26 notuna](../docs/BUILD_PHOTOS_2026-10-26.md#arduino-ve-usb-seri-durumu--2026-10-26) bakın.
 
 ## İlk aşama — seçilen ana set
 Mega + 12 MG996R + PCA9685 + bir GY-521 + iki ön HC-SR04 + HC-06 + LCD. İlk tek-servo denemesinde doğrulanmış haricî regüle besleme ve ortak GND kullanılacak. Kamera ve gaz sensörleri yürüyüş doğrulanınca eklenir. Kalan dört MG996R kol için ayrılır; bu ayrım mevcut kolun üretime hazır olduğu anlamına gelmez.

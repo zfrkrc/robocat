@@ -43,6 +43,16 @@ Sipariş kaynakları: [Robolink TCA9548A](https://www.robolinkmarket.com/tca9548
 3. Sketch: `Nova-SM3/Code/Nova-SM3_mega-v4.2/Nova-SM3_mega-v4.2.ino` (+ `AsyncServo.h`, `NovaServos.h` aynı klasörde kalmalı).
 4. Kart: **Arduino Mega or Mega 2560**, işlemci **ATmega2560**, doğru port. Yüklemeden sonra Seri Monitör 115200.
 
+### USB bağlantı teşhisi — 2026-10-26 (yükleme öncesi bloke)
+
+Mega takılıyken yapılan ölçüm:
+
+- `/dev/ttyUSB0` üzerinde **CH340** (`1a86:7523`) görünüyor; `ttyACM*` yok.
+- 1200–250 000 baud arası okumada **0 bayt**; DTR reset sonrası bootloader çıktısı yok.
+- `avrdude -c arduino` ile mega2560 ve atmega328p imza okuma: **12/12 `not in sync: resp=0x00`**. Manuel reset sonucu değiştirmedi.
+
+**Sonuç:** Mega'nın bağlı ve çalışır olduğu doğrulanmadı. Yükleme denemesi yapmadan önce sırayla: kartta PWR LED'i, hub'sız USB portu, TX/RX ve GND sürekliliği, 5 V besleme. Fotoğraflardaki `HW-373` modülü Arduino değil, 1S şarj/boost modülüdür.
+
 ### Firmware ile donanım farkları (kurulumu bloke eder)
 
 | Konu | Firmware ne bekliyor | Bizde ne var | Gereken |

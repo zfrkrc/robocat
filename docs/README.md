@@ -6,6 +6,7 @@
 | **Kurulum (yazılım/elektronik/mekanik)** | **[Kurulum](KURULUM.md)** |
 | **Parça listesi + bağlantı matrisi** | **[Bağlantı şablonu](BAGLANTI.md)** |
 | Hedef görünüm ve gerçek CAD | [Görsel galeri](GALLERY.md) |
+| Gerçek proje/donanım fotoğrafları | [20 kare + teşhis notları](BUILD_PHOTOS_2026-10-26.md) |
 | Güncel mimari / görev dağılımı | [Sistem](SYSTEM.md) |
 | Tek LiPo ve güç yolu | [Güç diyagramı](images/robocat-power.svg), [güncel güç planı](../hardware/PCB_PLAN_REV_A.md) |
 | Aldığımız parçalar | [Envanter](../hardware/INVENTORY.md) |

@@ -2,7 +2,7 @@
 
 ## Gerçek proje ve donanım fotoğrafları — 2026-10-26
 
-[20 fotoğraflık albüm](BUILD_PHOTOS_2026-10-26.md): baskı aşaması, kartlar, sensörler ve motor mekanizmaları. Modeli kesinleşmeyenler ayrıca işaretlendi; fotoğraf çalışma testi veya tam teslim teyidi değildir.
+[20 fotoğraflık albüm](BUILD_PHOTOS_2026-10-26.md): baskı aşaması, kartlar, sensörler ve motor mekanizmaları. Albümdeki `HW-373` kartı geliştirme kartı değil, 1S şarj/boost modülüdür; dairesel kart ve BLDC motorlar robot süpürgeden sökülmüş, RoboCat envanteri dışındadır. Fotoğraflarda Arduino Mega yoktur. Fotoğraf çalışma testi veya tam teslim teyidi değildir.
 
 ![Gerçek baskı aşaması](images/build-2026-10-26/img_9220.jpg)
 
