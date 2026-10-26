@@ -68,17 +68,14 @@ Mega + 12 MG996R + PCA9685 + bir GY-521 + iki ön HC-SR04 + HC-06 + LCD. İlk te
 
 ## Güncel eksikler / doğrulanacaklar — tek LiPo
 
-Son güncelleme: 2026-10-26 (kargo teslimi, 625 rulman, 6 V servo regülatörü, XT60/kablo ve servo uzatmalar işlendi; alüminyum horn ertelendi).
+Son güncelleme: 2026-10-26 (kargo teslimi, 2× 3S LiPo, 625 rulman, 6 V servo regülatörü, XT60/kablo ve servo uzatmalar işlendi; alüminyum horn ve HX711 ertelendi).
 
 ### Hâlâ satın alınacak
 | Parça | Not |
 |---|---|
-| Tinylab 3S 2200 mAh 40C LiPo (veya eşdeğeri) | Hedef model netleşti; satın alma/adedi fiziksel teyit edilmedi. 18650 hücreler ve ikinci üçlü yuva bu mimarinin gereksinimi değil |
-| 3S balanslı LiPo şarj cihazı | (varsa marka/model doğrulanmadı) |
 | LiPo düşük gerilim alarmı/koruması | 3S; hücre başına ≥3,5 V uyarı |
 | DC sigorta + yuva, uygun ana kesme | RL3-4 anahtarın DC akım değeri etiketten doğrulanacak |
 | M3×8–10, M4×10–12 vida, somun, pul | M3 geçiş Ø3,0–3,4; pilot Ø2,4–2,9 |
-| HX711 | Load cell için; yükselteç/ADC alternatifi de olur |
 
 ### Teslim alındı — test veya kod işi bekliyor
 | Parça | Kalan iş |
@@ -89,13 +86,16 @@ Son güncelleme: 2026-10-26 (kargo teslimi, 625 rulman, 6 V servo regülatörü,
 | **625 rulman (5×16×5)** | Cep derinliği ≈3,6–4,0 mm; geçme testi, gerekirse cep 5,2 mm'ye ream |
 | Arduino Mega 2560 R3 | USB'de CH340 görünüyor ama avrdude sync yok; PWR/TX/GND kontrolü ile fiziksel teyit |
 | 6 V servo regülatörü (≥15–20 A sınıfı) | 2026-10-26 alındı. Etiket/model kaydı; **sürekli akım kapasitesi ve termal davranış doğrulanmadan 12 servo bağlanmaz.** Sıra: yüksüz ayar → tek servo → üç servolu bacak → 12 servo |
-| XT60 + 18–20 AWG kablo, dağıtım klemensi | 2026-10-26 alındı. Kesit, konnektör ve tek nokta ortak GND kontrolü |
+| XT60 + 18–20 AWG kablo, dağıtım klemensi | 2026-10-26 alındı. **18–20 AWG yalnız servo dalı için yeterli**; batarya → regülatör ana hattı ≥16 AWG (tercihen 14 AWG). Kesit/konnektör ve tek nokta ortak GND kontrolü |
 | 3-pin servo uzatma ×12 | 2026-10-26 alındı. Uzunluk, kablo kesiti ve pin sırası (sinyal–V+–GND) kontrolü |
+| **2× 3S LiPo 2200 mAh 40C** | 2026-10-26 alındı. Hücre gerilimleri (3,7–3,85 V/hücre depolama), XT60 polaritesi ve şişme kontrolü; biri yedek, robot kapalıyken değiştirilir |
 
-### Ertelenen — plastik horn ile başlanacak
+### Ertelenen / koşullu
 | Parça | Karar |
 |---|---|
 | 25T alüminyum servo horn | **Şimdilik alınmayacak.** İlk denemeler MG996R ile gelen **plastik 25T horn** ile yapılacak. Plastik horn 10,0 mm delik desenine uyuyor mu kuru denenecek; kayma/dişli sıyırma veya tork yetersizliği görülürse alüminyuma geçilecek |
+| HX711 / load cell yükselteci | **Şimdilik alınmıyor.** Load cell proje için zorunlu değil; ağırlık ölçümü gerekirse alınacak |
+| 3S balanslı şarj cihazı | **Koşullu.** Elde olduğu hatırlanıyor; LiPo paketiyle gelmezse veya 3S balans soketi uyumsuzsa alınacak |
 
 Plastik horn kabul ölçütü: tek bacak testinde 5 dk yükte kayma yok, horn dişleri sıyrılmıyor, gövde <60 °C. Bu sağlanırsa alüminyum horn zorunlu değil.
 

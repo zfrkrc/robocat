@@ -17,11 +17,11 @@
 | Envanter | 16 MG996R, Mega R3, PCA9685, 3 kamera, 5 ultrasonik, 2 IMU sipariş listesinden kaydedildi |
 | Kafa | v0.3 CAD/STL/STEP var; gerçek kamera ve gövde uyumu bekliyor |
 | Baskı | v0.4 içinde 8 ayrı uyum işi; otomatik başlatma kapalı öneriliyor |
-| Batarya | Tek Tinylab 3S LiPo 2200 mAh / 40C hedefi; hot-swap iptal |
+| Batarya | 2× 3S LiPo 2200 mAh / 40C alındı (biri yedek, robot kapalıyken değişir); hot-swap iptal |
 | LiPo tepsisi | Yalnız boş/dummy deneme; gövde bağlantısı ve elektrik tamamlanmadı |
 | Yürüyüş / kol | Önce modüllerle masaüstü kalibrasyon; çalışan entegrasyon henüz doğrulanmadı |
 | PCB | Mimari ve pin planı; üretime hazır şematik/Gerber yok |
-| Tedarik | 2026-10-26: TCA9548A, XL4016, PWM hız kontrolü, voltmetre, sis yapıcı, PIR, 6 V servo regülatörü, XT60/kablo ve 12 servo uzatma alındı; 625 rulman temin edildi. Alüminyum horn ertelendi (plastik ile başlanacak). Testler bekliyor |
+| Tedarik | 2026-10-26: 2× 3S LiPo, TCA9548A, XL4016, PWM hız kontrolü, voltmetre, sis yapıcı, PIR, 6 V servo regülatörü, XT60/kablo ve 12 servo uzatma alındı; 625 rulman temin edildi. Alüminyum horn ertelendi (plastik ile başlanacak). Testler bekliyor |
 | Mega / USB | CH340 portu görünüyor ama avrdude imza okuma 12/12 başarısız; fiziksel teyit bekliyor |
 | Fotoğraf kaydı | 20 gerçek kare: baskı, kart, sensör, süpürge parçaları; HW-373 geliştirme kartı değil |
 

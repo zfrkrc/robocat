@@ -118,10 +118,16 @@ Göz çerçevesi alternatifi: `custom/robocat-v0.3/stl/CAT06B_eye_bezel_7x7_boss
 
 ## E) Kurulumu bloke eden eksikler
 
-**Satın alınacak:** 3S LiPo ve balanslı şarj · LiPo düşük gerilim koruması · DC sigorta + ana kesme · M3/M4 vida-somun · HX711.
+**Satın alınacak:** LiPo düşük gerilim alarmı/koruması · DC sigorta + ana kesme · M3/M4 vida-somun.
 
-**Ertelenen:** 25T alüminyum horn — ilk denemeler servonun kutusundan çıkan **plastik horn** ile yapılacak; kayma/sıyırma veya tork yetersizliği görülürse alınacak.
+**Ertelenen / koşullu:** 25T alüminyum horn — ilk denemeler servonun kutusundan çıkan **plastik horn** ile yapılacak; kayma/sıyırma olursa alınacak. HX711 — zorunlu değil. 3S balanslı şarj — elde olduğu hatırlanıyor; LiPo ile gelmezse alınacak.
 
-**Elde, test/kod bekliyor:** 6 V servo regülatörünün yüksüz ayarı + kademeli yük testi (12 servo için kapasite onayı yok) · 2× XL4016 yük testi · 2× TCA9548A kanal + firmware eşlemesi · 2× PWM hız kontrolü, 2× voltmetre, sis yapıcı, PIR kabul testi · 625 rulman cep/geçme testi · kablo/konnektör/servo uzatma kesit ve pin kontrolü · Arduino Mega USB teyidi (CH340 var, avrdude sync yok) · **PS2 → HC-06 kod düzenlemesi**.
+**Elde, test/kod bekliyor:** 2× 3S LiPo hücre gerilimi/XT60 kontrolü · 6 V servo regülatörünün yüksüz ayarı + kademeli yük testi (12 servo için kapasite onayı yok) · 2× XL4016 yük testi · 2× TCA9548A kanal + firmware eşlemesi · 2× PWM hız kontrolü, 2× voltmetre, sis yapıcı, PIR kabul testi · 625 rulman cep/geçme testi · kablo/konnektör/servo uzatma kesit ve pin kontrolü · Arduino Mega USB teyidi (CH340 var, avrdude sync yok) · **PS2 → HC-06 kod düzenlemesi**.
+
+### Düz anlatım: LiPo alarmı ve sigorta neden gerekli
+
+- **LiPo düşük gerilim alarmı (madde 3):** 3S pakette 3 hücre var. Bir hücre **3,0 V altına** inerse pil kalıcı bozulur, şişer ve yangın riski taşır. Robot yürürken bunu fark etmez, çekmeye devam eder. En basit çözüm, pilin **balans soketine takılan 3S alarm/buzzer**'dır (kablo kesmeye gerek yok); hücre 3,3–3,5 V'a düşünce öter. Alternatif: ACS712 + yazılımda gerilim/akım izleme ve kesme.
+- **DC sigorta + ana kesme (madde 4):** 40C/2200 mAh paket kısa devrede **80 A'ya kadar** verebilir; kablo erir, yangın çıkar. Sigorta bu akımı keser. Yuvaya uygun **araç tipi (blade) sigorta** batarya ile devre arasına, XT60'tan hemen sonra takılır. Ana kesme kolaylık içindir; RL3-4 anahtarın etiketindeki **T85 sıcaklık değeridir, DC akım değil** — DC rating doğrulanmadan ana hat anahtarı sayılmaz.
+- **Kesit uyarısı:** 18–20 AWG yalnız **servo dalı** için yeterlidir. Batarya → regülatör ana hattı **≥16 AWG (tercihen 14 AWG)** olmalı. Sigorta kablo kesitine göre seçilir: 16 AWG hatta 15–20 A, 14 AWG hatta 25–30 A; sigorta kablodan zayıf olmaz.
 
 Bunlar tamamlanmadan "kurulum bitti" denemez; yalnız tek servo / tek bacak masaüstü testleri yapılabilir.
