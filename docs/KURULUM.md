@@ -30,6 +30,10 @@ Ana izleme yeri bu kurulum klasörüdür. **Sipariş verildi ≠ teslim alındı
 
 Sipariş kaynakları: [Robolink TCA9548A](https://www.robolinkmarket.com/tca9548a-i2c-coklayici), [PWM kart](https://www.robolinkmarket.com/pwm-dc-motor-hiz-kontrol-devresi-18-12v-2a), [voltmetre](https://www.robolinkmarket.com/dijital-dc-voltmetre-kirmizi), [sis yapıcı](https://www.robolinkmarket.com/usb-ultrasonik-nem-buhar-yapici-modul-5v-sis-yapici), [PIR](https://www.robolinkmarket.com/hc-sr501-ayarlanabilir-ir-hareket-algilama-sensoru-pir), [XL4016](https://www.robo90.com/xl4016-dc-dc-step-down-dusurucu-voltaj-regulatoru-200w).
 
+## Fiziksel proje kaydı
+
+[Proje ve donanım fotoğrafları — 20 kare](BUILD_PHOTOS_2026-10-26.md). Baskı durumu ve görülen donanım burada izlenir. Fotoğraflar sipariş adetlerinin tümünün teslimini veya test kabulünü otomatik doğrulamaz; yukarıdaki teslim/test alanları ayrıca güncellenir.
+
 ## A) Yazılım kurulumu
 
 1. **Arduino IDE 2.x** kur.
