@@ -68,7 +68,7 @@ Mega + 12 MG996R + PCA9685 + bir GY-521 + iki ön HC-SR04 + HC-06 + LCD. İlk te
 
 ## Güncel eksikler / doğrulanacaklar — tek LiPo
 
-Son güncelleme: 2026-10-26 (kargo teslimi, 625 rulman, 6 V servo regülatörü, XT60/kablo ve servo uzatmalar işlendi).
+Son güncelleme: 2026-10-26 (kargo teslimi, 625 rulman, 6 V servo regülatörü, XT60/kablo ve servo uzatmalar işlendi; alüminyum horn ertelendi).
 
 ### Hâlâ satın alınacak
 | Parça | Not |
@@ -77,7 +77,6 @@ Son güncelleme: 2026-10-26 (kargo teslimi, 625 rulman, 6 V servo regülatörü,
 | 3S balanslı LiPo şarj cihazı | (varsa marka/model doğrulanmadı) |
 | LiPo düşük gerilim alarmı/koruması | 3S; hücre başına ≥3,5 V uyarı |
 | DC sigorta + yuva, uygun ana kesme | RL3-4 anahtarın DC akım değeri etiketten doğrulanacak |
-| 25T alüminyum servo horn | Delik deseni **10,0 mm** (ikincil 13,9 mm); horn kalınlığı doğrulanacak |
 | M3×8–10, M4×10–12 vida, somun, pul | M3 geçiş Ø3,0–3,4; pilot Ø2,4–2,9 |
 | HX711 | Load cell için; yükselteç/ADC alternatifi de olur |
 
@@ -93,9 +92,16 @@ Son güncelleme: 2026-10-26 (kargo teslimi, 625 rulman, 6 V servo regülatörü,
 | XT60 + 18–20 AWG kablo, dağıtım klemensi | 2026-10-26 alındı. Kesit, konnektör ve tek nokta ortak GND kontrolü |
 | 3-pin servo uzatma ×12 | 2026-10-26 alındı. Uzunluk, kablo kesiti ve pin sırası (sinyal–V+–GND) kontrolü |
 
+### Ertelenen — plastik horn ile başlanacak
+| Parça | Karar |
+|---|---|
+| 25T alüminyum servo horn | **Şimdilik alınmayacak.** İlk denemeler MG996R ile gelen **plastik 25T horn** ile yapılacak. Plastik horn 10,0 mm delik desenine uyuyor mu kuru denenecek; kayma/dişli sıyırma veya tork yetersizliği görülürse alüminyuma geçilecek |
+
+Plastik horn kabul ölçütü: tek bacak testinde 5 dk yükte kayma yok, horn dişleri sıyrılmıyor, gövde <60 °C. Bu sağlanırsa alüminyum horn zorunlu değil.
+
 ### Ayrıca doğrulanacak
 - Alınan kablo/konnektör/dağıtım ve servo uzatmaların kesit, pin sırası ve ortak GND düzeni.
-- Mekanik modele uygun vida, somun ve servo hornu; gerçek MG996R ile tek yuva denemesi.
+- Mekanik modele uygun vida/somun; plastik horn ile gerçek MG996R tek yuva denemesi.
 - Çıplak QRE/LDR için okuma devresi; modül pinleri, lojik seviyeler, PCB/gövde ölçüleri.
 - Hot-swap iptal: iki bağımsız kartuş, iki BMS ve hot-swap devresi sipariş listesine otomatik eklenmez; tek LiPo'nun koruma gereksinimi ayrıca tasarlanacak.
 

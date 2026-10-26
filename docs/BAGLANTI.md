@@ -37,9 +37,13 @@ Ana sipariş/teslim/test listesi: [KURULUM.md](KURULUM.md#sipariş-ve-kabul-taki
 | DC sigorta + yuva | Hat akımına göre | Yangın/kısa devre |
 | LiPo düşük gerilim alarmı/koruması | 3S | Hücre başına ≥3,5 V uyarı |
 | Balanslı şarj cihazı | 3S | (varsa doğrulanmadı) |
-| 25T alüminyum horn | **10,0 mm** (ikincil 13,9 mm) delik deseni | Ölçüldü; horn kalınlığı doğrulanacak |
 | Vida/somun | M3×8–10, M4×10–12, somun, pul | M3 geçiş Ø3,0–3,4; pilot Ø2,4–2,9 |
 | HX711 | — | Load cell için |
+
+### Ertelenen
+| Parça | Karar |
+|---|---|
+| 25T alüminyum horn | Plastik horn ile başlanacak (10,0 mm desen kuru denenecek); kayma/sıyırma görülürse alınacak |
 
 ### Basılmayacak
 CAT10 kızak · BAT01 kartuş kapağı · eski 18650 kasetleri · doğrulanmamış omuz ultrasonik braketi.

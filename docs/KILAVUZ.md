@@ -24,7 +24,8 @@ Bu belge **bugünkü durumdan ilk yürüyüş testine** kadar sırayı anlatır.
 
 - [Envanter](../hardware/INVENTORY.md): 16 MG996R (12 bacak + 4 kol adayı), Mega, PCA9685, 2 IMU, 5 ultrasonik, 3 ESP32-CAM, HC-06, LCD.
 - **Teslim alındı, test bekliyor:** 2× XL4016 (5 V/6 V yük ve ısınma testi), **625 rulman (5×16×5)** (cep/geçme testi), 2× TCA9548A (kanal testi), **6 V servo regülatörü** (kapasite/termal testi), XT60 + 18–20 AWG kablo, 12× 3-pin servo uzatma.
-- **Hâlâ eksik / seçilmedi:** 3S LiPo, DC sigorta + ana kesme, LiPo düşük hücre koruması, balanslı şarj cihazı, 25T servo horn, M3/M4 vida-somun, HX711 (load cell için).
+- **Hâlâ eksik / seçilmedi:** 3S LiPo, DC sigorta + ana kesme, LiPo düşük hücre koruması, balanslı şarj cihazı, M3/M4 vida-somun, HX711 (load cell için).
+- **Ertelenen:** 25T alüminyum horn. İlk testler MG996R'in **plastik horn**u ile; kayma/sıyırma olursa alınacak.
 - **Basılmayacak parçalar:** CAT10 kızak, BAT01 kartuş kapağı, eski 18650 kaset gövdesi/kapağı/kızağı, doğrulanmamış omuz ultrasonik braketi.
 
 ## 2) Baskı kılavuzu

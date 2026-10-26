@@ -97,7 +97,7 @@ Kurallar: servo gücü breadboard/Dupont'tan geçmez; ortak GND tek noktada; USB
 *Sekiz adım, her adımda kuru deneme. Ölçüler kesitle doğrulanmış değerlerdir; baskı toleransı ayrıca denenir.*
 
 1. **Servo merkezleme:** horn takmadan önce her servoyu orta noktaya getir (≈1500 µs / 307 tick @60 Hz).
-2. **Horn:** 25T alüminyum hornu servo dişlisine oturt, merkez vidasını sık (vida boyu dibe vurmasın). Horn-parça delik deseni **10,0 mm** (ikincil 13,9 mm) — takmadan önce kuru dene.
+2. **Horn:** servonun kutusundan çıkan **plastik 25T hornu** servo dişlisine oturt, merkez vidasını sık (vida boyu dibe vurmasın). Horn-parça delik deseni **10,0 mm** (ikincil 13,9 mm) — takmadan önce kuru dene. Yükte kayma/diş sıyırma olursa alüminyum horna geç.
 3. **Rulman (625 · 5×16×5):** Ø16 cebe oturt, Ø5 mil geçir. Cep derinliği ölçümü ≈3,6–4,0 mm; rulman 1 mm dışarıda kalırsa cebi 5,2 mm'ye ream et.
 4. **Bacak zinciri:** coax → femur → tibia; M3 geçiş, M4 pivot. Sıkma sırasında eklem serbest mi kontrol et.
 5. **Kafa:** yüz + kasa + arka kapak; burun ve göz çerçevesi **yapıştırma** (nötr silikon/CA, ince film, IPA temiz yüzey, 24 saat).
@@ -118,7 +118,9 @@ Göz çerçevesi alternatifi: `custom/robocat-v0.3/stl/CAT06B_eye_bezel_7x7_boss
 
 ## E) Kurulumu bloke eden eksikler
 
-**Satın alınacak:** 3S LiPo ve balanslı şarj · LiPo düşük gerilim koruması · DC sigorta + ana kesme · 25T horn · M3/M4 vida-somun · HX711.
+**Satın alınacak:** 3S LiPo ve balanslı şarj · LiPo düşük gerilim koruması · DC sigorta + ana kesme · M3/M4 vida-somun · HX711.
+
+**Ertelenen:** 25T alüminyum horn — ilk denemeler servonun kutusundan çıkan **plastik horn** ile yapılacak; kayma/sıyırma veya tork yetersizliği görülürse alınacak.
 
 **Elde, test/kod bekliyor:** 6 V servo regülatörünün yüksüz ayarı + kademeli yük testi (12 servo için kapasite onayı yok) · 2× XL4016 yük testi · 2× TCA9548A kanal + firmware eşlemesi · 2× PWM hız kontrolü, 2× voltmetre, sis yapıcı, PIR kabul testi · 625 rulman cep/geçme testi · kablo/konnektör/servo uzatma kesit ve pin kontrolü · Arduino Mega USB teyidi (CH340 var, avrdude sync yok) · **PS2 → HC-06 kod düzenlemesi**.
 

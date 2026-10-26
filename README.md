@@ -21,7 +21,7 @@
 | LiPo tepsisi | Yalnız boş/dummy deneme; gövde bağlantısı ve elektrik tamamlanmadı |
 | Yürüyüş / kol | Önce modüllerle masaüstü kalibrasyon; çalışan entegrasyon henüz doğrulanmadı |
 | PCB | Mimari ve pin planı; üretime hazır şematik/Gerber yok |
-| Tedarik | 2026-10-26: TCA9548A, XL4016, PWM hız kontrolü, voltmetre, sis yapıcı, PIR, 6 V servo regülatörü, XT60/kablo ve 12 servo uzatma alındı; 625 rulman temin edildi. Testler bekliyor |
+| Tedarik | 2026-10-26: TCA9548A, XL4016, PWM hız kontrolü, voltmetre, sis yapıcı, PIR, 6 V servo regülatörü, XT60/kablo ve 12 servo uzatma alındı; 625 rulman temin edildi. Alüminyum horn ertelendi (plastik ile başlanacak). Testler bekliyor |
 | Mega / USB | CH340 portu görünüyor ama avrdude imza okuma 12/12 başarısız; fiziksel teyit bekliyor |
 | Fotoğraf kaydı | 20 gerçek kare: baskı, kart, sensör, süpürge parçaları; HW-373 geliştirme kartı değil |
 
