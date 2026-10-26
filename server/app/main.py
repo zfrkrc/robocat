@@ -49,6 +49,18 @@ app.add_middleware(CORSMiddleware, allow_origins=_origins, allow_methods=["*"], 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 
+@app.middleware("http")
+async def _device_log(request: Request, call_next):
+    """Cihaz çağrılarını UA + gerçek IP + anahtar sonucu ile logla (anahtar yazılmaz)."""
+    response = await call_next(request)
+    if request.url.path.startswith("/api/v1/device/"):
+        ua = request.headers.get("User-Agent", "-")[:40]
+        ip = _client_ip(request)
+        key_ok = "ok" if request.headers.get("X-Device-Key") else "yok"
+        print(f"[device] {ip} {request.method} {request.url.path} -> {response.status_code} ua={ua} key={key_ok}", flush=True)
+    return response
+
+
 def _camera_dir(camera_id: str) -> Path:
     d = settings.frames_dir / camera_id
     d.mkdir(parents=True, exist_ok=True)
@@ -245,6 +257,18 @@ def _device_robots() -> dict[str, str]:
     return out
 
 
+def _client_ip(request: Request) -> str | None:
+    """Gerçek istemci IP'si: Cloudflare/nginx arkasında X-Forwarded-For."""
+    if os.environ.get("ROBO_TRUST_PROXY", "0") in ("1", "true", "True"):
+        cf = request.headers.get("CF-Connecting-IP")
+        if cf:
+            return cf.strip()
+        fwd = request.headers.get("X-Forwarded-For", "")
+        if fwd:
+            return fwd.split(",")[0].strip()
+    return request.client.host if request.client else None
+
+
 _last_sync: dict[str, float] = {}
 MIN_INTERVAL_S = float(os.environ.get("ROBO_DEVICE_MIN_INTERVAL_S", 0.4))
 
@@ -274,7 +298,7 @@ def device_sync(device_id: str, body: DeviceSyncIn, request: Request) -> DeviceS
     _last_sync[device_id] = now
 
     robot_id = _device_robots().get(device_id, device_id)
-    ip = request.client.host if request.client else None
+    ip = _client_ip(request)
     db.device_touch(device_id, ip, body.rssi, body.battery_v, body.firmware, body.sensors)
     if body.battery_v is not None:
         db.insert_telemetry(robot_id, body.battery_v, body.sensors.get("current_a"),
