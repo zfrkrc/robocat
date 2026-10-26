@@ -2,7 +2,7 @@
 
 **Dört ayaklı robot kedi · yerel hareket kontrolü · merkezde görüntü işleme**
 
-[Başlangıç](docs/README.md) · [Görsel galeri](docs/GALLERY.md) · [Baskı merkezi](docs/PRINTING.md) · [Donanım](hardware/README.md) · [Yol haritası](docs/ROADMAP.md)
+[Başlangıç](docs/README.md) · [Kılavuz](docs/KILAVUZ.md) · [Görsel galeri](docs/GALLERY.md) · [Baskı merkezi](docs/PRINTING.md) · [Donanım](hardware/README.md) · [Yol haritası](docs/ROADMAP.md)
 
 ![RoboCat hedef konsepti](docs/images/robocat-concept-v0.3.png)
 

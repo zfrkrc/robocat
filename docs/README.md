@@ -2,6 +2,7 @@
 
 | Bakmak istediğin | Belge |
 |---|---|
+| **Adım adım uygulama** | **[Kılavuz](KILAVUZ.md)** |
 | Hedef görünüm ve gerçek CAD | [Görsel galeri](GALLERY.md) |
 | Güncel mimari / görev dağılımı | [Sistem](SYSTEM.md) |
 | Tek LiPo ve güç yolu | [Güç diyagramı](images/robocat-power.svg), [güncel güç planı](../hardware/PCB_PLAN_REV_A.md) |
