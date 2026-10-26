@@ -1,0 +1,39 @@
+{
+  "cad_valid": true,
+  "solid_count": 1,
+  "nominal_dimensions_mm": [
+    28,
+    28,
+    4.5
+  ],
+  "stl_dimensions_mm": [
+    28.0,
+    28.0,
+    4.5
+  ],
+  "min_z_mm": -1.7145055406796758e-15,
+  "boss_diameter_mm": 19.6,
+  "boss_height_mm": 1.5,
+  "throat_mm": [
+    7,
+    7
+  ],
+  "front_recess_mm": [
+    9,
+    9,
+    1
+  ],
+  "face_checks": [
+    {
+      "x_mm": -30,
+      "face_overlap_mm3": 0
+    },
+    {
+      "x_mm": 30,
+      "face_overlap_mm3": 0
+    }
+  ],
+  "scope": "face and printed eye bezel only; no camera, glue, fastener, cable or thermal checks",
+  "print_orientation": "front large face down, boss up; minZ=0",
+  "physical_fit_verified": false
+}

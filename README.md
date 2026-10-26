@@ -1,5 +1,7 @@
 # RoboCat
 
+> **Metalik PETG hazırlığı:** [v0.5 aşama talimatı](custom/petg-stage-v0.5/README.md) · [6 tek-parça deneme işi](custom/petg-stage-v0.5/metallic_queue.json). Düzeltilmiş CAT06B tek katıdır. Durum: PETG ve açık kullanıcı baskı komutu bekleniyor; otomatik başlatma yok. Sıcaklıklar ve gerçek yazıcı profili doğrulanmadan G-code üretilmez/gönderilmez. v0.4 genel uyum listesi ayrı korunur.
+
 **Dört ayaklı robot kedi · yerel hareket kontrolü · merkezde görüntü işleme**
 
 [Başlangıç](docs/README.md) · [Kılavuz](docs/KILAVUZ.md) · [Kurulum](docs/KURULUM.md) · [Bağlantı](docs/BAGLANTI.md) · [Görsel galeri](docs/GALLERY.md) · [Baskı merkezi](docs/PRINTING.md) · [Donanım](hardware/README.md) · [Yol haritası](docs/ROADMAP.md)

@@ -63,4 +63,8 @@ Kaynak: Chris Locke / cguweb-com Arduino-Projects, Nova-SM3; telif ve lisanslar 
 
 Yapistirma onerisi: notr kürlenen silikon (sokulebilir) veya CA. Montaj oncesi yuzey IPA ile temizlenmeli, silikon ince surulmeli.
 
-Durum: yalniz CAD. Baski toleransi, yapisma dayanimi, sensor/lens derinligi ve isi testi yapilmadi. CAT06'nin yerine gecmesi icin gercek sensör/modul olcusu ve arka bosluk dogrulanmali. v0.4 manifestinde CAT06 x2 olarak listelenen is icin alternatif sayilir; manifest otomatik degismedi.
+Durum: yalniz CAD. Baski toleransi, yapisma dayanimi, sensor/lens derinligi ve isi testi yapilmadi. CAT06'nin yerine gecmesi icin gercek sensör/modul olcusu ve arka bosluk dogrulanmali. v0.4 manifestinde CAT06 işi bulunmaz. Güncel metalik deneme işi v0.5 M02 içindedir; önce yalnız bir adet basılır.
+
+
+## 2026-10-26 CAT06B mesh düzeltmesi / metalik aşama
+Önceki varyanttaki üç örtüşen kapalı mesh kabuğu Boolean union ile tek geçerli katı hâline getirildi. STL büyük ön yüz tabanda, bilezik yukarı ve minZ=0 olacak şekilde yeniden çıkarıldı. Üretici kaynak: [generate_eye.py](../petg-stage-v0.5/generate_eye.py); [ölçü/montaj kontrolü](../petg-stage-v0.5/validation.json). Mevcut `generate.py` eski CAT06 varyantının ve orijinal kafa montajının kaynağı olarak kalır; CAT06B için ayrıca yeni üretici çalıştırılır. Fiziksel/optik test yoktur. Yapıştırmadan önce kuru yerleşim ve canlı görüntü denenir. [Güncel aşama](../petg-stage-v0.5/README.md).

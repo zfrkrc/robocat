@@ -38,3 +38,9 @@ Iki renk PETG (beyaz + metalik) ile v0.4 uyum islerinin renk atamasi. Gorsel CAD
 | Metalik | CAT02 kasa, CAT03 arka kapak, CAT06 goz halkasi x2, CAT08 kamera tasiyici x2, CAT09 mesafe pulu x8, CAT05 kulak ici x2, BAT_TEST tepsi, TEST01 kupon | 18 |
 
 CAT10 kizak, BAT01 kartus kapagi ve eski 18650 parcalari bu dagilimda yoktur; v0.4 kontratinda engellidir. CAT05 kulak ici iki renkten birine atanmistir; konseptteki turkuaz rengin karsiligi yoktur.
+
+
+## Düzeltilmiş CAT06B / metalik ilk deneme
+![CAT06B tek katı, gerçek CAD](../custom/petg-stage-v0.5/eye_fixed.png)
+
+Üç kabuklu eski dosya yerine tek birleşik katı. Büyük ön yüz tabanda, merkezleme bileziği yukarı yönlendirilmiştir. Önce bir adet metalik PETG denemesi; gerçek kamera görüntüsü ve kuru uyum kontrolü yapılmadan yapıştırma yok. [Metalik aşama ve profil adayı](../custom/petg-stage-v0.5/README.md). Yukarıdaki renk dağılımı görseli eski yuvarlak CAT06'yı gösterir; CAT06B kare varyantının son geometrisi bu görseldedir.
