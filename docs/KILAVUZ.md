@@ -23,7 +23,8 @@ Bu belge **bugünkü durumdan ilk yürüyüş testine** kadar sırayı anlatır.
 ## 1) Parçalar
 
 - [Envanter](../hardware/INVENTORY.md): 16 MG996R (12 bacak + 4 kol adayı), Mega, PCA9685, 2 IMU, 5 ultrasonik, 3 ESP32-CAM, HC-06, LCD.
-- **Eksik / seçilmedi:** bütün robot için 6 V kaynak kapasitesi ve siparişteki XL4016'ların teslim/yük testi, DC sigorta, LiPo düşük hücre koruması, balanslı şarj cihazı, 25T servo horn, **625 rulman (5×16×5)**, M3/M4 vida-somun, HX711 (load cell için).
+- **Teslim alındı, test bekliyor:** 2× XL4016 (5 V/6 V yük ve ısınma testi), **625 rulman (5×16×5)** (cep/geçme testi), 2× TCA9548A (kanal testi).
+- **Hâlâ eksik / seçilmedi:** bütün robot için 6 V / ≥15–20 A servo kaynağı, DC sigorta + ana kesme, LiPo düşük hücre koruması, balanslı şarj cihazı, 25T servo horn, M3/M4 vida-somun, 12 servo uzatma, XT60/kablo, HX711 (load cell için).
 - **Basılmayacak parçalar:** CAT10 kızak, BAT01 kartuş kapağı, eski 18650 kaset gövdesi/kapağı/kızağı, doğrulanmamış omuz ultrasonik braketi.
 
 ## 2) Baskı kılavuzu

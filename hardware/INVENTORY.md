@@ -67,15 +67,37 @@ Fotoğraflarda **Arduino Mega görünmüyor.** Mega'nın USB teşhisi için [fot
 Mega + 12 MG996R + PCA9685 + bir GY-521 + iki ön HC-SR04 + HC-06 + LCD. İlk tek-servo denemesinde doğrulanmış haricî regüle besleme ve ortak GND kullanılacak. Kamera ve gaz sensörleri yürüyüş doğrulanınca eklenir. Kalan dört MG996R kol için ayrılır; bu ayrım mevcut kolun üretime hazır olduğu anlamına gelmez.
 
 ## Güncel eksikler / doğrulanacaklar — tek LiPo
-- Tinylab 3S 2200 mAh 40C LiPo hedefi netleşti; satın alma/adedi fiziksel teyit edilmedi. 18650 hücreler ve ikinci üçlü yuva artık bu mimarinin gereksinimi değildir.
-- Uygun 3S LiPo balanslı şarj, düşük hücre gerilimi izleme/koruma çözümü, DC sigorta ve uygun ana kesme.
-- 2× XL4016 sipariş edildi: 5 V elektronik ve 6 V tek-bacak test hattına aday. Teslim/yük/ısınma testi bekleniyor; bütün robot için yüksek akım kapasitesi onaylanmadı.
+
+Son güncelleme: 2026-10-26 (kargo teslimi ve 625 rulman temini işlendi).
+
+### Hâlâ satın alınacak
+| Parça | Not |
+|---|---|
+| Tinylab 3S 2200 mAh 40C LiPo (veya eşdeğeri) | Hedef model netleşti; satın alma/adedi fiziksel teyit edilmedi. 18650 hücreler ve ikinci üçlü yuva bu mimarinin gereksinimi değil |
+| 3S balanslı LiPo şarj cihazı | (varsa marka/model doğrulanmadı) |
+| LiPo düşük gerilim alarmı/koruması | 3S; hücre başına ≥3,5 V uyarı |
+| DC sigorta + yuva, uygun ana kesme | RL3-4 anahtarın DC akım değeri etiketten doğrulanacak |
+| 6 V / ≥15–20 A servo regülatörü | 12 servo stall'da 25–30 A çekebilir; 2× XL4016 (8 A) bu iş için **onaylı değil**, yalnız tek bacak testine aday |
+| XT60 + 18–20 AWG yüksek akım kablo, dağıtım klemensi | Ortak GND tek noktada |
+| 25T alüminyum servo horn | Delik deseni **10,0 mm** (ikincil 13,9 mm); horn kalınlığı doğrulanacak |
+| M3×8–10, M4×10–12 vida, somun, pul | M3 geçiş Ø3,0–3,4; pilot Ø2,4–2,9 |
+| 3-pin servo uzatma ×12 | Kablo ekleme değil, hazır uzatma tercih edilecek |
+| HX711 | Load cell için; yükselteç/ADC alternatifi de olur |
+
+### Teslim alındı — test veya kod işi bekliyor
+| Parça | Kalan iş |
+|---|---|
+| 2× TCA9548A | Kanal taraması ve firmware kanal eşlemesi (`tca_select`) |
+| 2× XL4016 | Yüksüz 5,0 / 6,0 V ayarı, yük altında gerilim–akım–sıcaklık kaydı |
+| 2× PWM DC hız kontrolü, 2× voltmetre, 1× sis yapıcı, 1× PIR | Kabul testi; voltmetreler multimetreyle karşılaştırılacak |
+| **625 rulman (5×16×5)** | Cep derinliği ≈3,6–4,0 mm; geçme testi, gerekirse cep 5,2 mm'ye ream |
+| Arduino Mega 2560 R3 | USB'de CH340 görünüyor ama avrdude sync yok; PWR/TX/GND kontrolü ile fiziksel teyit |
+
+### Ayrıca doğrulanacak
 - Yüksek akım kablo/konnektör/dağıtım, servo uzatma ve güvenilir ortak GND.
-- **Rulman seçimi: 625 (5×16×5).** Güncel `SM3_Frame_*` setinde kesitle ölçülen: dış yuva Ø15,9–16,3 mm, mil/geçiş delikleri Ø5,0–5,5 mm, yuva derinliği ≈3,6–4,0 mm; 8 mm delik bulunmadı. Yani SM3 geometrisi Ø5 mil için modellenmiş; 625 uyumlu, baskı sonrası gerçek geçme ve 5 mm'lik rulman için cep derinliği (gerekirse ream) doğrulanacak.
-- Mekanik modele uygun vida, somun, servo hornu ve rulmanlar; gerçek MG996R ile tek yuva denemesi.
-- Load cell için HX711 veya uygun yükselteç/ADC; çıplak QRE/LDR için okuma devresi.
-- Modül pinleri, lojik seviyeler, PCB/gövde ölçüleri. Satın alma listesi fiziksel uyumu doğrulamaz.
-- Hot-swap iptal. İki bağımsız kartuş, iki BMS ve hot-swap devresi artık sipariş listesine otomatik eklenmez; tek LiPo'nun koruma gereksinimi ayrıca tasarlanacak.
+- Mekanik modele uygun vida, somun ve servo hornu; gerçek MG996R ile tek yuva denemesi.
+- Çıplak QRE/LDR için okuma devresi; modül pinleri, lojik seviyeler, PCB/gövde ölçüleri.
+- Hot-swap iptal: iki bağımsız kartuş, iki BMS ve hot-swap devresi sipariş listesine otomatik eklenmez; tek LiPo'nun koruma gereksinimi ayrıca tasarlanacak.
 
 ## Burun tasarımına etkisi
 MQ sensörleri mevcut kedi burnuna doğrudan yerleştirilmeyecek. Örneğin Winsen MQ-8 5 V ısıtıcı kullanır ve üretici belgesinde ısıtıcı tüketimi 950 mW'a kadar belirtilir. Havalandırmalı, ısıl ayrımı olan ayrı sensör bölmesi ve besleme bütçesi gerekir. Üç farklı gaz sensörü genel koku tanıma ya da koku izini takip etme yeteneğini otomatik sağlamaz. Ölçümler kalibrasyonsuz ppm/güvenlik alarmı olarak sunulmayacak.
@@ -90,16 +112,16 @@ Bu güncelleme yalnız envanter belgesidir; baskı kuyruğu, STL, G-code veya ya
 
 ## Sipariş ve kabul takibi — 2026-10-26
 
-Ana izleme yeri bu kurulum klasörüdür. **Sipariş verildi ≠ teslim alındı ≠ test edildi.** Aşağıdaki yeni siparişlerin teslimi ve fiziksel kabulü henüz teyit edilmedi.
+Ana izleme yeri bu kurulum klasörüdür. **Sipariş verildi ≠ teslim alındı ≠ test edildi.** Aşağıdaki siparişler **2026-10-26'da teslim alındı** (kullanıcı bildirimi); adet sayımı, fotoğraf kaydı ve elektriksel testler henüz yapılmadı.
 
 | Parça | Sipariş | Teslim alınan | Test edilen | Kullanım / sonraki adım |
 |---|---:|---|---|---|
-| TCA9548A I²C çoklayıcı | 2 | Teyit bekliyor | 0 | 1 kullanım + 1 yedek; kanal/adres eşlemesi firmware ile doğrulanacak |
-| PWM DC motor hız kontrolü 1,8–12 V / 2 A | 2 | Teyit bekliyor | 0 | Servo regülatörü değildir; dolu 3S (12,6 V) doğrudan bağlanmaz |
-| Dijital DC voltmetre, kırmızı | 2 | Teyit bekliyor | 0 | Batarya ve 6 V hattı göstergesi adayı; hücre koruması değildir |
-| USB 5 V ultrasonik sis yapıcı | 1 | Teyit bekliyor | 0 | Sonraki efekt aşaması; ilk yürüyüşe dahil değil |
-| HC-SR501 PIR | 1 | Teyit bekliyor | 0 | Opsiyonel hareket algılama; pin tahsisi henüz yok |
-| XL4016 düşürücü regülatör, Robo90 200W başlıklı | 2 | Teyit bekliyor | 0 | Bir kart 5 V elektronik, bir kart 6 V tek-servo/tek-bacak testine aday |
+| TCA9548A I²C çoklayıcı | 2 | ✅ 2026-10-26 | 0 | 1 kullanım + 1 yedek; kanal/adres eşlemesi firmware ile doğrulanacak |
+| PWM DC motor hız kontrolü 1,8–12 V / 2 A | 2 | ✅ 2026-10-26 | 0 | Servo regülatörü değildir; dolu 3S (12,6 V) doğrudan bağlanmaz |
+| Dijital DC voltmetre, kırmızı | 2 | ✅ 2026-10-26 | 0 | Batarya ve 6 V hattı göstergesi adayı; hücre koruması değildir |
+| USB 5 V ultrasonik sis yapıcı | 1 | ✅ 2026-10-26 | 0 | Sonraki efekt aşaması; ilk yürüyüşe dahil değil |
+| HC-SR501 PIR | 1 | ✅ 2026-10-26 | 0 | Opsiyonel hareket algılama; pin tahsisi henüz yok |
+| XL4016 düşürücü regülatör, Robo90 200W başlıklı | 2 | ✅ 2026-10-26 | 0 | Bir kart 5 V elektronik, bir kart 6 V tek-servo/tek-bacak testine aday |
 
 **XL4016 kabul koşulu:** Satıcı 8 A çıkış, 5 A üzerinde ek soğutma belirtiyor. 6 V × 8 A = 48 W; “200W” başlığı 6 V'ta 200 W veya 15–20 A garantisi değildir. 12–16 servonun yürüyüş beslemesi henüz onaylanmadı. Kartlar arası çıkış paralelleme yok; bataryadan ayrı girişler ve ortak GND. Yük bağlamadan multimetreyle 5,0 / 6,0 V ayarlanır; yük altında gerilim, akım ve sıcaklık kaydedilir. Bu modüllerin ayarlanabilir akım limiti olduğu varsayılmaz; test beslemesinde uygun akım koruması gerekir.
 

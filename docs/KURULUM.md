@@ -5,22 +5,23 @@ Kurulumu üç aşamaya ayırıyorum: **yazılım**, **elektronik**, **mekanik**.
 
 ## Sipariş ve kabul takibi — 2026-10-26
 
-Ana izleme yeri bu kurulum klasörüdür. **Sipariş verildi ≠ teslim alındı ≠ test edildi.** Aşağıdaki yeni siparişlerin teslimi ve fiziksel kabulü henüz teyit edilmedi.
+Ana izleme yeri bu kurulum klasörüdür. **Sipariş verildi ≠ teslim alındı ≠ test edildi.** Aşağıdaki siparişler **2026-10-26'da teslim alındı** (kullanıcı bildirimi); adet sayımı, fotoğraf kaydı ve elektriksel testler henüz yapılmadı.
 
 | Parça | Sipariş | Teslim alınan | Test edilen | Kullanım / sonraki adım |
 |---|---:|---|---|---|
-| TCA9548A I²C çoklayıcı | 2 | Teyit bekliyor | 0 | 1 kullanım + 1 yedek; kanal/adres eşlemesi firmware ile doğrulanacak |
-| PWM DC motor hız kontrolü 1,8–12 V / 2 A | 2 | Teyit bekliyor | 0 | Servo regülatörü değildir; dolu 3S (12,6 V) doğrudan bağlanmaz |
-| Dijital DC voltmetre, kırmızı | 2 | Teyit bekliyor | 0 | Batarya ve 6 V hattı göstergesi adayı; hücre koruması değildir |
-| USB 5 V ultrasonik sis yapıcı | 1 | Teyit bekliyor | 0 | Sonraki efekt aşaması; ilk yürüyüşe dahil değil |
-| HC-SR501 PIR | 1 | Teyit bekliyor | 0 | Opsiyonel hareket algılama; pin tahsisi henüz yok |
-| XL4016 düşürücü regülatör, Robo90 200W başlıklı | 2 | Teyit bekliyor | 0 | Bir kart 5 V elektronik, bir kart 6 V tek-servo/tek-bacak testine aday |
+| TCA9548A I²C çoklayıcı | 2 | ✅ 2026-10-26 | 0 | 1 kullanım + 1 yedek; kanal/adres eşlemesi firmware ile doğrulanacak |
+| PWM DC motor hız kontrolü 1,8–12 V / 2 A | 2 | ✅ 2026-10-26 | 0 | Servo regülatörü değildir; dolu 3S (12,6 V) doğrudan bağlanmaz |
+| Dijital DC voltmetre, kırmızı | 2 | ✅ 2026-10-26 | 0 | Batarya ve 6 V hattı göstergesi adayı; hücre koruması değildir |
+| USB 5 V ultrasonik sis yapıcı | 1 | ✅ 2026-10-26 | 0 | Sonraki efekt aşaması; ilk yürüyüşe dahil değil |
+| HC-SR501 PIR | 1 | ✅ 2026-10-26 | 0 | Opsiyonel hareket algılama; pin tahsisi henüz yok |
+| XL4016 düşürücü regülatör, Robo90 200W başlıklı | 2 | ✅ 2026-10-26 | 0 | Bir kart 5 V elektronik, bir kart 6 V tek-servo/tek-bacak testine aday |
 
 **XL4016 kabul koşulu:** Satıcı 8 A çıkış, 5 A üzerinde ek soğutma belirtiyor. 6 V × 8 A = 48 W; “200W” başlığı 6 V'ta 200 W veya 15–20 A garantisi değildir. 12–16 servonun yürüyüş beslemesi henüz onaylanmadı. Kartlar arası çıkış paralelleme yok; bataryadan ayrı girişler ve ortak GND. Yük bağlamadan multimetreyle 5,0 / 6,0 V ayarlanır; yük altında gerilim, akım ve sıcaklık kaydedilir. Bu modüllerin ayarlanabilir akım limiti olduğu varsayılmaz; test beslemesinde uygun akım koruması gerekir.
 
 ### Kabul kontrol listesi
 
-- [ ] Kargo teslimi, gerçek adet ve kart fotoğrafları kaydedildi
+- [x] Kargo teslimi kullanıcı tarafından bildirildi (2026-10-26)
+- [ ] Gerçek adet ve kart fotoğraflarıyla teslim teyidi
 - [ ] XL4016 model/pin/polarite kontrolü ve yüksüz çıkış ayarı yapıldı
 - [ ] 5 V elektronik hattı yük/ısınma testi geçti
 - [ ] 6 V tek servo, ardından üç servolu bacak testi geçti
@@ -57,7 +58,7 @@ Mega takılıyken yapılan ölçüm:
 
 | Konu | Firmware ne bekliyor | Bizde ne var | Gereken |
 |---|---|---|---|
-| I²C çoklayıcı | **TCA9548A** (`tca_select(tca_pwm)` / `tca_mpu`) | 2 adet sipariş, teslim bekliyor | Kanal eşlemesini mevcut firmware ile doğrula; gerekirse kodu düzenle |
+| I²C çoklayıcı | **TCA9548A** (`tca_select(tca_pwm)` / `tca_mpu`) | 2 adet teslim alındı (2026-10-26); kanal testi yok | Kanal eşlemesini mevcut firmware ile doğrula; gerekirse kodu düzenle |
 | Kumanda | **PS2 alıcı** (`PS2X`) | **HC-06** Bluetooth | HC-06 için Serial1 komut protokolü yazılmalı |
 | PWM kanalı | 2 sürücü kimliği (1/2) | 1× PCA9685 | 16 servo = tek kartın **tamamı**; ek kanal yok |
 
@@ -117,6 +118,8 @@ Göz çerçevesi alternatifi: `custom/robocat-v0.3/stl/CAT06B_eye_bezel_7x7_boss
 
 ## E) Kurulumu bloke eden eksikler
 
-6 V bütün-robot servo beslemesi (kapasite doğrulaması bekliyor; XL4016 test adayı) · 5 V XL4016 hattının teslim/yük testi · DC sigorta + ana kesme · LiPo düşük gerilim koruması · balanslı şarj · 25T horn · **625 rulman (5×16×5)** · M3/M4 vida-somun · **TCA9548A teslimi + kanal/kod doğrulaması** · **PS2 → HC-06 kod düzenlemesi**
+**Satın alınacak:** 6 V / ≥15–20 A servo regülatörü (XL4016 8 A yalnız test adayı) · 3S LiPo ve balanslı şarj · LiPo düşük gerilim koruması · DC sigorta + ana kesme · XT60 ve 18–20 AWG kablo/dağıtım · 25T horn · M3/M4 vida-somun · 12 servo uzatma · HX711.
+
+**Elde, test/kod bekliyor:** 2× XL4016 yük testi · 2× TCA9548A kanal + firmware eşlemesi · 2× PWM hız kontrolü, 2× voltmetre, sis yapıcı, PIR kabul testi · 625 rulman cep/geçme testi · Arduino Mega USB teyidi (CH340 var, avrdude sync yok) · **PS2 → HC-06 kod düzenlemesi**.
 
 Bunlar tamamlanmadan "kurulum bitti" denemez; yalnız tek servo / tek bacak masaüstü testleri yapılabilir.
