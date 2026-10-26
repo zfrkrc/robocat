@@ -83,6 +83,11 @@ Yanıt:
 | `resume` | — | beklemeden takibe döner |
 | `operator_stop` | — | görevi bitirir |
 
+### Rol ve yetenekler
+`{"role":"robot"|"pentest"|"camera"|"other","capabilities":["tcp_scan",...]}` alanları sync ile bildirilir.
+`role=pentest` cihazlar yalnız `scan/recon/report/pause/stop` komutlarını alır; yürüme komutları 422 döner.
+Bulgu akışı: [PENTEST_PROTOCOL.md](PENTEST_PROTOCOL.md).
+
 Davranış ayrıntısı: [MISSION.md](MISSION.md).
 
 ## 5) Güvenlik notları

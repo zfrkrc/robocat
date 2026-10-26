@@ -116,6 +116,15 @@ GET  /api/v1/devices                   cihaz listesi (online, rssi, firmware, sy
 
 Tek turda durum + komut alımı. Anahtar: `X-Device-Key`; sunucuda `ROBO_DEVICE_KEYS`. Ayrıntı: [DEVICE_PROTOCOL.md](DEVICE_PROTOCOL.md).
 
+## 6c) Pentest ajanı
+
+```
+POST /api/v1/device/{id}/findings      {"items":[{target,title,severity,port,...}]}
+GET  /api/v1/findings?device_id=&severity=&limit=
+```
+
+`role=pentest` cihazlar yalnız `scan/recon/report/pause/stop` alır; tarama hedefi `ROBO_PENTEST_SCOPE` içinde olmalı (değilse 403, kapsam tanımsızsa 409). Sözleşme: [PENTEST_PROTOCOL.md](PENTEST_PROTOCOL.md).
+
 ## 6b) Görev (mission) uçları
 
 ```

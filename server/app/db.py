@@ -103,6 +103,25 @@ CREATE TABLE IF NOT EXISTS devices (
     sync_count  INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS findings (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id   TEXT NOT NULL,
+    scan_id     TEXT,
+    ts          REAL NOT NULL,
+    target      TEXT NOT NULL,
+    port        INTEGER,
+    proto       TEXT,
+    service     TEXT,
+    version     TEXT,
+    severity    TEXT,
+    title       TEXT NOT NULL,
+    evidence    TEXT,
+    cvss        REAL,
+    in_scope    INTEGER NOT NULL DEFAULT 1
+);
+CREATE INDEX IF NOT EXISTS idx_findings_dev_ts ON findings(device_id, ts DESC);
+CREATE INDEX IF NOT EXISTS idx_findings_scan ON findings(scan_id);
+
 CREATE TABLE IF NOT EXISTS events (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     ts        REAL NOT NULL,
@@ -123,9 +142,19 @@ def connect() -> sqlite3.Connection:
     return conn
 
 
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Küçük, geriye dönük uyumlu şema eklemeleri."""
+    cols = {r["name"] for r in conn.execute("PRAGMA table_info(devices)").fetchall()}
+    if "role" not in cols:
+        conn.execute("ALTER TABLE devices ADD COLUMN role TEXT DEFAULT 'robot'")
+    if "capabilities" not in cols:
+        conn.execute("ALTER TABLE devices ADD COLUMN capabilities TEXT")
+
+
 def init_db() -> None:
     with connect() as conn:
         conn.executescript(SCHEMA)
+        _migrate(conn)
 
 
 def log_event(kind: str, message: str, robot_id: str | None = None, camera_id: str | None = None) -> None:
@@ -279,20 +308,61 @@ def mission_clear(robot_id: str) -> None:
 
 
 def device_touch(device_id: str, ip: str | None, rssi: int | None, battery_v: float | None,
-                 firmware: str | None, sensors: dict | None) -> None:
+                 firmware: str | None, sensors: dict | None, role: str | None = None,
+                 capabilities: list | None = None) -> None:
     with connect() as conn:
         conn.execute(
-            """INSERT INTO devices (id, last_seen, ip, rssi, battery_v, firmware, sensors, sync_count)
-               VALUES (?,?,?,?,?,?,?,1)
+            """INSERT INTO devices (id, last_seen, ip, rssi, battery_v, firmware, sensors,
+                                    sync_count, role, capabilities)
+               VALUES (?,?,?,?,?,?,?,1,COALESCE(?, 'robot'),?)
                ON CONFLICT(id) DO UPDATE SET
                  last_seen=excluded.last_seen, ip=excluded.ip, rssi=excluded.rssi,
                  battery_v=COALESCE(excluded.battery_v, devices.battery_v),
                  firmware=COALESCE(excluded.firmware, devices.firmware),
                  sensors=COALESCE(excluded.sensors, devices.sensors),
+                 role=COALESCE(?, devices.role),
+                 capabilities=COALESCE(?, devices.capabilities),
                  sync_count=devices.sync_count+1""",
             (device_id, time.time(), ip, rssi, battery_v, firmware,
-             json.dumps(sensors or {}, ensure_ascii=False)),
+             json.dumps(sensors or {}, ensure_ascii=False), role,
+             json.dumps(capabilities, ensure_ascii=False) if capabilities else None,
+             role, json.dumps(capabilities, ensure_ascii=False) if capabilities else None),
         )
+
+
+def device_role(device_id: str) -> str:
+    with connect() as conn:
+        row = conn.execute("SELECT role FROM devices WHERE id=?", (device_id,)).fetchone()
+    return (row["role"] if row and row["role"] else "robot")
+
+
+def insert_findings(device_id: str, items: list[dict]) -> int:
+    now = time.time()
+    rows = [(device_id, it.get("scan_id"), now, it["target"], it.get("port"), it.get("proto"),
+             it.get("service"), it.get("version"), it.get("severity"), it["title"],
+             it.get("evidence"), it.get("cvss"), 1 if it.get("in_scope", True) else 0)
+            for it in items]
+    if not rows:
+        return 0
+    with connect() as conn:
+        conn.executemany(
+            """INSERT INTO findings (device_id, scan_id, ts, target, port, proto, service,
+                                     version, severity, title, evidence, cvss, in_scope)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""", rows)
+    return len(rows)
+
+
+def findings_recent(device_id: str | None, limit: int = 100, severity: str | None = None) -> list[dict]:
+    q = "SELECT * FROM findings"; where, args = [], []
+    if device_id:
+        where.append("device_id=?"); args.append(device_id)
+    if severity:
+        where.append("severity=?"); args.append(severity)
+    if where:
+        q += " WHERE " + " AND ".join(where)
+    q += " ORDER BY id DESC LIMIT ?"; args.append(limit)
+    with connect() as conn:
+        return [dict(r) for r in conn.execute(q, args).fetchall()]
 
 
 def device_list() -> list[dict[str, Any]]:
@@ -302,6 +372,7 @@ def device_list() -> list[dict[str, Any]]:
     for r in rows:
         d = dict(r)
         d["sensors"] = json.loads(d["sensors"] or "{}")
+        d["capabilities"] = json.loads(d["capabilities"] or "[]")
         d["online"] = bool(d["last_seen"]) and (time.time() - float(d["last_seen"]) < 15)
         out.append(d)
     return out

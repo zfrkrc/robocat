@@ -9,7 +9,8 @@ ROBOT_ID = r"^[a-z0-9][a-z0-9_-]{1,31}$"
 
 CameraRole = Literal["head_left", "head_right", "arm", "other"]
 CommandKind = Literal["stop", "move", "look", "greet", "idle", "calibrate",
-                      "follow", "hold", "say", "nose_extend", "nose_retract"]
+                      "follow", "hold", "say", "nose_extend", "nose_retract",
+                      "scan", "recon", "report", "pause"]
 
 
 class CameraIn(BaseModel):
@@ -138,6 +139,8 @@ class DeviceSyncIn(BaseModel):
     """Tek turda durum bildirimi + komut alma (ESP8266 dostu)."""
 
     ts: float | None = None
+    role: Literal["robot", "pentest", "camera", "other"] | None = None
+    capabilities: list[str] = Field(default_factory=list, max_length=16)
     rssi: int | None = Field(default=None, ge=-120, le=0)
     battery_v: float | None = Field(default=None, ge=0, le=30)
     firmware: str | None = Field(default=None, max_length=40)
@@ -162,6 +165,32 @@ class DeviceSyncOut(BaseModel):
     acks_applied: int = 0
 
 
+
+
+class FindingIn(BaseModel):
+    target: str = Field(min_length=1, max_length=190)
+    title: str = Field(min_length=3, max_length=200)
+    severity: Literal["info", "low", "medium", "high", "critical"] = "info"
+    scan_id: str | None = Field(default=None, max_length=48)
+    port: int | None = Field(default=None, ge=0, le=65535)
+    proto: str | None = Field(default=None, max_length=12)
+    service: str | None = Field(default=None, max_length=48)
+    version: str | None = Field(default=None, max_length=64)
+    evidence: str | None = Field(default=None, max_length=2000)
+    cvss: float | None = Field(default=None, ge=0, le=10)
+
+
+class FindingOut(FindingIn):
+    id: int
+    device_id: str
+    ts: float
+    in_scope: bool
+
+
+class FindingsIn(BaseModel):
+    items: list[FindingIn] = Field(min_length=1, max_length=200)
+
+
 class DeviceInfoOut(BaseModel):
     id: str
     last_seen: float | None = None
@@ -172,3 +201,5 @@ class DeviceInfoOut(BaseModel):
     sensors: dict[str, Any] = {}
     sync_count: int = 0
     online: bool = False
+    role: str = "robot"
+    capabilities: list[str] = []

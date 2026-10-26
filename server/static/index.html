@@ -52,6 +52,12 @@
       <div class="cams" id="cams"><div class="hint">kamera kaydı yok — <code>POST /api/v1/cameras</code></div></div>
     </div>
 
+    <div class="card" style="margin-bottom:16px">
+      <h2>Pentest bulguları</h2>
+      <table><thead><tr><th>zaman</th><th>cihaz</th><th>hedef</th><th>önem</th><th>başlık</th><th>kapsam</th></tr></thead>
+      <tbody id="finds"><tr><td colspan="6" class="hint">bulgu yok</td></tr></tbody></table>
+    </div>
+
     <div class="card">
       <h2>Son tespitler</h2>
       <table><thead><tr><th>zaman</th><th>kamera</th><th>tip</th><th>etiket</th><th>skor</th><th>kutu (x,y,w,h)</th></tr></thead>
@@ -217,6 +223,20 @@ async function upload(){
   dets();
 }
 
+async function finds(){
+  const list = await api('/api/v1/findings?limit=20');
+  const tb = document.getElementById('finds');
+  if(!list.length){ tb.innerHTML = '<tr><td colspan="6" class="hint">bulgu yok</td></tr>'; return; }
+  const col = {critical:'#f85149', high:'#ff7b72', medium:'#d29922', low:'#58a6ff', info:'#8b9aa7'};
+  tb.innerHTML = list.map(f => `<tr>
+    <td>${new Date(f.ts*1000).toLocaleTimeString()}</td>
+    <td>${f.device_id}</td>
+    <td>${f.target}${f.port ? ':' + f.port : ''}</td>
+    <td style="color:${col[f.severity] || '#8b9aa7'};font-weight:600">${f.severity}</td>
+    <td>${f.title}</td>
+    <td>${f.in_scope ? 'içinde' : '<span style="color:#d29922">dışında</span>'}</td></tr>`).join('');
+}
+
 async function send(kind, params){
   try{
     await api(`/api/v1/robots/${robot()}/commands`, {method:'POST',
@@ -236,9 +256,9 @@ async function camOptions(){
   sel.innerHTML = list.map(c => `<option value="${c.id}">${c.id}</option>`).join('');
   if(cur) sel.value = cur;
 }
-health(); cams(); dets(); mstate(); camOptions();
+health(); cams(); dets(); mstate(); camOptions(); finds();
 setInterval(health, 2000); setInterval(dets, 3000); setInterval(cams, 10000);
-setInterval(mstate, 1500); setInterval(camOptions, 15000);
+setInterval(mstate, 1500); setInterval(camOptions, 15000); setInterval(finds, 4000);
 </script>
 </body>
 </html>

@@ -14,6 +14,7 @@ Watch:
 from __future__ import annotations
 
 import hmac
+import ipaddress
 import os
 import time
 from collections import Counter, defaultdict
@@ -22,15 +23,15 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import db, mission, pipeline
 from .config import settings
 from .schemas import (AckIn, CameraIn, CameraOut, CommandIn, CommandOut, DetectionOut,
                       DeviceInfoOut, DeviceSyncIn, DeviceSyncOut, DeviceCommandOut,
-                      EmergencyIn, FrameResult, MissionEventIn, MissionOut, ScanOut,
-                      TelemetryIn, TelemetryOut)
+                      EmergencyIn, FindingOut, FindingsIn, FrameResult, MissionEventIn,
+                      MissionOut, ScanOut, TelemetryIn, TelemetryOut)
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -51,7 +52,24 @@ STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 @app.middleware("http")
 async def _device_log(request: Request, call_next):
-    """Cihaz çağrılarını UA + gerçek IP + anahtar sonucu ile logla (anahtar yazılmaz)."""
+    """Cihaz çağrılarını UA + gerçek IP + anahtar sonucu ile logla (anahtar yazılmaz).
+
+    Anahtar doğrulaması burada, gövde doğrulamasından ÖNCE yapılır; böylece
+    yetkisiz istekler 422 yerine 401 alır.
+    """
+    parts = request.url.path.strip("/").split("/")
+    if len(parts) >= 4 and parts[0] == "api" and parts[1] == "v1" and parts[2] == "device":
+        device_id = parts[3]
+        keys = _device_keys()
+        presented = request.headers.get("X-Device-Key", "")
+        if keys:
+            expected = keys.get(device_id)
+            if not expected or not hmac.compare_digest(expected, presented):
+                return JSONResponse({"detail": "invalid device key"}, status_code=401)
+        else:
+            host = request.client.host if request.client else ""
+            if host not in ("127.0.0.1", "::1", "testclient"):
+                return JSONResponse({"detail": "device keys are not configured"}, status_code=503)
     response = await call_next(request)
     if request.url.path.startswith("/api/v1/device/"):
         ua = request.headers.get("User-Agent", "-")[:40]
@@ -201,6 +219,20 @@ def robot_state(robot_id: str) -> dict:
 def command_create(robot_id: str, body: CommandIn) -> CommandOut:
     if db.flags_get(robot_id) and body.kind != "stop":
         raise HTTPException(409, "emergency stop engaged; only 'stop' is accepted")
+
+    role = db.device_role(robot_id)
+    allowed = PENTEST_COMMANDS if role == "pentest" else ROBOT_COMMANDS
+    if body.kind not in allowed:
+        raise HTTPException(422, f"command '{body.kind}' is not valid for role '{role}'")
+
+    if body.kind in ("scan", "recon"):
+        target = str(body.params.get("target", "")).strip()
+        if not target:
+            raise HTTPException(422, "scan/recon needs params.target")
+        if not _scope():
+            raise HTTPException(409, "ROBO_PENTEST_SCOPE is not configured; scans are refused")
+        if not _in_scope(target):
+            raise HTTPException(403, f"target '{target}' is outside the authorised scope")
     cid = db.command_enqueue(robot_id, body.kind, body.params)
     db.log_event("command.queued", body.kind, robot_id=robot_id)
     return CommandOut(id=cid, robot_id=robot_id, ts=time.time(), kind=body.kind,
@@ -257,6 +289,40 @@ def _device_robots() -> dict[str, str]:
     return out
 
 
+PENTEST_COMMANDS = {"scan", "recon", "report", "pause", "stop"}
+ROBOT_COMMANDS = {"stop", "move", "look", "greet", "idle", "calibrate",
+                  "follow", "hold", "say", "nose_extend", "nose_retract"}
+
+
+def _scope() -> list[str]:
+    raw = os.environ.get("ROBO_PENTEST_SCOPE", "").strip()
+    return [x.strip().lower() for x in raw.split(",") if x.strip()]
+
+
+def _in_scope(target: str) -> bool:
+    """Yetkili hedef listesi: CIDR/ağ veya alan adı soneki. Boş liste = hiçbiri."""
+    scope = _scope()
+    if not scope:
+        return False
+    t = target.strip().lower()
+    for entry in scope:
+        if "/" in entry:
+            try:
+                if ipaddress.ip_address(t) in ipaddress.ip_network(entry, strict=False):
+                    return True
+            except ValueError:
+                continue
+        else:
+            if t == entry or t.endswith("." + entry.lstrip("*.")):
+                return True
+            try:
+                if ipaddress.ip_address(t) == ipaddress.ip_address(entry):
+                    return True
+            except ValueError:
+                continue
+    return False
+
+
 def _client_ip(request: Request) -> str | None:
     """Gerçek istemci IP'si: Cloudflare/nginx arkasında X-Forwarded-For."""
     if os.environ.get("ROBO_TRUST_PROXY", "0") in ("1", "true", "True"):
@@ -299,7 +365,8 @@ def device_sync(device_id: str, body: DeviceSyncIn, request: Request) -> DeviceS
 
     robot_id = _device_robots().get(device_id, device_id)
     ip = _client_ip(request)
-    db.device_touch(device_id, ip, body.rssi, body.battery_v, body.firmware, body.sensors)
+    db.device_touch(device_id, ip, body.rssi, body.battery_v, body.firmware, body.sensors,
+                    body.role, body.capabilities or None)
     if body.battery_v is not None:
         db.insert_telemetry(robot_id, body.battery_v, body.sensors.get("current_a"),
                             {k: v for k, v in body.sensors.items() if k in ("pitch", "roll", "yaw")},
@@ -337,6 +404,28 @@ def device_sync(device_id: str, body: DeviceSyncIn, request: Request) -> DeviceS
         events_applied=applied_events,
         acks_applied=applied_acks,
     )
+
+
+@app.post("/api/v1/device/{device_id}/findings", status_code=201)
+def device_findings(device_id: str, body: FindingsIn, request: Request) -> dict:
+    """Pentest ajanının bulguları. Kapsam dışı hedefler işaretlenir, silinmez."""
+    _require_device(request, device_id)
+    items = []
+    for it in body.items:
+        d = it.model_dump()
+        d["in_scope"] = _in_scope(it.target)
+        items.append(d)
+    n = db.insert_findings(device_id, items)
+    out_of_scope = sum(1 for i in items if not i["in_scope"])
+    db.log_event("findings.ingest", f"{n} item(s), {out_of_scope} out of scope", robot_id=device_id)
+    return {"stored": n, "out_of_scope": out_of_scope, "scope_configured": bool(_scope())}
+
+
+@app.get("/api/v1/findings", response_model=list[FindingOut])
+def findings_list(device_id: str | None = None, severity: str | None = None,
+                  limit: int = Query(100, ge=1, le=500)) -> list[FindingOut]:
+    return [FindingOut(**{**f, "in_scope": bool(f["in_scope"])})
+            for f in db.findings_recent(device_id, limit, severity)]
 
 
 @app.get("/api/v1/devices", response_model=list[DeviceInfoOut])

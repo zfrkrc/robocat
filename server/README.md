@@ -59,5 +59,6 @@ Panelde görev kartı (takip / isimle durdur / çevre kontrolü / evet-hayır / 
 - **ArUco** gerçek ölçülebilir hedeftir; kalibrasyon ve konum için bunu tercih et.
 - **Kimlik doğrulama yok (v0.1)**: LAN dışına açma; ters vekil + token sonraki adım.
 - Video kaydı yok; kareler JPEG olarak döngüsel saklanır (varsayılan 200).
+- **Rol ayrımı:** `robot` (yürüme) · `pentest` (scan/recon/report + findings).
 - **Cihaz köprüsü (ESP8266):** `POST /api/v1/device/{id}/sync` + `X-Device-Key` (`ROBO_DEVICE_KEYS`). Ayrıntı: [`docs/DEVICE_PROTOCOL.md`](../docs/DEVICE_PROTOCOL.md), örnek: `firmware/esp8266_bridge/`.
 - E-stop **sunucu tarafı kapıdır**; gerçek güvenlik **robot üzerindeki yerel stop**tur. İkisi birlikte kullanılmalı.
