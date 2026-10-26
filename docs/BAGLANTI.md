@@ -26,21 +26,20 @@ Ana sipariş/teslim/test listesi: [KURULUM.md](KURULUM.md#sipariş-ve-kabul-taki
 | Rulman | 625 · 5×16×5 mm | — | Temin edildi (2026-10-26); adet sayımı ve cep uyumu testi bekliyor |
 | I²C çoklayıcı | TCA9548A | 2 | Teslim alındı (2026-10-26); kanal/firmware testi bekliyor |
 | Regülatör | XL4016 düşürücü | 2 | Teslim alındı (2026-10-26); 5 V / 6 V yük testi bekliyor |
+| Güç | 6 V servo regülatörü (≥15–20 A sınıfı) | 1 | 2026-10-26 alındı; sürekli akım/termal doğrulama bekliyor |
+| Güç | XT60 + 18–20 AWG kablo, dağıtım | — | 2026-10-26 alındı; kesit/konnektör kontrolü |
+| Kablolama | 3-pin servo uzatma | 12 | 2026-10-26 alındı; pin sırası kontrolü |
 | Sarf | PETG beyaz + metalik (1,75 mm) | 2 | Baskı malzemesi |
 
 ### Eksik / alınacak
 | Parça | Ölçü / sınıf | Neden |
 |---|---|---|
-| 6 V servo regülatörü | ≥15–20 A sınıfı, termal değerlendirilecek | 12 servo stall'da 25–30 A çekebilir |
-| 5 V regülatör | 2× XL4016 teslim alındı; yük/ısınma testi bekliyor | Ayrı elektronik hattı adayı |
 | DC sigorta + yuva | Hat akımına göre | Yangın/kısa devre |
 | LiPo düşük gerilim alarmı/koruması | 3S | Hücre başına ≥3,5 V uyarı |
 | Balanslı şarj cihazı | 3S | (varsa doğrulanmadı) |
 | 25T alüminyum horn | **10,0 mm** (ikincil 13,9 mm) delik deseni | Ölçüldü; horn kalınlığı doğrulanacak |
 | Vida/somun | M3×8–10, M4×10–12, somun, pul | M3 geçiş Ø3,0–3,4; pilot Ø2,4–2,9 |
-| Servo uzatma | 3-pin ×12 | Kablolama |
 | HX711 | — | Load cell için |
-| XT60 + yüksek akım kablo | 18–20 AWG | (varsa doğrulanmadı) |
 
 ### Basılmayacak
 CAT10 kızak · BAT01 kartuş kapağı · eski 18650 kasetleri · doğrulanmamış omuz ultrasonik braketi.

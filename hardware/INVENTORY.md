@@ -68,7 +68,7 @@ Mega + 12 MG996R + PCA9685 + bir GY-521 + iki ön HC-SR04 + HC-06 + LCD. İlk te
 
 ## Güncel eksikler / doğrulanacaklar — tek LiPo
 
-Son güncelleme: 2026-10-26 (kargo teslimi ve 625 rulman temini işlendi).
+Son güncelleme: 2026-10-26 (kargo teslimi, 625 rulman, 6 V servo regülatörü, XT60/kablo ve servo uzatmalar işlendi).
 
 ### Hâlâ satın alınacak
 | Parça | Not |
@@ -77,11 +77,8 @@ Son güncelleme: 2026-10-26 (kargo teslimi ve 625 rulman temini işlendi).
 | 3S balanslı LiPo şarj cihazı | (varsa marka/model doğrulanmadı) |
 | LiPo düşük gerilim alarmı/koruması | 3S; hücre başına ≥3,5 V uyarı |
 | DC sigorta + yuva, uygun ana kesme | RL3-4 anahtarın DC akım değeri etiketten doğrulanacak |
-| 6 V / ≥15–20 A servo regülatörü | 12 servo stall'da 25–30 A çekebilir; 2× XL4016 (8 A) bu iş için **onaylı değil**, yalnız tek bacak testine aday |
-| XT60 + 18–20 AWG yüksek akım kablo, dağıtım klemensi | Ortak GND tek noktada |
 | 25T alüminyum servo horn | Delik deseni **10,0 mm** (ikincil 13,9 mm); horn kalınlığı doğrulanacak |
 | M3×8–10, M4×10–12 vida, somun, pul | M3 geçiş Ø3,0–3,4; pilot Ø2,4–2,9 |
-| 3-pin servo uzatma ×12 | Kablo ekleme değil, hazır uzatma tercih edilecek |
 | HX711 | Load cell için; yükselteç/ADC alternatifi de olur |
 
 ### Teslim alındı — test veya kod işi bekliyor
@@ -92,9 +89,12 @@ Son güncelleme: 2026-10-26 (kargo teslimi ve 625 rulman temini işlendi).
 | 2× PWM DC hız kontrolü, 2× voltmetre, 1× sis yapıcı, 1× PIR | Kabul testi; voltmetreler multimetreyle karşılaştırılacak |
 | **625 rulman (5×16×5)** | Cep derinliği ≈3,6–4,0 mm; geçme testi, gerekirse cep 5,2 mm'ye ream |
 | Arduino Mega 2560 R3 | USB'de CH340 görünüyor ama avrdude sync yok; PWR/TX/GND kontrolü ile fiziksel teyit |
+| 6 V servo regülatörü (≥15–20 A sınıfı) | 2026-10-26 alındı. Etiket/model kaydı; **sürekli akım kapasitesi ve termal davranış doğrulanmadan 12 servo bağlanmaz.** Sıra: yüksüz ayar → tek servo → üç servolu bacak → 12 servo |
+| XT60 + 18–20 AWG kablo, dağıtım klemensi | 2026-10-26 alındı. Kesit, konnektör ve tek nokta ortak GND kontrolü |
+| 3-pin servo uzatma ×12 | 2026-10-26 alındı. Uzunluk, kablo kesiti ve pin sırası (sinyal–V+–GND) kontrolü |
 
 ### Ayrıca doğrulanacak
-- Yüksek akım kablo/konnektör/dağıtım, servo uzatma ve güvenilir ortak GND.
+- Alınan kablo/konnektör/dağıtım ve servo uzatmaların kesit, pin sırası ve ortak GND düzeni.
 - Mekanik modele uygun vida, somun ve servo hornu; gerçek MG996R ile tek yuva denemesi.
 - Çıplak QRE/LDR için okuma devresi; modül pinleri, lojik seviyeler, PCB/gövde ölçüleri.
 - Hot-swap iptal: iki bağımsız kartuş, iki BMS ve hot-swap devresi sipariş listesine otomatik eklenmez; tek LiPo'nun koruma gereksinimi ayrıca tasarlanacak.

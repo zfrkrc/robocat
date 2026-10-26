@@ -118,8 +118,8 @@ Göz çerçevesi alternatifi: `custom/robocat-v0.3/stl/CAT06B_eye_bezel_7x7_boss
 
 ## E) Kurulumu bloke eden eksikler
 
-**Satın alınacak:** 6 V / ≥15–20 A servo regülatörü (XL4016 8 A yalnız test adayı) · 3S LiPo ve balanslı şarj · LiPo düşük gerilim koruması · DC sigorta + ana kesme · XT60 ve 18–20 AWG kablo/dağıtım · 25T horn · M3/M4 vida-somun · 12 servo uzatma · HX711.
+**Satın alınacak:** 3S LiPo ve balanslı şarj · LiPo düşük gerilim koruması · DC sigorta + ana kesme · 25T horn · M3/M4 vida-somun · HX711.
 
-**Elde, test/kod bekliyor:** 2× XL4016 yük testi · 2× TCA9548A kanal + firmware eşlemesi · 2× PWM hız kontrolü, 2× voltmetre, sis yapıcı, PIR kabul testi · 625 rulman cep/geçme testi · Arduino Mega USB teyidi (CH340 var, avrdude sync yok) · **PS2 → HC-06 kod düzenlemesi**.
+**Elde, test/kod bekliyor:** 6 V servo regülatörünün yüksüz ayarı + kademeli yük testi (12 servo için kapasite onayı yok) · 2× XL4016 yük testi · 2× TCA9548A kanal + firmware eşlemesi · 2× PWM hız kontrolü, 2× voltmetre, sis yapıcı, PIR kabul testi · 625 rulman cep/geçme testi · kablo/konnektör/servo uzatma kesit ve pin kontrolü · Arduino Mega USB teyidi (CH340 var, avrdude sync yok) · **PS2 → HC-06 kod düzenlemesi**.
 
 Bunlar tamamlanmadan "kurulum bitti" denemez; yalnız tek servo / tek bacak masaüstü testleri yapılabilir.
