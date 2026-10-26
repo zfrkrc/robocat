@@ -30,7 +30,7 @@ Bu belge **bağlantı şablonudur**, doğrulanmış şematik değildir. Pinler �
 | LiPo düşük gerilim alarmı/koruması | 3S | Hücre başına ≥3,5 V uyarı |
 | Balanslı şarj cihazı | 3S | (varsa doğrulanmadı) |
 | 25T alüminyum horn | **10,0 mm** (ikincil 13,9 mm) delik deseni | Ölçüldü; horn kalınlığı doğrulanacak |
-| Rulman | **8×16×5 mm** | Yuva Ø≈16 ölçüldü |
+| Rulman | **625 · 5×16×5 mm** | Yuva Ø≈16, mil deliği Ø5,0–5,5 ölçüldü |
 | Vida/somun | M3×8–10, M4×10–12, somun, pul | M3 geçiş Ø3,0–3,4; pilot Ø2,4–2,9 |
 | Servo uzatma | 3-pin ×12 | Kablolama |
 | **TCA9548A** I²C çoklayıcı | — | Firmware bekliyor **veya** kod düzenlenecek |
@@ -86,6 +86,19 @@ Firmware `servoSetup` dizisi (sürücü 1):
 | 15 | **boş** | — | Kol adayı |
 
 **Sonuç:** tek PCA9685 16 kanalıyla 12 bacak + 4 kol sığar; TCA9548A şart değil **ama** firmware `tca_select()` çağırıyor → kodda stub/sadeleştirme gerekir.
+
+## 3b) Rulman uyumu — 625 (5×16×5)
+
+Güncel sette ölçülen (`SM3_Frame_FrontShoulderMiddle`, `SM3_Frame_LeftFemur`, `SM3_Frame_LeftTibia`):
+
+| Özellik | Ölçüm | Sonuç |
+|---|---|---|
+| Dış yuva çapı | Ø15,9–16,3 mm | 625 (Ø16) oturur |
+| Mil / geçiş delikleri | Ø5,0–5,5 mm | 625'in Ø5 iç çapı ve Ø5 mil ile uyumlu |
+| Yuva (yatak) derinliği | **≈3,6–4,0 mm** | 5 mm geniş rulman ~1 mm dışarıda kalır; gerekirse cep 5,2 mm'ye açılır |
+| 8 mm delik | **bulunmadı** | Tasarım zaten Ø5 mil kullanıyor; geometri değişikliği gerekmiyor |
+
+Not: `Nova-SM2` BOM'undaki "8×16×5" ifadesi SM3 geometrisiyle uyuşmuyor; SM3 parçaları Ø5 mil için modellenmiş. **625 seçimi doğru.** Ölçümler kesit tabanlıdır; baskı sonrası gerçek geçme denenmeli.
 
 ## 4) Güç yolu
 

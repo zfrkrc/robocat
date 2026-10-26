@@ -57,6 +57,7 @@ Mega + 12 MG996R + PCA9685 + bir GY-521 + iki ön HC-SR04 + HC-06 + LCD. İlk te
 - Uygun 3S LiPo balanslı şarj, düşük hücre gerilimi izleme/koruma çözümü, DC sigorta ve uygun ana kesme.
 - 6 V servo regülatörü ve ayrı 5 V elektronik regülatörü; gerçek model, akım ve termal değerlendirme bekliyor.
 - Yüksek akım kablo/konnektör/dağıtım, servo uzatma ve güvenilir ortak GND.
+- **Rulman seçimi: 625 (5×16×5).** Güncel `SM3_Frame_*` setinde kesitle ölçülen: dış yuva Ø15,9–16,3 mm, mil/geçiş delikleri Ø5,0–5,5 mm, yuva derinliği ≈3,6–4,0 mm; 8 mm delik bulunmadı. Yani SM3 geometrisi Ø5 mil için modellenmiş; 625 uyumlu, baskı sonrası gerçek geçme ve 5 mm'lik rulman için cep derinliği (gerekirse ream) doğrulanacak.
 - Mekanik modele uygun vida, somun, servo hornu ve rulmanlar; gerçek MG996R ile tek yuva denemesi.
 - Load cell için HX711 veya uygun yükselteç/ADC; çıplak QRE/LDR için okuma devresi.
 - Modül pinleri, lojik seviyeler, PCB/gövde ölçüleri. Satın alma listesi fiziksel uyumu doğrulamaz.

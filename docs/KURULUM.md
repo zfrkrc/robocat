@@ -47,7 +47,7 @@ Kurallar: servo gücü breadboard/Dupont'tan geçmez; ortak GND tek noktada; USB
 
 1. **Servo merkezleme:** horn takmadan önce her servoyu orta noktaya getir (≈1500 µs / 307 tick @60 Hz).
 2. **Horn:** 25T alüminyum hornu servo dişlisine oturt, merkez vidasını sık (vida boyu dibe vurmasın). Horn-parça delik deseni **10,0 mm** (ikincil 13,9 mm) — takmadan önce kuru dene.
-3. **Rulman:** 8×16×5 mm yuvalara oturt; baskı çapı daralırsa hafifçe ream et.
+3. **Rulman (625 · 5×16×5):** Ø16 cebe oturt, Ø5 mil geçir. Cep derinliği ölçümü ≈3,6–4,0 mm; rulman 1 mm dışarıda kalırsa cebi 5,2 mm'ye ream et.
 4. **Bacak zinciri:** coax → femur → tibia; M3 geçiş, M4 pivot. Sıkma sırasında eklem serbest mi kontrol et.
 5. **Kafa:** yüz + kasa + arka kapak; burun ve göz çerçevesi **yapıştırma** (nötr silikon/CA, ince film, IPA temiz yüzey, 24 saat).
 6. **Kablolama:** servo uzatmaları eklem içinden geçir, hareket açıklığında sıkışma olmasın.
@@ -67,6 +67,6 @@ Göz çerçevesi alternatifi: `custom/robocat-v0.3/stl/CAT06B_eye_bezel_7x7_boss
 
 ## E) Kurulumu bloke eden eksikler
 
-6 V regülatör (≥15–20 A sınıfı, seçilmedi) · ayrı 5 V regülatör · DC sigorta + ana kesme · LiPo düşük gerilim koruması · balanslı şarj · 25T horn · 8×16×5 rulman · M3/M4 vida-somun · **TCA9548A veya kod düzenlemesi** · **PS2 → HC-06 kod düzenlemesi**
+6 V regülatör (≥15–20 A sınıfı, seçilmedi) · ayrı 5 V regülatör · DC sigorta + ana kesme · LiPo düşük gerilim koruması · balanslı şarj · 25T horn · **625 rulman (5×16×5)** · M3/M4 vida-somun · **TCA9548A veya kod düzenlemesi** · **PS2 → HC-06 kod düzenlemesi**
 
 Bunlar tamamlanmadan "kurulum bitti" denemez; yalnız tek servo / tek bacak masaüstü testleri yapılabilir.

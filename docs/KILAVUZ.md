@@ -15,7 +15,7 @@ Bu belge **bugünkü durumdan ilk yürüyüş testine** kadar sırayı anlatır.
 ## 1) Parçalar
 
 - [Envanter](../hardware/INVENTORY.md): 16 MG996R (12 bacak + 4 kol adayı), Mega, PCA9685, 2 IMU, 5 ultrasonik, 3 ESP32-CAM, HC-06, LCD.
-- **Eksik / seçilmedi:** 6 V servo regülatörü, ayrı 5 V regülatör, DC sigorta, LiPo düşük hücre koruması, balanslı şarj cihazı, 25T servo horn, 8×16×5 rulman, M3/M4 vida-somun, HX711 (load cell için).
+- **Eksik / seçilmedi:** 6 V servo regülatörü, ayrı 5 V regülatör, DC sigorta, LiPo düşük hücre koruması, balanslı şarj cihazı, 25T servo horn, **625 rulman (5×16×5)**, M3/M4 vida-somun, HX711 (load cell için).
 - **Basılmayacak parçalar:** CAT10 kızak, BAT01 kartuş kapağı, eski 18650 kaset gövdesi/kapağı/kızağı, doğrulanmamış omuz ultrasonik braketi.
 
 ## 2) Baskı kılavuzu
@@ -68,7 +68,8 @@ Set: `Nova-SM3/STL Files/SM3 Files` (`SM3_Frame_*`, `SM3_Foot`). Eski `SM2*` / `
 |---|---|---|
 | Servo gövde yuvası (Coax / Femur) | 20,0 × 20,0 / 20,1 × 20,0 mm | Ölçüldü |
 | MG996R gövde genişliği | 19,7 mm (üretici verisi) | Genişlik uyuyor (0,3–0,4 mm boşluk) |
-| Rulman yuvası | Ø≈16 mm | Ölçüldü (adet doğrulanmadı) |
+| Rulman yuvası | Ø≈16 mm, yatak derinliği **≈3,6–4,0 mm** | Ölçüldü (adet doğrulanmadı) |
+| Rulman iç çapı | **Ø5,0–5,5 mm** delikler | Ölçüldü → **625 (5×16×5) uyumlu** |
 | Horn vida deseni | M3 çiftleri **10,0 mm** (baskın), 13,9 mm | Ölçüldü |
 | Yüz göz deliği | Ø20 mm, merkezler ±30 mm | Ölçüldü |
 | CAT06 göz halkası | Ø28 dış / Ø20 iç × 3 mm | Ölçüldü |
