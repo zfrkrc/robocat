@@ -1,66 +1,87 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1020" viewBox="0 0 1680 1020">
-<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5d6d7e"/></marker></defs>
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1020" viewBox="0 0 1680 1020"><defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5d6d7e"/></marker></defs>
 <rect width="1680" height="1020" fill="#fbfaf7"/>
 <text x="40" y="52" font-family="DejaVu Sans" font-size="26" fill="#1b2631" text-anchor="start" font-weight="bold">RoboCat — bağlantı şablonu (öneri)</text>
-<text x="40" y="78" font-family="DejaVu Sans" font-size="12.5" fill="#5d6d7e" text-anchor="start" font-weight="normal">Doğrulanmış şematik değil · pinler öneridir · güç ve kod uyumsuzlukları BAGLANTI.md'de</text>
-<rect x="50" y="120" width="210" height="66" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/><text x="64" y="146" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">3S LiPo</text><text x="64" y="166" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">11,1 V · 2200 mAh · XT60</text>
-<rect x="50" y="216" width="210" height="74" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/><text x="64" y="242" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">Sigorta + ana kesme</text><text x="64" y="262" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">DC sigorta · RL3-4</text>
-<rect x="50" y="330" width="210" height="66" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/><text x="64" y="356" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">6 V regülatör</text><text x="64" y="376" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">≥15–20 A sınıfı (seçilmedi)</text>
-<rect x="50" y="436" width="210" height="66" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/><text x="64" y="462" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">5 V regülatör</text><text x="64" y="482" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">Mega + sensörler</text>
-<rect x="50" y="560" width="210" height="86" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/><text x="64" y="586" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">Servo barası</text><text x="64" y="606" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">6 V · 18–20 AWG · ortak GND</text>
-<rect x="370" y="150" width="300" height="470" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/><text x="384" y="176" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">Arduino Mega 2560</text><text x="384" y="196" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">yerel hareket · 5 V logic</text>
-<text x="386" y="236" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D20/D21  I²C</text>
-<text x="386" y="280" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D8  OE</text>
-<text x="386" y="324" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D18/D19  Serial1</text>
-<text x="386" y="368" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D2/D3  INT</text>
-<text x="386" y="412" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D34–D39  TRIG/ECHO</text>
-<text x="386" y="456" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D40–D43  (ops.)</text>
-<text x="386" y="500" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">A0–A6  analog</text>
-<text x="386" y="544" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D4/D5/D6/D7</text>
-<rect x="760" y="300" width="250" height="150" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/><text x="774" y="326" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">PCA9685</text><text x="774" y="346" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">16 kanal · I²C 0x40</text>
-<text x="776" y="398" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e" text-anchor="start" font-weight="normal">CH0–11  bacak   CH12–15  kol</text>
-<rect x="1090" y="120" width="330" height="470" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/><text x="1104" y="146" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">Servolar (16)</text><text x="1104" y="166" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">MG996R 180° · 4,8–7,2 V</text>
-<text x="1110" y="190" font-family="DejaVu Sans" font-size="13" fill="#1b2631" text-anchor="start" font-weight="normal">RF: coxa/femur/tibia</text>
-<text x="1110" y="208" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">CH 0/1/2</text>
-<text x="1110" y="248" font-family="DejaVu Sans" font-size="13" fill="#1b2631" text-anchor="start" font-weight="normal">LF: coxa/femur/tibia</text>
-<text x="1110" y="266" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">CH 4/5/6</text>
-<text x="1110" y="306" font-family="DejaVu Sans" font-size="13" fill="#1b2631" text-anchor="start" font-weight="normal">RR: coxa/femur/tibia</text>
-<text x="1110" y="324" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">CH 8/9/10</text>
-<text x="1110" y="364" font-family="DejaVu Sans" font-size="13" fill="#1b2631" text-anchor="start" font-weight="normal">LR: coxa/femur/tibia</text>
-<text x="1110" y="382" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">CH 12/13/14</text>
-<text x="1110" y="430" font-family="DejaVu Sans" font-size="12" fill="#7d3c98" text-anchor="start" font-weight="normal">Kol adayları: CH3 · CH7 · CH11 · CH15</text>
-<text x="1110" y="452" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e" text-anchor="start" font-weight="normal">Horn: 25T · delik deseni 10,0 mm</text>
-<text x="1110" y="474" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e" text-anchor="start" font-weight="normal">Rulman: 8×16×5</text>
-<rect x="1090" y="630" width="330" height="60" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/><text x="1104" y="656" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">MPU6050 (GY-521)</text><text x="1104" y="676" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">I²C · 0x68 · INT D2/D3</text>
-<rect x="1090" y="706" width="330" height="60" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/><text x="1104" y="732" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">HC-06 Bluetooth</text><text x="1104" y="752" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">Serial1 · D18/D19 · 3,3 V seviye</text>
-<rect x="1090" y="782" width="330" height="60" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/><text x="1104" y="808" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">HC-SR04 ×3</text><text x="1104" y="828" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">D34–D39 · 5 V</text>
-<rect x="1090" y="858" width="330" height="60" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6" stroke-dasharray="5,4"/><text x="1104" y="884" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">16×2 I²C LCD</text><text x="1104" y="904" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">I²C · firmware OLED bekliyor</text>
-<rect x="760" y="486" width="250" height="66" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6" stroke-dasharray="5,4"/><text x="774" y="512" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">ESP32-CAM ×3</text><text x="774" y="532" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">Wi-Fi · 5 V · Mega'dan görüntü yok</text>
-<polyline points="260,153 300,153 300,200 370,200" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="266" y="145" font-family="DejaVu Sans" font-size="11" fill="#b03a2e" text-anchor="start" font-weight="normal">11,1 V</text>
-<polyline points="260,253 300,253 300,300 310,300 310,378 370,378" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<polyline points="260,396 320,396 320,450 370,450" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="266" y="388" font-family="DejaVu Sans" font-size="11" fill="#b03a2e" text-anchor="start" font-weight="normal">6 V</text>
-<polyline points="260,603 300,603 300,470 370,470" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="266" y="596" font-family="DejaVu Sans" font-size="11" fill="#b03a2e" text-anchor="start" font-weight="normal">servo V+</text>
-<polyline points="260,469 320,469 320,320 760,320" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="600" y="312" font-family="DejaVu Sans" font-size="11" fill="#b03a2e" text-anchor="start" font-weight="normal">5 V → VCC (mantık)</text>
-<polyline points="670,240 700,240 700,340 760,340" fill="none" stroke="#2471a3" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="676" y="232" font-family="DejaVu Sans" font-size="11" fill="#2471a3" text-anchor="start" font-weight="normal">SDA/SCL</text>
-<polyline points="670,286 730,286 730,300 760,300" fill="none" stroke="#7d3c98" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="676" y="278" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">OE</text>
-<polyline points="1010,330 1050,330 1050,180 1090,180" fill="none" stroke="#7d3c98" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="1016" y="322" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">PWM</text>
-<polyline points="670,330 720,330 720,510 760,510" fill="none" stroke="#148f77" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="676" y="322" font-family="DejaVu Sans" font-size="11" fill="#148f77" text-anchor="start" font-weight="normal">TX1/RX1</text>
-<polyline points="1010,519 1050,519 1050,760 1090,760" fill="none" stroke="#148f77" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<polyline points="670,376 690,376 690,600 1050,600 1050,660 1090,660" fill="none" stroke="#2471a3" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="700" y="592" font-family="DejaVu Sans" font-size="11" fill="#2471a3" text-anchor="start" font-weight="normal">I²C (IMU, LCD)</text>
-<polyline points="670,420 710,420 710,812 1090,812" fill="none" stroke="#b9770e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
-<text x="716" y="804" font-family="DejaVu Sans" font-size="11" fill="#b9770e" text-anchor="start" font-weight="normal">TRIG/ECHO</text>
-<polyline points="1010,549 1040,549 1040,900 1070,900 1070,888 1090,888" fill="none" stroke="#7f8c8d" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6,5" marker-end="url(#a)"/>
-<polyline points="885,486 885,560 1000,560 1000,120 1040,120 1040,60 1200,60" fill="none" stroke="#7f8c8d" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6,5" marker-end="url(#a)"/>
-<text x="1010" y="52" font-family="DejaVu Sans" font-size="11" fill="#7f8c8d" text-anchor="start" font-weight="normal">Wi-Fi → merkez (görüntü)</text>
+<text x="40" y="78" font-family="DejaVu Sans" font-size="12.5" fill="#5d6d7e" text-anchor="start" font-weight="normal">Doğrulanmış şematik değil · pinler öneridir · ayrıntı: docs/BAGLANTI.md</text>
+<rect x="50" y="120" width="210" height="66" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/>
+<text x="64" y="146" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">3S LiPo</text>
+<text x="64" y="166" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">11,1 V · 2200 mAh · XT60</text>
+<rect x="50" y="216" width="210" height="66" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/>
+<text x="64" y="242" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">Sigorta + ana kesme</text>
+<text x="64" y="262" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">DC sigorta · RL3-4</text>
+<rect x="50" y="330" width="210" height="66" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/>
+<text x="64" y="356" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">6 V regülatör</text>
+<text x="64" y="376" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">≥15–20 A (seçilmedi)</text>
+<rect x="50" y="436" width="210" height="66" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/>
+<text x="64" y="462" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">5 V regülatör</text>
+<text x="64" y="482" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">Mega + sensörler</text>
+<rect x="50" y="560" width="210" height="66" rx="10" fill="#fdf2f0" stroke="#b03a2e" stroke-width="1.6"/>
+<text x="64" y="586" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">Servo barası</text>
+<text x="64" y="606" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">6 V · 18–20 AWG · ortak GND</text>
+<rect x="370" y="150" width="300" height="420" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/>
+<text x="384" y="176" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">Arduino Mega 2560</text>
+<text x="384" y="196" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">yerel hareket · 5 V logic</text>
+<text x="386" y="240" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D20/D21  I²C</text>
+<text x="386" y="286" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D8  OE</text>
+<text x="386" y="332" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D18/D19  Serial1</text>
+<text x="386" y="378" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D2/D3  INT</text>
+<text x="386" y="424" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D34–D39  TRIG/ECHO</text>
+<text x="386" y="470" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">D40–D43  (ops.)</text>
+<text x="386" y="516" font-family="DejaVu Sans" font-size="12" fill="#5d6d7e" text-anchor="start" font-weight="normal">A0–A6  analog</text>
+<rect x="770" y="250" width="240" height="140" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/>
+<text x="784" y="276" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">PCA9685</text>
+<text x="784" y="296" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">16 kanal · I²C 0x40</text>
+<text x="786" y="350" font-family="DejaVu Sans" font-size="11" fill="#5d6d7e" text-anchor="start" font-weight="normal">CH0–11 bacak · CH12–15 kol</text>
+<rect x="1100" y="120" width="320" height="460" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/>
+<text x="1114" y="146" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">Servolar (16)</text>
+<text x="1114" y="166" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">MG996R 180° · 4,8–7,2 V</text>
+<text x="1120" y="190" font-family="DejaVu Sans" font-size="13" fill="#1b2631" text-anchor="start" font-weight="normal">RF: coxa / femur / tibia</text>
+<text x="1120" y="208" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">CH 0 / 1 / 2</text>
+<text x="1120" y="250" font-family="DejaVu Sans" font-size="13" fill="#1b2631" text-anchor="start" font-weight="normal">LF: coxa / femur / tibia</text>
+<text x="1120" y="268" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">CH 4 / 5 / 6</text>
+<text x="1120" y="310" font-family="DejaVu Sans" font-size="13" fill="#1b2631" text-anchor="start" font-weight="normal">RR: coxa / femur / tibia</text>
+<text x="1120" y="328" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">CH 8 / 9 / 10</text>
+<text x="1120" y="370" font-family="DejaVu Sans" font-size="13" fill="#1b2631" text-anchor="start" font-weight="normal">LR: coxa / femur / tibia</text>
+<text x="1120" y="388" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">CH 12 / 13 / 14</text>
+<text x="1120" y="436" font-family="DejaVu Sans" font-size="12" fill="#7d3c98" text-anchor="start" font-weight="normal">Kol adayları: CH3 · CH7 · CH11 · CH15</text>
+<text x="1120" y="458" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e" text-anchor="start" font-weight="normal">Horn 25T · delik deseni 10,0 mm</text>
+<text x="1120" y="478" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e" text-anchor="start" font-weight="normal">Rulman 8×16×5</text>
+<rect x="770" y="600" width="240" height="70" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6" stroke-dasharray="5,4"/>
+<text x="784" y="626" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">ESP32-CAM ×3</text>
+<text x="784" y="646" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">Wi-Fi · 5 V · görüntü Mega'dan geçmez</text>
+<rect x="1100" y="630" width="320" height="60" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/>
+<text x="1114" y="656" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">MPU6050 (GY-521)</text>
+<text x="1114" y="676" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">I²C · 0x68 · INT D2/D3</text>
+<rect x="1100" y="706" width="320" height="60" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/>
+<text x="1114" y="732" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">HC-06 Bluetooth</text>
+<text x="1114" y="752" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">Serial1 · D18/D19 · 3,3 V seviye</text>
+<rect x="1100" y="782" width="320" height="60" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6"/>
+<text x="1114" y="808" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">HC-SR04 ×3</text>
+<text x="1114" y="828" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">D34–D39 · 5 V</text>
+<rect x="1100" y="858" width="320" height="60" rx="10" fill="#ffffff" stroke="#85929e" stroke-width="1.6" stroke-dasharray="5,4"/>
+<text x="1114" y="884" font-family="DejaVu Sans" font-size="16" font-weight="bold" fill="#1b2631">16×2 I²C LCD</text>
+<text x="1114" y="904" font-family="DejaVu Sans" font-size="11.5" fill="#5d6d7e">I²C · firmware OLED bekliyor</text>
+<polyline points="155,186 155,216" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<polyline points="155,282 155,330" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<polyline points="260,363 300,363 300,600 260,600" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="266" y="355" font-family="DejaVu Sans" font-size="11" fill="#b03a2e" text-anchor="start" font-weight="normal">6 V</text>
+<polyline points="260,469 345,469 345,120 740,120 740,340 770,340" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="470" y="112" font-family="DejaVu Sans" font-size="11" fill="#b03a2e" text-anchor="start" font-weight="normal">5 V → PCA VCC (mantık)</text>
+<polyline points="155,153 300,153 300,200 370,200" fill="none" stroke="#b03a2e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="160" y="145" font-family="DejaVu Sans" font-size="11" fill="#b03a2e" text-anchor="start" font-weight="normal">11,1 V</text>
+<polyline points="670,200 720,200 720,272 770,272" fill="none" stroke="#2471a3" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="676" y="192" font-family="DejaVu Sans" font-size="11" fill="#2471a3" text-anchor="start" font-weight="normal">SDA/SCL</text>
+<polyline points="670,246 742,246 742,292 770,292" fill="none" stroke="#7d3c98" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="676" y="238" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">OE</text>
+<polyline points="1010,310 1050,310 1050,180 1100,180" fill="none" stroke="#7d3c98" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="1016" y="302" font-family="DejaVu Sans" font-size="11" fill="#7d3c98" text-anchor="start" font-weight="normal">PWM</text>
+<polyline points="670,520 700,520 700,760 1100,760" fill="none" stroke="#148f77" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="706" y="512" font-family="DejaVu Sans" font-size="11" fill="#148f77" text-anchor="start" font-weight="normal">TX1/RX1</text>
+<polyline points="670,470 1060,470 1060,660 1100,660" fill="none" stroke="#2471a3" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="900" y="462" font-family="DejaVu Sans" font-size="11" fill="#2471a3" text-anchor="start" font-weight="normal">I²C (IMU, LCD)</text>
+<polyline points="670,540 680,540 680,812 1100,812" fill="none" stroke="#b9770e" stroke-width="2" stroke-linejoin="round" marker-end="url(#a)"/>
+<text x="686" y="804" font-family="DejaVu Sans" font-size="11" fill="#b9770e" text-anchor="start" font-weight="normal">TRIG/ECHO</text>
+
+
 <rect x="50" y="960" width="26" height="8" rx="4" fill="#b03a2e"/>
 <text x="84" y="969" font-family="DejaVu Sans" font-size="11.5" fill="#b03a2e" text-anchor="start" font-weight="normal">Güç / 6 V servo</text>
 <rect x="240" y="960" width="26" height="8" rx="4" fill="#2471a3"/>
@@ -72,5 +93,4 @@
 <rect x="810" y="960" width="26" height="8" rx="4" fill="#b9770e"/>
 <text x="844" y="969" font-family="DejaVu Sans" font-size="11.5" fill="#b9770e" text-anchor="start" font-weight="normal">GPIO</text>
 <rect x="1000" y="960" width="26" height="8" rx="4" fill="#7f8c8d"/>
-<text x="1034" y="969" font-family="DejaVu Sans" font-size="11.5" fill="#7f8c8d" text-anchor="start" font-weight="normal">Wi-Fi</text>
-</svg>
+<text x="1034" y="969" font-family="DejaVu Sans" font-size="11.5" fill="#7f8c8d" text-anchor="start" font-weight="normal">Wi-Fi</text></svg>
