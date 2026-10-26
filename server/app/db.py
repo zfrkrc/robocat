@@ -84,6 +84,14 @@ CREATE TABLE IF NOT EXISTS robot_flags (
     updated_at REAL NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS mission (
+    robot_id   TEXT PRIMARY KEY,
+    state      TEXT NOT NULL,
+    started_at REAL,
+    updated_at REAL NOT NULL,
+    context    TEXT
+);
+
 CREATE TABLE IF NOT EXISTS events (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     ts        REAL NOT NULL,
@@ -229,6 +237,34 @@ def telemetry_prune(robot_id: str, keep: int) -> None:
                (SELECT id FROM telemetry WHERE robot_id=? ORDER BY id DESC LIMIT ?)""",
             (robot_id, robot_id, keep),
         )
+
+
+def mission_get(robot_id: str) -> dict[str, Any] | None:
+    with connect() as conn:
+        row = conn.execute("SELECT * FROM mission WHERE robot_id=?", (robot_id,)).fetchone()
+    if not row:
+        return None
+    d = dict(row)
+    d["context"] = json.loads(d["context"] or "{}")
+    return d
+
+
+def mission_set(robot_id: str, state: str, context: dict | None = None, started_at: float | None = None) -> None:
+    now = time.time()
+    with connect() as conn:
+        cur = conn.execute("SELECT started_at FROM mission WHERE robot_id=?", (robot_id,)).fetchone()
+        start = started_at if started_at is not None else (cur["started_at"] if cur else now)
+        conn.execute(
+            """INSERT INTO mission (robot_id, state, started_at, updated_at, context) VALUES (?,?,?,?,?)
+               ON CONFLICT(robot_id) DO UPDATE SET state=excluded.state, updated_at=excluded.updated_at,
+                 context=excluded.context, started_at=excluded.started_at""",
+            (robot_id, state, start, now, json.dumps(context or {}, ensure_ascii=False)),
+        )
+
+
+def mission_clear(robot_id: str) -> None:
+    with connect() as conn:
+        conn.execute("DELETE FROM mission WHERE robot_id=?", (robot_id,))
 
 
 def flags_get(robot_id: str) -> bool:

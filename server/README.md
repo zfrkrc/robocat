@@ -36,7 +36,9 @@ Testler: `cd server && python3 -m pytest -q` (9 test; ağ/model gerekmez).
 | POST | `/api/v1/robots/{id}/commands/{cid}/ack` | robot köprüsü |
 | POST | `/api/v1/robots/{id}/emergency_stop` | operatör |
 
-Tam sözleşme: [`docs/SERVER_API.md`](../docs/SERVER_API.md).
+Tam sözleşme: [`docs/SERVER_API.md`](../docs/SERVER_API.md) · davranış: [`docs/MISSION.md`](../docs/MISSION.md).
+
+Panelde görev kartı (takip / isimle durdur / çevre kontrolü / evet-hayır / sensör) ve **web'den kare yükleme** vardır.
 
 ## Ortam değişkenleri
 

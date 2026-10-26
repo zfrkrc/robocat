@@ -61,6 +61,28 @@
 
   <aside>
     <div class="card" style="margin-bottom:16px">
+      <h2>Görev (mission)</h2>
+      <div class="row">
+        <button class="primary" onclick="mstart()">Takibe başla</button>
+        <button onclick="mstop()">Görevi bitir</button>
+      </div>
+      <div class="kv"><span>durum</span><span id="mstate">–</span></div>
+      <div class="kv"><span>tetik</span><span id="mtrig">–</span></div>
+      <div class="row" style="margin-top:10px">
+        <button onclick="mevent('name_called')">İsmimle seslendim</button>
+        <button onclick="mevent('env_check')">Çevre kontrolü</button>
+        <button onclick="manswer(true)">Evet</button>
+        <button onclick="manswer(false)">Hayır</button>
+      </div>
+      <div class="row">
+        <button onclick="mscan()">Tara (deterministik)</button>
+        <button onclick="msensor(90)">Sensör: 90 ppm</button>
+        <button onclick="msensor(2600,'mv')">Sensör: 2600 mV</button>
+      </div>
+      <div class="hint">Tanıma <b>tek kareye</b> dayanmaz: ArUco/kişi en az 2 karede tekrar etmeli. Hareket tek başına "kişi" sayılmaz.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
       <h2>Komut</h2>
       <div class="row">
         <button class="primary" onclick="send('move',{linear:0.1,strafe:0,rotate:0})">ileri</button>
@@ -81,6 +103,16 @@
     <div class="card" style="margin-bottom:16px">
       <h2>Telemetri</h2>
       <div id="tel"><div class="hint">veri yok</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h2>Web'den kare yükle</h2>
+      <div class="row">
+        <select id="upcam"></select>
+        <input type="file" id="upfile" accept="image/jpeg">
+        <button class="primary" onclick="upload()">Yükle</button>
+      </div>
+      <div class="hint" id="upmsg">JPEG · analiz anında yapılır (sync=1)</div>
     </div>
 
     <div class="card">
@@ -144,6 +176,47 @@ async function dets(){
     <td>${d.camera_id}</td><td>${d.kind}</td><td>${d.label}</td><td>${d.score ?? ''}</td>
     <td>${d.x ?? ''},${d.y ?? ''},${d.w ?? ''},${d.h ?? ''}</td></tr>`).join('');
 }
+async function mstate(){
+  try{
+    const m = await api('/api/v1/robots/' + robot() + '/mission');
+    document.getElementById('mstate').textContent = m.state + (m.estopped ? ' (e-stop)' : '');
+    document.getElementById('mtrig').textContent = (m.context && (m.context.trigger || m.context.label)) || '–';
+  }catch(e){ document.getElementById('mstate').textContent = 'yok'; }
+}
+async function mstart(){ await api(`/api/v1/robots/${robot()}/mission/start`, {method:'POST'}); mstate(); }
+async function mstop(){ await api(`/api/v1/robots/${robot()}/mission/stop`, {method:'POST'}); mstate(); }
+async function mevent(type, data){
+  try{
+    await api(`/api/v1/robots/${robot()}/mission/event`, {method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({type, data: data||{}})});
+  }catch(e){ alert('olay reddedildi: ' + e.message); }
+  mstate();
+}
+async function manswer(yes){ await mevent('answer', {yes}); }
+async function msensor(v, unit){
+  const data = unit === 'mv' ? {alcohol_mv: v} : {alcohol_ppm: v};
+  await mevent('sensor', data);
+}
+async function mscan(){
+  const cam = document.getElementById('upcam').value;
+  if(!cam){ alert('önce kamera kaydı gerekli'); return; }
+  const r = await api(`/api/v1/robots/${robot()}/mission/scan?camera_id=${encodeURIComponent(cam)}`, {method:'POST'});
+  alert('tarama: ' + (r.accepted ? 'KABUL · ' + r.label : 'RED · ' + r.reason));
+  mstate();
+}
+async function upload(){
+  const cam = document.getElementById('upcam').value;
+  const f = document.getElementById('upfile').files[0];
+  const msg = document.getElementById('upmsg');
+  if(!cam || !f){ msg.textContent = 'kamera + JPEG seç'; return; }
+  const r = await fetch(`/api/v1/cameras/${encodeURIComponent(cam)}/frame?sync=1`,
+    {method:'POST', headers:{'Content-Type':'image/jpeg'}, body: f});
+  if(!r.ok){ msg.textContent = 'hata: ' + (await r.text()); return; }
+  const j = await r.json();
+  msg.textContent = `yüklendi · ${j.analysis.width}×${j.analysis.height} · tespit ${j.analysis.detections.length}`;
+  dets();
+}
+
 async function send(kind, params){
   try{
     await api(`/api/v1/robots/${robot()}/commands`, {method:'POST',
@@ -156,8 +229,16 @@ async function estop(engaged){
     headers:{'Content-Type':'application/json'}, body: JSON.stringify({engaged})});
   health();
 }
-health(); cams(); dets();
+async function camOptions(){
+  const list = await api('/api/v1/cameras');
+  const sel = document.getElementById('upcam');
+  const cur = sel.value;
+  sel.innerHTML = list.map(c => `<option value="${c.id}">${c.id}</option>`).join('');
+  if(cur) sel.value = cur;
+}
+health(); cams(); dets(); mstate(); camOptions();
 setInterval(health, 2000); setInterval(dets, 3000); setInterval(cams, 10000);
+setInterval(mstate, 1500); setInterval(camOptions, 15000);
 </script>
 </body>
 </html>

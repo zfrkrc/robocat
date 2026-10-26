@@ -107,6 +107,19 @@ POST /api/v1/robots/{robot_id}/emergency_stop  {"engaged":true,"note":"operatör
 - `engaged=false` ile açılır. Her iki geçiş `events` tablosuna yazılır.
 - **Bu sunucu tarafı bir kapıdır.** Gerçek güvenlik: robot üzerindeki yerel stop + güç kesme. Sunucu kapalıyken robot hareket etmemeli.
 
+## 6b) Görev (mission) uçları
+
+```
+POST /api/v1/robots/{id}/mission/start            -> {"state":"follow"}
+POST /api/v1/robots/{id}/mission/stop             -> {"state":"idle"}
+GET  /api/v1/robots/{id}/mission                  -> {"state":..., "context":{...}}
+POST /api/v1/robots/{id}/mission/event            {"type":"name_called"|"env_check"|"scan_result"|"person_seen"|"answer"|"sensor"|"resume"|"operator_stop","data":{}}
+GET  /api/v1/robots/{id}/recognize?camera_id=..   -> deterministik karar
+POST /api/v1/robots/{id}/mission/scan?camera_id=..-> karar + göreve işleme
+```
+
+Davranış sözleşmesi: [MISSION.md](MISSION.md). `answer` olayı `{"yes":true|false}`; `sensor` olayı `{"alcohol_ppm":..}` veya `{"alcohol_mv":..}` taşır.
+
 ## 7) Sağlık ve hata biçimi
 
 ```

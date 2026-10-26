@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import os
 import time
+from collections import Counter, defaultdict
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -23,15 +24,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import db, pipeline
+from . import db, mission, pipeline
 from .config import settings
 from .schemas import (AckIn, CameraIn, CameraOut, CommandIn, CommandOut, DetectionOut,
-                      EmergencyIn, FrameResult, TelemetryIn, TelemetryOut)
+                      EmergencyIn, FrameResult, MissionEventIn, MissionOut, ScanOut,
+                      TelemetryIn, TelemetryOut)
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     db.init_db()
     pipeline.start()
+    mission.start_ticker()
     yield
 
 
@@ -214,6 +217,82 @@ def emergency_stop(robot_id: str, body: EmergencyIn) -> dict:
     db.flags_set(robot_id, body.engaged)
     db.log_event("robot.estop", f"engaged={body.engaged} {body.note or ''}".strip(), robot_id=robot_id)
     return {"robot_id": robot_id, "estopped": body.engaged}
+
+
+# ---------------------------------------------------------------- mission
+def _recognize(camera_id: str, window_s: float, min_hits: int) -> dict:
+    """Deterministic decision from stored detections.
+
+    Rules (no randomness):
+      * ArUco marker seen in >= min_hits frames -> accepted, identity = marker id.
+      * Person detector seen in >= min_hits frames with mean score >= 0.35 -> accepted.
+      * Motion alone -> never accepted (it is not identity).
+    """
+    since = time.time() - window_s
+    rows = db.detections_recent(camera_id, limit=400, since=since)
+    aruco = Counter()
+    person = []
+    for d in rows:
+        if d["kind"] == "aruco":
+            aruco[d["label"]] += 1
+        elif d["kind"] == "person":
+            person.append(float(d["score"] or 0.0))
+
+    if aruco:
+        label, hits = aruco.most_common(1)[0]
+        if hits >= min_hits:
+            return {"accepted": True, "reason": "aruco_repeated", "kind": "aruco",
+                    "label": label, "hits": hits, "mean_score": 1.0, "window_s": window_s}
+    if len(person) >= min_hits:
+        mean = sum(person) / len(person)
+        if mean >= 0.35:
+            return {"accepted": True, "reason": "person_repeated", "kind": "person",
+                    "label": "person", "hits": len(person), "mean_score": round(mean, 3),
+                    "window_s": window_s}
+    return {"accepted": False, "reason": "insufficient_evidence",
+            "kind": None, "label": None,
+            "hits": max([*aruco.values(), len(person)] or [0]),
+            "mean_score": None, "window_s": window_s}
+
+
+@app.post("/api/v1/robots/{robot_id}/mission/start", response_model=MissionOut)
+def mission_start(robot_id: str) -> MissionOut:
+    mission.for_robot(robot_id).start()
+    return MissionOut(**mission.for_robot(robot_id).state())
+
+
+@app.post("/api/v1/robots/{robot_id}/mission/stop")
+def mission_stop(robot_id: str) -> dict:
+    return mission.for_robot(robot_id).stop()
+
+
+@app.get("/api/v1/robots/{robot_id}/mission", response_model=MissionOut)
+def mission_state(robot_id: str) -> MissionOut:
+    return MissionOut(**mission.for_robot(robot_id).state())
+
+
+@app.post("/api/v1/robots/{robot_id}/mission/event", response_model=MissionOut)
+def mission_event(robot_id: str, body: MissionEventIn) -> MissionOut:
+    result = mission.for_robot(robot_id).handle(body.type, body.data)
+    if result.get("ok") is False:
+        raise HTTPException(409, result.get("error", "event rejected"))
+    return MissionOut(**mission.for_robot(robot_id).state())
+
+
+@app.get("/api/v1/robots/{robot_id}/recognize", response_model=ScanOut)
+def recognize(robot_id: str, camera_id: str, window_s: float = Query(3.0, gt=0.2, le=30),
+              min_hits: int = Query(2, ge=1, le=20)) -> ScanOut:
+    _camera_known(camera_id)
+    return ScanOut(**_recognize(camera_id, window_s, min_hits))
+
+
+@app.post("/api/v1/robots/{robot_id}/mission/scan", response_model=ScanOut)
+def mission_scan(robot_id: str, camera_id: str, window_s: float = Query(3.0, gt=0.2, le=30),
+                 min_hits: int = Query(2, ge=1, le=20)) -> ScanOut:
+    _camera_known(camera_id)
+    result = _recognize(camera_id, window_s, min_hits)
+    mission.for_robot(robot_id).handle("scan_result", result)
+    return ScanOut(**result)
 
 
 # -------------------------------------------------------------- dashboard

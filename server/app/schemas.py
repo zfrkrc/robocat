@@ -8,7 +8,8 @@ CAMERA_ID = r"^[a-z0-9][a-z0-9_-]{1,31}$"
 ROBOT_ID = r"^[a-z0-9][a-z0-9_-]{1,31}$"
 
 CameraRole = Literal["head_left", "head_right", "arm", "other"]
-CommandKind = Literal["stop", "move", "look", "greet", "idle", "calibrate"]
+CommandKind = Literal["stop", "move", "look", "greet", "idle", "calibrate",
+                      "follow", "hold", "say", "nose_extend", "nose_retract"]
 
 
 class CameraIn(BaseModel):
@@ -96,3 +97,27 @@ class AckIn(BaseModel):
 class EmergencyIn(BaseModel):
     engaged: bool = True
     note: str | None = Field(default=None, max_length=200)
+
+
+class MissionEventIn(BaseModel):
+    type: str = Field(min_length=2, max_length=32)
+    data: dict[str, Any] = {}
+
+
+class MissionOut(BaseModel):
+    robot_id: str
+    state: str
+    started_at: float | None = None
+    updated_at: float | None = None
+    context: dict[str, Any] = {}
+    estopped: bool = False
+
+
+class ScanOut(BaseModel):
+    accepted: bool
+    reason: str
+    kind: str | None = None
+    label: str | None = None
+    hits: int = 0
+    mean_score: float | None = None
+    window_s: float
