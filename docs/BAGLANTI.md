@@ -6,6 +6,8 @@ Ana sipariş/teslim/test listesi: [KURULUM.md](KURULUM.md#sipariş-ve-kabul-taki
 
 ## 1) Parça listesi — durum
 
+[1:1 ölçekli donanım kataloğu](images/robocat-hardware-catalog.svg) · [baskı parçaları kataloğu](GALLERY.md)
+
 ### Var (envanterde)
 | Grup | Parça | Adet | Not |
 |---|---|---:|---|

@@ -28,7 +28,7 @@ Bu belge **bugünkü durumdan ilk yürüyüş testine** kadar sırayı anlatır.
 
 ## 2) Baskı kılavuzu
 
-Yetkili liste: [v0.4 talimatı](../custom/print-fit-v0.4/README.md) + [manifest](../custom/print-fit-v0.4/print_manifest.json). Bütün klasörü otomatik basmayın; her iş ayrı ve elle başlatılır.
+Yetkili liste: [v0.4 talimatı](../custom/print-fit-v0.4/README.md) + [manifest](../custom/print-fit-v0.4/print_manifest.json). Parça görselleri: [katalog](GALLERY.md#parça-kataloğu--baskı-parçaları). Bütün klasörü otomatik basmayın; her iş ayrı ve elle başlatılır.
 
 | Sıra | İş | Adet | Not |
 |---:|---|---:|---|

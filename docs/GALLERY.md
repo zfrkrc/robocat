@@ -54,3 +54,20 @@ CAT10 kizak, BAT01 kartus kapagi ve eski 18650 parcalari bu dagilimda yoktur; v0
 ## Bağlantı şablonu
 ![Bağlantı şeması](images/robocat-wiring.svg)
 
+## Parça kataloğu — baskı parçaları
+
+### Gövde / bacak (Nova-SM3, 38 STL)
+![Gövde ve bacak parçaları](images/robocat-parts-frame.png)
+
+`Nova-SM3/STL Files/SM3 Files` setinin tamamı. Boyutlar model sınır kutusudur (mm); baskı yönü ve destek kararı ayrıca verilir.
+
+### Kafa (v0.3 + v0.5, 11 parça)
+![Kafa parçaları](images/robocat-parts-head.png)
+
+Beyaz/metalik ataması renkli gösterilmiştir. CAT06B v0.5'te tek geçerli katı olarak yeniden üretilmiştir (7×7 kare geçiş).
+
+## Satın alınan ürünler — 1:1 ölçekli
+![Donanım kataloğu](images/robocat-hardware-catalog.svg)
+
+Tüm kartlar aynı ölçektedir. Ölçüler üretici nominal değerleridir; ürün fotoğrafı değildir ve konektör/pin yerleşimi temsili gösterilmiştir.
+
