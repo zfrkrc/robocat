@@ -13,15 +13,17 @@ Bu belge **bugünkü durumdan ilk yürüyüş testine** kadar sırayı anlatır.
 | Alan | Durum |
 |---|---|
 | Mekanik | Nova-SM3 tabanlı gövde/bacak; kafa parçaları v0.3, uyum işleri v0.4 |
-| Elektronik | Mega 2560 + PCA9685 + 16 MG996R envanterde; güç regülasyonu seçilmedi |
+| Elektronik | Mega 2560 + PCA9685 + 16 MG996R envanterde; 2× XL4016 siparişte; 5 V elektronik/6 V tek-bacak adayı, yük testi yok |
 | Batarya | Tek 3S 2200 mAh LiPo hedefi; hot-swap iptal |
 | Yazılım | Nova firmware (Mega v4.x) referans; RoboCat için doğrulanmış yürüyüş yok |
 | Görüş | 3× ESP32-CAM planı; tanıma/takip uygulanmadı |
 
+**Ana sipariş/teslim/test takibi:** [KURULUM.md](KURULUM.md#sipariş-ve-kabul-takibi--2026-10-26). Yeni siparişler teslim edilmiş sayılmaz.
+
 ## 1) Parçalar
 
 - [Envanter](../hardware/INVENTORY.md): 16 MG996R (12 bacak + 4 kol adayı), Mega, PCA9685, 2 IMU, 5 ultrasonik, 3 ESP32-CAM, HC-06, LCD.
-- **Eksik / seçilmedi:** 6 V servo regülatörü, ayrı 5 V regülatör, DC sigorta, LiPo düşük hücre koruması, balanslı şarj cihazı, 25T servo horn, **625 rulman (5×16×5)**, M3/M4 vida-somun, HX711 (load cell için).
+- **Eksik / seçilmedi:** bütün robot için 6 V kaynak kapasitesi ve siparişteki XL4016'ların teslim/yük testi, DC sigorta, LiPo düşük hücre koruması, balanslı şarj cihazı, 25T servo horn, **625 rulman (5×16×5)**, M3/M4 vida-somun, HX711 (load cell için).
 - **Basılmayacak parçalar:** CAT10 kızak, BAT01 kartuş kapağı, eski 18650 kaset gövdesi/kapağı/kızağı, doğrulanmamış omuz ultrasonik braketi.
 
 ## 2) Baskı kılavuzu
@@ -106,11 +108,11 @@ Firmware `NovaServos.h` (v4.1) `servoHome` / `servoLimit` **PCA9685 tick** değe
 - LiPo **doğrudan servolara bağlanmaz**; servo gücü breadboard/Dupont'tan geçmez.
 - Ortak GND, kalın kablo, ayrı servo barası.
 - USB ile harici besleme aynı anda ters besleme yapmayacak.
-- Sigorta, düşük gerilim koruması ve regülatör modelleri **henüz seçilmedi**.
+- Sigorta ve düşük hücre gerilimi koruması seçilmedi. 2× XL4016 siparişte; görevleri ve kabul koşulları [ana kurulum takibinde](KURULUM.md#sipariş-ve-kabul-takibi--2026-10-26).
 
 ## 6) Test sırası
 
-1. **Tek servo:** ayarlı kaynak 6,0 V / ~3 A limit, PCA9685 ch0; 0→180° 10° adım. Merkez, yön, güvenli min/maks, akım (boşta / hareket / stall).
+1. **Tek servo:** ayarlı kaynak 6,0 V / ~3 A limit, PCA9685 ch0; horn/yük olmadan yaklaşık merkezden küçük adımlarla başla. Mekanik sona veya stall'a zorlamadan merkez, yön, güvenli sınır ve boşta/hareket akımını kaydet.
 2. **Yuva denemesi:** gövde, horn, rulman, vida boyu; sıkışma var mı.
 3. **Tek bacak (3 servo):** tek tek sonra birlikte; sıkışma, sıçrama, 5 dk tutma sonrası gövde sıcaklığı (**<60 °C** hedef), besleme düşümü.
 4. **Destekli gövde (12 servo):** 6 V / ≥15–20 A kaynak, kademeli 3 → 6 → 12; toplam akım, rail gerilimi, ısınma. **3 A limitli kaynakla 12 servo ölçülmez** (akım limiti ile servo yükü karışır).

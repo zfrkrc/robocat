@@ -2,6 +2,8 @@
 
 Bu belge **bağlantı şablonudur**, doğrulanmış şematik değildir. Pinler öneridir; modül seviyeleri, pull-up ve gerçek pin dizilimi fiziksel kontrol bekler.
 
+Ana sipariş/teslim/test listesi: [KURULUM.md](KURULUM.md#sipariş-ve-kabul-takibi--2026-10-26). 2× TCA9548A, 2× XL4016, 2× PWM hız kontrolü, 2× voltmetre, 1× sis yapıcı ve 1× PIR siparişte; teslim/test teyidi yok.
+
 ## 1) Parça listesi — durum
 
 ### Var (envanterde)
@@ -25,7 +27,7 @@ Bu belge **bağlantı şablonudur**, doğrulanmış şematik değildir. Pinler �
 | Parça | Ölçü / sınıf | Neden |
 |---|---|---|
 | 6 V servo regülatörü | ≥15–20 A sınıfı, termal değerlendirilecek | 12 servo stall'da 25–30 A çekebilir |
-| 5 V regülatör | Mega + kamera + sensör bütçesine göre | Ayrı elektronik hattı |
+| 5 V regülatör | XL4016 ×1 siparişte, yük testi bekliyor | Ayrı elektronik hattı adayı |
 | DC sigorta + yuva | Hat akımına göre | Yangın/kısa devre |
 | LiPo düşük gerilim alarmı/koruması | 3S | Hücre başına ≥3,5 V uyarı |
 | Balanslı şarj cihazı | 3S | (varsa doğrulanmadı) |
@@ -33,7 +35,7 @@ Bu belge **bağlantı şablonudur**, doğrulanmış şematik değildir. Pinler �
 | Rulman | **625 · 5×16×5 mm** | Yuva Ø≈16, mil deliği Ø5,0–5,5 ölçüldü |
 | Vida/somun | M3×8–10, M4×10–12, somun, pul | M3 geçiş Ø3,0–3,4; pilot Ø2,4–2,9 |
 | Servo uzatma | 3-pin ×12 | Kablolama |
-| **TCA9548A** I²C çoklayıcı | — | Firmware bekliyor **veya** kod düzenlenecek |
+| **TCA9548A** I²C çoklayıcı | 2 sipariş: 1 kullanım + 1 yedek | Teslim ve firmware kanal eşlemesi bekliyor |
 | HX711 | — | Load cell için |
 | XT60 + yüksek akım kablo | 18–20 AWG | (varsa doğrulanmadı) |
 
@@ -120,7 +122,7 @@ Not: `Nova-SM2` BOM'undaki "8×16×5" ifadesi SM3 geometrisiyle uyuşmuyor; SM3 
 
 | Konu | Firmware | Bizde | Yapılacak |
 |---|---|---|---|
-| I²C mux | TCA9548A | yok | TCA al veya `tca_select` stub |
+| I²C mux | TCA9548A | 2 siparişte | Teslim, kanal/adres kontrolü; tek PCA9685 uyarlaması |
 | Kumanda | PS2 alıcı | HC-06 | Serial1 komut katmanı |
 | Gösterge | OLED (SSD1306/SSD1331) | 16×2 I²C LCD | LCD sürücüsü |
 | Servo | DS3218 270° varsayımı | MG996R 180° | `servoHome`/`servoLimit` yeniden |
