@@ -122,6 +122,27 @@ CREATE TABLE IF NOT EXISTS findings (
 CREATE INDEX IF NOT EXISTS idx_findings_dev_ts ON findings(device_id, ts DESC);
 CREATE INDEX IF NOT EXISTS idx_findings_scan ON findings(scan_id);
 
+CREATE TABLE IF NOT EXISTS attack_arms (
+    robot_id   TEXT PRIMARY KEY,
+    token      TEXT NOT NULL,
+    expires_at REAL NOT NULL,
+    used_at    REAL
+);
+
+CREATE TABLE IF NOT EXISTS attack_sessions (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    robot_id   TEXT NOT NULL,
+    mode       TEXT NOT NULL,
+    bssid      TEXT NOT NULL,
+    channel    INTEGER,
+    duration_s INTEGER NOT NULL,
+    started_at REAL NOT NULL,
+    ends_at    REAL NOT NULL,
+    status     TEXT NOT NULL DEFAULT 'active',
+    stopped_at REAL
+);
+CREATE INDEX IF NOT EXISTS idx_attack_robot ON attack_sessions(robot_id, started_at DESC);
+
 CREATE TABLE IF NOT EXISTS events (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     ts        REAL NOT NULL,
@@ -402,6 +423,90 @@ def device_list() -> list[dict[str, Any]]:
         d["online"] = bool(d["last_seen"]) and (time.time() - float(d["last_seen"]) < 15)
         out.append(d)
     return out
+
+
+# ---- radyo test oturumları (kontrollü) --------------------------------
+def attack_arm_put(robot_id: str, token: str, ttl_s: int) -> None:
+    with connect() as conn:
+        conn.execute(
+            """INSERT INTO attack_arms (robot_id, token, expires_at, used_at) VALUES (?,?,?,NULL)
+               ON CONFLICT(robot_id) DO UPDATE SET token=excluded.token,
+                 expires_at=excluded.expires_at, used_at=NULL""",
+            (robot_id, token, time.time() + ttl_s),
+        )
+
+
+def attack_arm_use(robot_id: str, token: str) -> bool:
+    with connect() as conn:
+        row = conn.execute("SELECT token, expires_at, used_at FROM attack_arms WHERE robot_id=?",
+                           (robot_id,)).fetchone()
+        if not row or row["used_at"] is not None:
+            return False
+        if row["token"] != token or row["expires_at"] < time.time():
+            return False
+        conn.execute("UPDATE attack_arms SET used_at=? WHERE robot_id=?", (time.time(), robot_id))
+        return True
+
+
+def attack_session_start(robot_id: str, mode: str, bssid: str, channel: int | None,
+                         duration_s: int) -> dict:
+    now = time.time()
+    with connect() as conn:
+        cur = conn.execute(
+            """INSERT INTO attack_sessions (robot_id, mode, bssid, channel, duration_s,
+                                            started_at, ends_at, status)
+               VALUES (?,?,?,?,?,?,?, 'active')""",
+            (robot_id, mode, bssid, channel, duration_s, now, now + duration_s),
+        )
+        sid = int(cur.lastrowid)
+        row = conn.execute("SELECT * FROM attack_sessions WHERE id=?", (sid,)).fetchone()
+    return dict(row)
+
+
+def attack_sessions_recent(robot_id: str, limit: int = 20) -> list[dict]:
+    with connect() as conn:
+        rows = conn.execute(
+            "SELECT * FROM attack_sessions WHERE robot_id=? ORDER BY id DESC LIMIT ?",
+            (robot_id, limit)).fetchall()
+    return [dict(r) for r in rows]
+
+
+def attack_active(robot_id: str) -> dict | None:
+    with connect() as conn:
+        row = conn.execute(
+            """SELECT * FROM attack_sessions WHERE robot_id=? AND status='active'
+               ORDER BY id DESC LIMIT 1""", (robot_id,)).fetchone()
+    return dict(row) if row else None
+
+
+def attack_expired() -> list[dict]:
+    with connect() as conn:
+        rows = conn.execute(
+            """SELECT * FROM attack_sessions WHERE status='active' AND ends_at < ?""",
+            (time.time(),)).fetchall()
+    return [dict(r) for r in rows]
+
+
+def attack_finish(session_id: int, status: str = "finished") -> None:
+    with connect() as conn:
+        conn.execute("UPDATE attack_sessions SET status=?, stopped_at=? WHERE id=?",
+                     (status, time.time(), session_id))
+
+
+def attack_count_since(robot_id: str, since: float) -> int:
+    with connect() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) AS n FROM attack_sessions WHERE robot_id=? AND started_at>=?",
+            (robot_id, since)).fetchone()
+    return int(row["n"])
+
+
+def attack_last_end(robot_id: str) -> float | None:
+    with connect() as conn:
+        row = conn.execute(
+            "SELECT MAX(COALESCE(stopped_at, ends_at)) AS t FROM attack_sessions WHERE robot_id=?",
+            (robot_id,)).fetchone()
+    return float(row["t"]) if row and row["t"] else None
 
 
 def flags_get(robot_id: str) -> bool:

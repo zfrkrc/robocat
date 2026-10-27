@@ -112,6 +112,18 @@
     </div>
 
     <div class="card" style="margin-bottom:16px">
+      <h2>Radyo testi (attack)</h2>
+      <div class="kv"><span>durum</span><span id="atk-en">–</span></div>
+      <div class="kv"><span>allowlist</span><span id="atk-list">–</span></div>
+      <div class="kv"><span>bütçe</span><span id="atk-budget">–</span></div>
+      <div class="kv"><span>aktif</span><span id="atk-active">–</span></div>
+      <div class="row" style="margin-top:8px">
+        <button class="danger" onclick="atkStop()">Radyo testini durdur</button>
+      </div>
+      <div class="hint">Başlatma panelde yok: yalnız <code>/attack/arm</code> + token ile. Kapsam ve süre sunucuda zorunlu.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
       <h2>Web'den kare yükle</h2>
       <div class="row">
         <select id="upcam"></select>
@@ -237,6 +249,21 @@ async function finds(){
     <td>${f.in_scope ? 'içinde' : '<span style="color:#d29922">dışında</span>'}</td></tr>`).join('');
 }
 
+async function atkStatus(){
+  try{
+    const s = await api('/api/v1/robots/' + robot() + '/attack/status');
+    document.getElementById('atk-en').textContent = s.enabled ? 'açık' : 'kapalı';
+    document.getElementById('atk-list').textContent = (s.allowlist || []).length + ' BSSID';
+    document.getElementById('atk-budget').textContent = s.used_today + ' / ' + s.daily_budget;
+    document.getElementById('atk-active').textContent = s.active
+      ? s.active.mode + ' · ' + s.active.remaining_s + 's' : 'yok';
+  }catch(e){ document.getElementById('atk-en').textContent = 'yok'; }
+}
+async function atkStop(){
+  await api('/api/v1/robots/' + robot() + '/attack/stop', {method:'POST'});
+  atkStatus();
+}
+
 async function send(kind, params){
   try{
     await api(`/api/v1/robots/${robot()}/commands`, {method:'POST',
@@ -256,9 +283,9 @@ async function camOptions(){
   sel.innerHTML = list.map(c => `<option value="${c.id}">${c.id}</option>`).join('');
   if(cur) sel.value = cur;
 }
-health(); cams(); dets(); mstate(); camOptions(); finds();
+health(); cams(); dets(); mstate(); camOptions(); finds(); atkStatus();
 setInterval(health, 2000); setInterval(dets, 3000); setInterval(cams, 10000);
-setInterval(mstate, 1500); setInterval(camOptions, 15000); setInterval(finds, 4000);
+setInterval(mstate, 1500); setInterval(camOptions, 15000); setInterval(finds, 4000); setInterval(atkStatus, 3000);
 </script>
 </body>
 </html>

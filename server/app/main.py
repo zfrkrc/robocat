@@ -16,11 +16,13 @@ from __future__ import annotations
 import hmac
 import ipaddress
 import os
+import threading
 import time
 from collections import Counter, defaultdict
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import secrets
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
@@ -30,6 +32,7 @@ from . import db, mission, pipeline
 from .config import settings
 from .schemas import (AckIn, CameraIn, CameraOut, CommandIn, CommandOut, DetectionOut,
                       DeviceInfoOut, DeviceSyncIn, DeviceSyncOut, DeviceCommandOut,
+                      AttackArmOut, AttackIn, AttackOut,
                       EmergencyIn, FindingOut, FindingsIn, FrameResult, MissionEventIn,
                       MissionOut, ScanOut, TelemetryIn, TelemetryOut)
 
@@ -38,6 +41,7 @@ async def lifespan(_: FastAPI):
     db.init_db()
     pipeline.start()
     mission.start_ticker()
+    threading.Thread(target=_attack_watchdog, name="attack-watchdog", daemon=True).start()
     yield
 
 
@@ -308,7 +312,18 @@ def _device_robots() -> dict[str, str]:
 
 
 PENTEST_COMMANDS = {"scan", "recon", "report", "pause", "stop",
-                    "ping", "info", "led", "wifi_scan", "reboot"}
+                    "ping", "info", "led", "wifi_scan", "reboot"}  # "attack" özel uçtan
+
+ATTACK_ENABLE = os.environ.get("ROBO_ATTACK_ENABLE", "0") in ("1", "true", "True")
+ATTACK_MAX_S = int(os.environ.get("ROBO_ATTACK_MAX_S", "60"))
+ATTACK_COOLDOWN_S = int(os.environ.get("ROBO_ATTACK_COOLDOWN_S", "15"))
+ATTACK_DAILY_MAX = int(os.environ.get("ROBO_ATTACK_DAILY_MAX", "10"))
+ATTACK_ARM_TTL_S = int(os.environ.get("ROBO_ATTACK_ARM_TTL_S", "120"))
+
+
+def _attack_allowlist() -> list[str]:
+    raw = os.environ.get("ROBO_ATTACK_BSSIDS", "")
+    return [b.strip().lower() for b in raw.split(",") if b.strip()]
 ROBOT_COMMANDS = {"stop", "move", "look", "greet", "idle", "calibrate",
                   "follow", "hold", "say", "nose_extend", "nose_retract"}
 
@@ -640,6 +655,111 @@ def mission_scan(robot_id: str, camera_id: str, window_s: float = Query(3.0, gt=
     result = _recognize(camera_id, window_s, min_hits)
     mission.for_robot(robot_id).handle("scan_result", result)
     return ScanOut(**result)
+
+
+# ------------------------------------------------------- attack (kontrollü)
+def _require_attack_enabled() -> list[str]:
+    if not ATTACK_ENABLE:
+        raise HTTPException(403, "attack is disabled (set ROBO_ATTACK_ENABLE=1)")
+    allow = _attack_allowlist()
+    if not allow:
+        raise HTTPException(409, "ROBO_ATTACK_BSSIDS is empty; no target is authorised")
+    return allow
+
+
+@app.post("/api/v1/robots/{robot_id}/attack/arm", response_model=AttackArmOut)
+def attack_arm(robot_id: str) -> AttackArmOut:
+    """Tek kullanımlık, kısa ömürlü silahlandırma anahtarı."""
+    allow = _require_attack_enabled()
+    if db.flags_get(robot_id):
+        raise HTTPException(409, "emergency stop engaged")
+    token = secrets.token_urlsafe(18)
+    db.attack_arm_put(robot_id, token, ATTACK_ARM_TTL_S)
+    db.log_event("attack.arm", f"ttl={ATTACK_ARM_TTL_S}s", robot_id=robot_id)
+    return AttackArmOut(robot_id=robot_id, token=token,
+                        expires_at=time.time() + ATTACK_ARM_TTL_S,
+                        allowlist=allow, max_duration_s=ATTACK_MAX_S)
+
+
+@app.post("/api/v1/robots/{robot_id}/attack", response_model=AttackOut, status_code=201)
+def attack_start(robot_id: str, body: AttackIn) -> AttackOut:
+    allow = _require_attack_enabled()
+    if db.flags_get(robot_id):
+        raise HTTPException(409, "emergency stop engaged")
+    if body.bssid.lower() not in allow:
+        raise HTTPException(403, f"bssid {body.bssid} is not in ROBO_ATTACK_BSSIDS")
+    if body.duration_s > ATTACK_MAX_S:
+        raise HTTPException(422, f"duration_s must be <= {ATTACK_MAX_S}")
+    if not db.attack_arm_use(robot_id, body.token):
+        raise HTTPException(401, "invalid, expired or already used arm token")
+    if db.attack_active(robot_id):
+        raise HTTPException(409, "an attack session is already active")
+    last = db.attack_last_end(robot_id)
+    if last and time.time() - last < ATTACK_COOLDOWN_S:
+        wait = int(ATTACK_COOLDOWN_S - (time.time() - last)) + 1
+        raise HTTPException(429, f"cooldown active; retry in {wait}s")
+    if db.attack_count_since(robot_id, time.time() - 86400) >= ATTACK_DAILY_MAX:
+        raise HTTPException(429, f"daily budget reached ({ATTACK_DAILY_MAX})")
+
+    sess = db.attack_session_start(robot_id, body.mode, body.bssid.lower(), body.channel, body.duration_s)
+    db.command_enqueue(robot_id, "attack", {
+        "session_id": sess["id"], "mode": body.mode, "bssid": body.bssid.lower(),
+        "channel": body.channel, "duration_s": body.duration_s,
+        "stop_at": sess["ends_at"],
+    })
+    db.log_event("attack.start", f"#{sess['id']} {body.mode} {body.bssid} {body.duration_s}s "
+                                 f"{body.note or ''}".strip(), robot_id=robot_id)
+    return AttackOut(session_id=sess["id"], robot_id=sess["robot_id"], mode=sess["mode"],
+                     bssid=sess["bssid"], channel=sess["channel"], duration_s=sess["duration_s"],
+                     started_at=sess["started_at"], ends_at=sess["ends_at"], status=sess["status"])
+
+
+@app.post("/api/v1/robots/{robot_id}/attack/stop")
+def attack_stop(robot_id: str) -> dict:
+    active = db.attack_active(robot_id)
+    db.command_enqueue(robot_id, "stop", {"reason": "attack_stop"})
+    if active:
+        db.attack_finish(active["id"], "stopped")
+        db.log_event("attack.stop", f"#{active['id']} manual", robot_id=robot_id)
+    return {"robot_id": robot_id, "stopped": bool(active)}
+
+
+@app.get("/api/v1/robots/{robot_id}/attack/status")
+def attack_status(robot_id: str) -> dict:
+    active = db.attack_active(robot_id)
+    now = time.time()
+    return {
+        "robot_id": robot_id,
+        "enabled": ATTACK_ENABLE,
+        "allowlist": _attack_allowlist(),
+        "max_duration_s": ATTACK_MAX_S,
+        "daily_budget": ATTACK_DAILY_MAX,
+        "used_today": db.attack_count_since(robot_id, now - 86400),
+        "cooldown_s": ATTACK_COOLDOWN_S,
+        "active": ({**active, "remaining_s": max(0, int(active["ends_at"] - now))} if active else None),
+        "recent": db.attack_sessions_recent(robot_id, 5),
+    }
+
+
+def _sweep_attacks() -> int:
+    """Süresi dolan oturumları kapat (cihaz unutsa bile sunucu stop yollar)."""
+    closed = 0
+    for sess in db.attack_expired():
+        db.command_enqueue(sess["robot_id"], "stop",
+                           {"reason": "attack_timeout", "session_id": sess["id"]})
+        db.attack_finish(sess["id"], "expired")
+        db.log_event("attack.expired", f"#{sess['id']}", robot_id=sess["robot_id"])
+        closed += 1
+    return closed
+
+
+def _attack_watchdog() -> None:
+    while True:
+        try:
+            _sweep_attacks()
+        except Exception:
+            pass
+        time.sleep(1.0)
 
 
 # -------------------------------------------------------------- dashboard

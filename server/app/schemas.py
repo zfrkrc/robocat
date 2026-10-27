@@ -11,7 +11,7 @@ CameraRole = Literal["head_left", "head_right", "arm", "other"]
 CommandKind = Literal["stop", "move", "look", "greet", "idle", "calibrate",
                       "follow", "hold", "say", "nose_extend", "nose_retract",
                       "scan", "recon", "report", "pause",
-                      "ping", "info", "led", "wifi_scan", "reboot"]
+                      "ping", "info", "led", "wifi_scan", "reboot", "attack"]
 
 
 class CameraIn(BaseModel):
@@ -190,6 +190,38 @@ class FindingOut(FindingIn):
     device_id: str
     ts: float
     in_scope: bool
+
+
+AttackMode = Literal["deauth", "beacon", "probe", "rickroll", "evil_twin"]
+
+
+class AttackArmOut(BaseModel):
+    robot_id: str
+    token: str
+    expires_at: float
+    allowlist: list[str]
+    max_duration_s: int
+
+
+class AttackIn(BaseModel):
+    mode: AttackMode
+    bssid: str = Field(pattern=r"^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$")
+    channel: int | None = Field(default=None, ge=1, le=13)
+    duration_s: int = Field(ge=5, le=120)
+    token: str = Field(min_length=8, max_length=64)
+    note: str | None = Field(default=None, max_length=200)
+
+
+class AttackOut(BaseModel):
+    session_id: int
+    robot_id: str
+    mode: str
+    bssid: str
+    channel: int | None = None
+    duration_s: int
+    started_at: float
+    ends_at: float
+    status: str
 
 
 class FindingsIn(BaseModel):
