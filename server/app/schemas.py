@@ -10,7 +10,8 @@ ROBOT_ID = r"^[a-z0-9][a-z0-9_-]{1,31}$"
 CameraRole = Literal["head_left", "head_right", "arm", "other"]
 CommandKind = Literal["stop", "move", "look", "greet", "idle", "calibrate",
                       "follow", "hold", "say", "nose_extend", "nose_retract",
-                      "scan", "recon", "report", "pause"]
+                      "scan", "recon", "report", "pause",
+                      "ping", "info", "led", "wifi_scan", "reboot"]
 
 
 class CameraIn(BaseModel):

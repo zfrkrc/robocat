@@ -155,6 +155,9 @@ def _migrate(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE devices ADD COLUMN progress REAL")
     if "activity_at" not in cols:
         conn.execute("ALTER TABLE devices ADD COLUMN activity_at REAL")
+    # eski satırları normalize et: NULL rol/yetenek serileştirmeyi bozmasın
+    conn.execute("UPDATE devices SET role='robot' WHERE role IS NULL OR role=''")
+    conn.execute("UPDATE devices SET capabilities='[]' WHERE capabilities IS NULL OR capabilities=''")
 
 
 def init_db() -> None:

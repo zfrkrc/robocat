@@ -239,6 +239,18 @@ def command_create(robot_id: str, body: CommandIn) -> CommandOut:
                 params = _normalize_scan_params(params)
             except ValueError as exc:
                 raise HTTPException(422, str(exc))
+    if body.kind == "led":
+        if "on" not in params or not isinstance(params["on"], bool):
+            raise HTTPException(422, "led needs boolean params.on")
+        params = {"on": params["on"]}
+    if body.kind == "wifi_scan":
+        ch = params.get("channel")
+        dur = params.get("duration_ms", 1500)
+        if ch is not None and not (1 <= int(ch) <= 13):
+            raise HTTPException(422, "channel must be 1..13")
+        if not (200 <= int(dur) <= 10000):
+            raise HTTPException(422, "duration_ms must be 200..10000")
+        params = {"channel": int(ch) if ch is not None else None, "duration_ms": int(dur)}
     cid = db.command_enqueue(robot_id, body.kind, params)
     db.log_event("command.queued", body.kind, robot_id=robot_id)
     return CommandOut(id=cid, robot_id=robot_id, ts=time.time(), kind=body.kind,
@@ -295,7 +307,8 @@ def _device_robots() -> dict[str, str]:
     return out
 
 
-PENTEST_COMMANDS = {"scan", "recon", "report", "pause", "stop"}
+PENTEST_COMMANDS = {"scan", "recon", "report", "pause", "stop",
+                    "ping", "info", "led", "wifi_scan", "reboot"}
 ROBOT_COMMANDS = {"stop", "move", "look", "greet", "idle", "calibrate",
                   "follow", "hold", "say", "nose_extend", "nose_retract"}
 
