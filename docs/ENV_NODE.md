@@ -14,10 +14,10 @@ Hasta odası / atölye için kamerasız ortam izleme: alkol, metan, hidrojen, na
 |---|---|
 | Kart | **ESP32-D0WDQ6** (ESP8266 değil), 4 MB flash, CP2102 USB |
 | MAC | `80:7d:3a:99:85:e8` |
-| Firmware | `env-node` v0.1.0 |
-| Ağ | `maske` WiFi → **172.16.16.222** (DHCP), mDNS `env-node.local` |
-| Web | `http://172.16.16.222/` · `/api` |
-| Durum | Kart bağlı ve yayında; I²C taraması henüz **boş** (LCD takılı değil) |
+| Firmware | `env-node` v0.2.4 |
+| Ağ | `maske` WiFi → **172.16.16.232** (DHCP; IP değişebilir), mDNS `env-node.local` |
+| Web | `http://172.16.16.232/` · `/api` · `/sweep` · `/tare` · `/lcd` |
+| Durum | Kart bağlı; MQ-3/MQ-214/MQ-8 ve HX711 görünüyor. DHT22 okunamıyor, LCD I²C'de bulunamıyor |
 
 > Not: Bu kart ilk bakışta ESP8266 sanıldı; `esptool` ESP32-D0WDQ6 olduğunu doğruladı. A2DP + I²S + çok kanallı ADC yalnız ESP32'de var, bu yüzden proje bu kartla ilerliyor.
 
@@ -29,9 +29,10 @@ Hasta odası / atölye için kamerasız ortam izleme: alkol, metan, hidrojen, na
 | Metan | MQ-214 AOUT | **GPIO33** (ADC1) | Bölücü |
 | Hidrojen | MQ-8 AOUT | **GPIO34** (ADC1) | Bölücü, ısıtıcı ~950 mW |
 | Nabız | Sensör S | **GPIO35** (ADC1) | 3,3 V, bölücü yok |
-| Sıcaklık/nem | DHT22 DATA | **GPIO4** | 10k pull-up |
+| Sıcaklık/nem | DHT22 DATA | **GPIO4** | 10k pull-up · şu an okunamıyor |
 | LCD | SDA / SCL | **GPIO21 / GPIO22** | VCC 5 V, adres 0x27 veya 0x3F |
 | Ses (I²S) | MAX98357A BCK / LRC / DIN | **GPIO26 / 25 / 27** | VIN 5 V, hoparlör 4–8 Ω |
+| Ağırlık | HX711 DT / SCK | **GPIO18 / GPIO19** | Load cell; kalibrasyon (scale) gerekir |
 | Yerel MP3 (ops.) | DF1201S TX / RX | **GPIO17 / 16** | SD'den uyarı/anons sesleri |
 
 **ADC kuralı:** MQ sensörlerinin AOUT çıkışı 5 V'a kadar çıkabilir; ESP32 ADC'si **3,3 V** kabul eder. Her MQ hattına **10k/10k gerilim bölücü** konur (çıkış = AOUT/2). Ayrıca **ADC2 (GPIO0–15) WiFi açıkken kullanılamaz**, bu yüzden tüm analog girişler ADC1'dedir.
@@ -46,6 +47,37 @@ Hasta odası / atölye için kamerasız ortam izleme: alkol, metan, hidrojen, na
 | MAX98357A + hoparlör | 0,5–2 A tepe |
 
 **5 V / 3 A** adaptör, tek nokta ortak GND, MQ ısıtıcıları için ayrı 5 V dalı.
+
+## Kart etiketleri — D21 / TX0 karışıklığı
+
+| Kart etiketi | GPIO | Kullanım |
+|---|---|---|
+| **D21** | GPIO21 | I²C **SDA** (LCD) |
+| **D22** | GPIO22 | I²C **SCL** (LCD) |
+| TX0 | GPIO1 | USB seri TX — **sensöre bağlanmaz** |
+| RX0 | GPIO3 | USB seri RX — **sensöre bağlanmaz** |
+| D32 / D33 / D34 / D35 | ADC1 | MQ-3 / MQ-214 / MQ-8 / nabız |
+
+## LCD sorun giderme
+
+Ekranda anlamsız harfler/bloklar = LCD **initialize edilmemiş** (I²C konuşmuyor). Sıra:
+
+1. LCD arkasındaki **I²C backpack** var mı? (16 pinli çıplak LCD ise I²C dönüştürücü gerekir.)
+2. 4 kablo: **VCC 5 V · GND · SDA → D21 · SCL → D22** (SDA/SCL ters olabilir, cihaz ikisini de dener).
+3. `GET /sweep` → 4 olası pin çiftinde I²C taraması yapar, `/sweep/status` sonucu verir.
+4. Cihaz hâlâ `lcd: yok` diyorsa kablo/lehim veya backpack arızası; kontrast potu yalnız görünürlüğü etkiler, karakter bozukluğunu çözmez.
+
+## Şu anki okumalar (2026-10-27)
+
+| Sensör | Durum |
+|---|---|
+| MQ-3 alkol | ✅ ~560 mV (sensör bağlı) |
+| MQ-214 metan | ✅ ~395 mV |
+| MQ-8 hidrojen | ✅ ~270 mV |
+| Nabız | ⚠️ 0 mV (parmak yok) |
+| DHT22 | ❌ okunamıyor (GPIO4'te veri yok) |
+| HX711 | ✅ çip yanıt veriyor, ağırlık 0 g (load cell/kalibrasyon?) |
+| LCD | ❌ I²C'de bulunamadı |
 
 ## Sensör gerçekleri
 

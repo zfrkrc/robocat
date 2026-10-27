@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1010" viewBox="0 0 1400 1010">
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1160" viewBox="0 0 1400 1160">
   <style>
     .bg{fill:#0d1117}
     .card{fill:#161d26;stroke:#2a3644;stroke-width:1.5}
@@ -19,9 +19,9 @@
     .dash{stroke-dasharray:5 4}
   </style>
 
-  <rect class="bg" width="1400" height="1010"/>
+  <rect class="bg" width="1400" height="1160"/>
   <text class="t h" x="28" y="38" style="font-size:20px">RoboCat · Çevre Sensör Düğümü — ESP32 bağlantı şeması</text>
-  <text class="m s" x="28" y="60">ESP32-D0WDQ6 · 4 MB · env-node v0.1.0 · WiFi: maske · 172.16.16.222</text>
+  <text class="m s" x="28" y="60">ESP32-D0WDQ6 · 4 MB · env-node v0.2.4 · WiFi: maske · 172.16.16.232 (DHCP)</text>
 
   <!-- ===== ESP32 ===== -->
   <rect class="card" x="580" y="150" width="250" height="690" rx="12"/>
@@ -164,13 +164,21 @@
   <text class="lbl" x="716" y="850">5V</text>
   <path class="wg dash" d="M830 742 H910 V940 H830"/>
 
+  <!-- ===== HX711 ===== -->
+  <rect class="card" x="70" y="828" width="300" height="90" rx="10"/>
+  <text class="t h" x="88" y="854">HX711 + load cell (ağırlık)</text>
+  <text class="m s" x="88" y="874">DT → GPIO18 · SCK → GPIO19</text>
+  <text class="m xs" x="88" y="894">VCC 5 V · GND · kalibrasyon (scale) gerekir</text>
+
   <!-- ===== Notes ===== -->
-  <rect class="card2" x="70" y="870" width="470" height="110" rx="10"/>
-  <text class="t s" x="88" y="894" style="font-weight:600">Güvenlik notları</text>
-  <text class="m xs" x="88" y="914">• ESP32 ADC max 3,3 V — MQ AOUT 5 V, bölücü şart.</text>
-  <text class="m xs" x="88" y="932">• ADC2 (GPIO0–15) WiFi açıkken çalışmaz; hepsi ADC1’de.</text>
-  <text class="m xs" x="88" y="950">• MQ sensörleri 24–48 saat burn-in, her açılışta 5–10 dk ısınma.</text>
-  <text class="m xs" x="88" y="968">• Değerler ppm değil, 0–1 normalize indeks olarak sunulur.</text>
+  <rect class="card2" x="70" y="940" width="470" height="170" rx="10"/>
+  <text class="t s" x="88" y="964" style="font-weight:600">Güvenlik ve pin notları</text>
+  <text class="m xs" x="88" y="984">• ESP32 ADC max 3,3 V — MQ AOUT 5 V, bölücü şart.</text>
+  <text class="m xs" x="88" y="1002">• ADC2 (GPIO0–15) WiFi açıkken çalışmaz; hepsi ADC1’de.</text>
+  <text class="m xs" x="88" y="1020">• Kart etiketi: D21 = GPIO21 (SDA), D22 = GPIO22 (SCL).</text>
+  <text class="m xs" x="88" y="1038">• TX0 = GPIO1, RX0 = GPIO3: USB seri hattı, sensöre bağlanmaz.</text>
+  <text class="m xs" x="88" y="1056">• MQ sensörleri 24–48 saat burn-in, her açılışta 5–10 dk ısınma.</text>
+  <text class="m xs" x="88" y="1074">• Değerler ppm değil, 0–1 normalize indeks; nabız/ağırlık hobi amaçlı.</text>
 
   <!-- ===== Legend ===== -->
   <g transform="translate(1010,870)">
