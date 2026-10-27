@@ -734,9 +734,13 @@ def attack_start(robot_id: str, body: AttackIn) -> AttackOut:
         raise HTTPException(429, f"daily budget reached ({ATTACK_DAILY_MAX})")
 
     sess = db.attack_session_start(robot_id, body.mode, body.bssid.lower(), body.channel, body.duration_s)
+    # Cihaz sözleşmesi: type + dur (yerel UI ile aynı), sunucu alanları da korunur.
     db.command_enqueue(robot_id, "attack", {
-        "session_id": sess["id"], "mode": body.mode, "bssid": body.bssid.lower(),
-        "channel": body.channel, "duration_s": body.duration_s,
+        "session_id": sess["id"],
+        "mode": body.mode, "type": body.mode,
+        "bssid": body.bssid.lower(),
+        "channel": body.channel,
+        "duration_s": body.duration_s, "dur": body.duration_s,
         "stop_at": sess["ends_at"],
     })
     db.log_event("attack.start", f"#{sess['id']} {body.mode} {body.bssid} {body.duration_s}s "
