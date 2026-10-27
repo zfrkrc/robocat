@@ -13,6 +13,7 @@
 | Aldığımız parçalar | [Envanter](../hardware/INVENTORY.md) |
 | Pin adayları | [PINMAP_REV_A.csv](../hardware/PINMAP_REV_A.csv) |
 | Ne basılacak / ne bekleyecek | [Baskı merkezi](PRINTING.md) |
+| Eski sürümler ve ayrı projeler | [Arşiv merkezi](../archive/README.md) |
 | Orijinal dosyalar ve lisans sınırları | [Kaynak haritası](SOURCES.md) |
 | Aşamalar ve tamamlanma ölçütleri | [Yol haritası](ROADMAP.md) |
 

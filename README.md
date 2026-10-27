@@ -115,7 +115,7 @@ XL4016'lar 5 V elektronik ve 6 V masaüstü test hattına adaydır; **12–16 se
 | [Baskı merkezi](docs/PRINTING.md) | Güncel baskı kaynakları ve engelli parçalar |
 | [Özel tasarımlar](custom/README.md) | Kafa, göz ve LiPo tepsisi prototipleri |
 | [Nova-SM3](Nova-SM3) | Orijinal gövde, bacak ve elektronik referansları |
-| [Nova-SM2](Nova-SM2) | Önceki sürüm kaynakları |
+| [Eski kaynak arşivi](archive/README.md) | Nova-SM2 ve RoboCat dışındaki upstream projeler |
 | [Yol haritası](docs/ROADMAP.md) | İlk yürüyüşten kamera ve kola kadar kabul ölçütleri |
 
 Kafa CAD kontrolü gerçek lens/kart/ribbon, vidalar veya gövde bağlantısını kapsamaz. LiPo tepsisi boş/dummy uyum prototipidir. Burun hava girişidir; gaz ölçüm sistemi henüz entegre değildir.
