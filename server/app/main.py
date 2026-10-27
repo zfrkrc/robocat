@@ -78,6 +78,8 @@ async def _device_log(request: Request, call_next):
             if host not in ("127.0.0.1", "::1", "testclient"):
                 return JSONResponse({"detail": "device keys are not configured"}, status_code=503)
     response = await call_next(request)
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store, max-age=0"
     if request.url.path.startswith("/api/v1/device/"):
         ua = request.headers.get("User-Agent", "-")[:40]
         ip = _client_ip(request)
@@ -335,6 +337,16 @@ def _device_urls() -> dict[str, str]:
             if did.strip() and url.strip():
                 out[did.strip()] = url.strip()
     return out
+
+
+def _device_base(robot_id: str) -> str | None:
+    """Cihazın LAN adresi. Tek cihaz yapılandırılmışsa onu kullan (alias)."""
+    urls = _device_urls()
+    if robot_id in urls:
+        return urls[robot_id]
+    if len(urls) == 1:
+        return next(iter(urls.values()))
+    return None
 
 
 def _attack_allowlist() -> list[str]:
@@ -737,7 +749,7 @@ def attack_start(robot_id: str, body: AttackIn) -> AttackOut:
 @app.get("/api/v1/robots/{robot_id}/nearby")
 def nearby_aps(robot_id: str) -> dict:
     """Cihazın kendi /scan çıktısını (BSSID'li) proxy'ler. URL yalnız env'den gelir."""
-    base = _device_urls().get(robot_id)
+    base = _device_base(robot_id)
     if not base:
         raise HTTPException(404, f"no device URL configured for '{robot_id}' (ROBO_DEVICE_URLS)")
     try:
