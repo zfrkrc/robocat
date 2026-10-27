@@ -35,10 +35,15 @@ X-Device-Key: <key>
 
 ```json
 {"ts":1761480000,"rssi":-62,"battery_v":11.7,"firmware":"esp8266-bridge-0.1",
- "sensors":{"current_a":1.8,"pitch":0.4},
+ "activity":"scanning 172.16.16.50","progress":0.35,
+ "sensors":{"current_a":1.8,"heap":35808,"uptime_s":3564},
  "events":[{"type":"name_called"}],
  "ack":[{"id":41,"ok":true}]}
 ```
+
+`activity` (≤64 karakter) ve `progress` (0..1) **opsiyoneldir** ama güçlü önerilir:
+"cihaz ne yapıyorsa" panelde görünür. Gönderilmezse sunucu son komuttan türetir
+(`scan <hedef>`, `queued: …`) veya `idle` yazar.
 
 Yanıt:
 

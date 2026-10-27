@@ -145,6 +145,10 @@ class DeviceSyncIn(BaseModel):
     battery_v: float | None = Field(default=None, ge=0, le=30)
     firmware: str | None = Field(default=None, max_length=40)
     sensors: dict[str, float] = {}
+    activity: str | None = Field(default=None, max_length=64,
+                                 description="Şu an ne yapıyor: idle, scanning 10.0.0.5, wifi_scan…")
+    progress: float | None = Field(default=None, ge=0, le=1,
+                                   description="Aktif işin tamamlanma oranı 0..1")
     events: list[DeviceEvent] = Field(default_factory=list, max_length=8)
     ack: list[DeviceAck] = Field(default_factory=list, max_length=8)
 
@@ -203,3 +207,6 @@ class DeviceInfoOut(BaseModel):
     online: bool = False
     role: str = "robot"
     capabilities: list[str] = []
+    activity: str | None = None
+    progress: float | None = None
+    activity_at: float | None = None

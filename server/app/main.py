@@ -448,7 +448,7 @@ def device_sync(device_id: str, body: DeviceSyncIn, request: Request) -> DeviceS
     robot_id = _device_robots().get(device_id, device_id)
     ip = _client_ip(request)
     db.device_touch(device_id, ip, body.rssi, body.battery_v, body.firmware, body.sensors,
-                    body.role, body.capabilities or None)
+                    body.role, body.capabilities or None, body.activity, body.progress)
     if body.battery_v is not None:
         db.insert_telemetry(robot_id, body.battery_v, body.sensors.get("current_a"),
                             {k: v for k, v in body.sensors.items() if k in ("pitch", "roll", "yaw")},
@@ -510,9 +510,47 @@ def findings_list(device_id: str | None = None, severity: str | None = None,
             for f in db.findings_recent(device_id, limit, severity)]
 
 
+def _derived_activity(device_id: str) -> str | None:
+    """Cihaz `activity` göndermiyorsa son komuttan türet (ne yapıyor?).
+
+    - claimed bir komut varsa: "scan 172.16.16.50" gibi
+    - yoksa ve son sync tazeyse: "idle"
+    """
+    cmds = db.commands_recent(device_id, limit=5)
+    for c in cmds:
+        if c["status"] == "claimed":
+            tgt = (c["params"] or {}).get("target")
+            return f"{c['kind']} {tgt}".strip()
+    for c in cmds:
+        if c["status"] in ("queued",):
+            tgt = (c["params"] or {}).get("target")
+            return f"queued: {c['kind']} {tgt or ''}".strip()
+    return None
+
+
 @app.get("/api/v1/devices", response_model=list[DeviceInfoOut])
 def devices_list() -> list[DeviceInfoOut]:
-    return [DeviceInfoOut(**d) for d in db.device_list()]
+    out = []
+    for d in db.device_list():
+        # eski/bozuk satırlara karşı toleranslı normalize
+        if not isinstance(d.get("role"), str) or d["role"] not in ("robot", "pentest", "camera", "other"):
+            d["role"] = "robot"
+        caps = d.get("capabilities")
+        d["capabilities"] = caps if isinstance(caps, list) else []
+        try:
+            d["progress"] = float(d["progress"]) if d.get("progress") is not None else None
+        except (TypeError, ValueError):
+            d["progress"] = None
+        if d.get("activity") is not None and not isinstance(d["activity"], str):
+            d["activity"] = None
+        if not d.get("activity"):
+            derived = _derived_activity(d["id"])
+            if derived:
+                d["activity"] = derived
+            elif d.get("online"):
+                d["activity"] = "idle"
+        out.append(DeviceInfoOut(**d))
+    return out
 
 
 # ---------------------------------------------------------------- mission

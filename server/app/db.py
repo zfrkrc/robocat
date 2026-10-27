@@ -149,6 +149,12 @@ def _migrate(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE devices ADD COLUMN role TEXT DEFAULT 'robot'")
     if "capabilities" not in cols:
         conn.execute("ALTER TABLE devices ADD COLUMN capabilities TEXT")
+    if "activity" not in cols:
+        conn.execute("ALTER TABLE devices ADD COLUMN activity TEXT")
+    if "progress" not in cols:
+        conn.execute("ALTER TABLE devices ADD COLUMN progress REAL")
+    if "activity_at" not in cols:
+        conn.execute("ALTER TABLE devices ADD COLUMN activity_at REAL")
 
 
 def init_db() -> None:
@@ -309,24 +315,41 @@ def mission_clear(robot_id: str) -> None:
 
 def device_touch(device_id: str, ip: str | None, rssi: int | None, battery_v: float | None,
                  firmware: str | None, sensors: dict | None, role: str | None = None,
-                 capabilities: list | None = None) -> None:
+                 capabilities: list | None = None, activity: str | None = None,
+                 progress: float | None = None) -> None:
+    """Cihaz kalp atışı. İsimli parametreler kullanılır: sıra hatası olmaz."""
+    params = {
+        "id": device_id,
+        "ts": time.time(),
+        "ip": ip,
+        "rssi": rssi,
+        "batt": battery_v,
+        "fw": firmware,
+        "sensors": json.dumps(sensors or {}, ensure_ascii=False),
+        "role": role,
+        "caps": json.dumps(capabilities, ensure_ascii=False) if capabilities else None,
+        "act": activity,
+        "prog": progress,
+    }
     with connect() as conn:
         conn.execute(
             """INSERT INTO devices (id, last_seen, ip, rssi, battery_v, firmware, sensors,
-                                    sync_count, role, capabilities)
-               VALUES (?,?,?,?,?,?,?,1,COALESCE(?, 'robot'),?)
+                                    sync_count, role, capabilities, activity, progress, activity_at)
+               VALUES (:id, :ts, :ip, :rssi, :batt, :fw, :sensors, 1,
+                       COALESCE(:role, 'robot'), :caps, :act, :prog,
+                       CASE WHEN :act IS NULL THEN NULL ELSE :ts END)
                ON CONFLICT(id) DO UPDATE SET
-                 last_seen=excluded.last_seen, ip=excluded.ip, rssi=excluded.rssi,
-                 battery_v=COALESCE(excluded.battery_v, devices.battery_v),
-                 firmware=COALESCE(excluded.firmware, devices.firmware),
-                 sensors=COALESCE(excluded.sensors, devices.sensors),
-                 role=COALESCE(?, devices.role),
-                 capabilities=COALESCE(?, devices.capabilities),
+                 last_seen=:ts, ip=:ip, rssi=:rssi,
+                 battery_v=COALESCE(:batt, devices.battery_v),
+                 firmware=COALESCE(:fw, devices.firmware),
+                 sensors=COALESCE(:sensors, devices.sensors),
+                 role=COALESCE(:role, devices.role),
+                 capabilities=COALESCE(:caps, devices.capabilities),
+                 activity=COALESCE(:act, devices.activity),
+                 progress=COALESCE(:prog, devices.progress),
+                 activity_at=CASE WHEN :act IS NULL THEN devices.activity_at ELSE :ts END,
                  sync_count=devices.sync_count+1""",
-            (device_id, time.time(), ip, rssi, battery_v, firmware,
-             json.dumps(sensors or {}, ensure_ascii=False), role,
-             json.dumps(capabilities, ensure_ascii=False) if capabilities else None,
-             role, json.dumps(capabilities, ensure_ascii=False) if capabilities else None),
+            params,
         )
 
 
