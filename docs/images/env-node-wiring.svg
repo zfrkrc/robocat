@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1010" viewBox="0 0 1400 1010">
+  <style>
+    .bg{fill:#0d1117}
+    .card{fill:#161d26;stroke:#2a3644;stroke-width:1.5}
+    .card2{fill:#121a23;stroke:#2a3644;stroke-width:1.2}
+    .t{fill:#e8eef4;font-family:Inter,Segoe UI,Roboto,sans-serif}
+    .m{fill:#93a4b5;font-family:Inter,Segoe UI,Roboto,sans-serif}
+    .h{font-size:15px;font-weight:600}
+    .s{font-size:12px}
+    .xs{font-size:11px}
+    .pin{font-size:11px;font-family:ui-monospace,Menlo,monospace;fill:#e8eef4}
+    .lbl{font-size:10px;font-family:ui-monospace,Menlo,monospace;fill:#c9d4df}
+    .w5{stroke:#f85149;stroke-width:2.5;fill:none}
+    .wg{stroke:#8b949e;stroke-width:2.2;fill:none}
+    .wa{stroke:#3fb950;stroke-width:2.5;fill:none}
+    .wi2c{stroke:#d29922;stroke-width:2.5;fill:none}
+    .wi2s{stroke:#a371f7;stroke-width:2.5;fill:none}
+    .wd{stroke:#4493f8;stroke-width:2.2;fill:none}
+    .dash{stroke-dasharray:5 4}
+  </style>
+
+  <rect class="bg" width="1400" height="1010"/>
+  <text class="t h" x="28" y="38" style="font-size:20px">RoboCat · Çevre Sensör Düğümü — ESP32 bağlantı şeması</text>
+  <text class="m s" x="28" y="60">ESP32-D0WDQ6 · 4 MB · env-node v0.1.0 · WiFi: maske · 172.16.16.222</text>
+
+  <!-- ===== ESP32 ===== -->
+  <rect class="card" x="580" y="150" width="250" height="690" rx="12"/>
+  <text class="t h" x="705" y="180" text-anchor="middle">ESP32 DevKit</text>
+  <text class="m xs" x="705" y="198" text-anchor="middle">ESP32-D0WDQ6 · 4 MB</text>
+  <rect x="645" y="212" width="120" height="40" rx="6" fill="#1f2a36" stroke="#3a4a58"/>
+  <text class="m xs" x="705" y="228" text-anchor="middle">USB CP2102</text>
+  <text class="m xs" x="705" y="242" text-anchor="middle">(flash / seri log)</text>
+
+  <!-- left pin labels -->
+  <g class="pin">
+    <text x="594" y="326">GPIO32</text>
+    <text x="594" y="396">GPIO33</text>
+    <text x="594" y="466">GPIO34</text>
+    <text x="594" y="536">GPIO35</text>
+    <text x="594" y="606">GPIO4</text>
+    <text x="594" y="676" class="m">3V3</text>
+    <text x="594" y="746" class="m">GND</text>
+    <text x="594" y="816" class="m">5V</text>
+  </g>
+  <g>
+    <circle cx="580" cy="322" r="4" fill="#3fb950"/><circle cx="580" cy="392" r="4" fill="#3fb950"/>
+    <circle cx="580" cy="462" r="4" fill="#3fb950"/><circle cx="580" cy="532" r="4" fill="#3fb950"/>
+    <circle cx="580" cy="602" r="4" fill="#4493f8"/><circle cx="580" cy="672" r="4" fill="#f0883e"/>
+    <circle cx="580" cy="742" r="4" fill="#8b949e"/><circle cx="580" cy="812" r="4" fill="#f85149"/>
+  </g>
+
+  <!-- right pin labels -->
+  <g class="pin">
+    <text x="816" y="326" text-anchor="end">GPIO21</text>
+    <text x="816" y="396" text-anchor="end">GPIO22</text>
+    <text x="816" y="466" text-anchor="end">GPIO26</text>
+    <text x="816" y="536" text-anchor="end">GPIO25</text>
+    <text x="816" y="606" text-anchor="end">GPIO27</text>
+    <text x="816" y="676" text-anchor="end" class="m">5V</text>
+    <text x="816" y="746" text-anchor="end" class="m">GND</text>
+  </g>
+  <g>
+    <circle cx="830" cy="322" r="4" fill="#d29922"/><circle cx="830" cy="392" r="4" fill="#d29922"/>
+    <circle cx="830" cy="462" r="4" fill="#a371f7"/><circle cx="830" cy="532" r="4" fill="#a371f7"/>
+    <circle cx="830" cy="602" r="4" fill="#a371f7"/><circle cx="830" cy="672" r="4" fill="#f85149"/>
+    <circle cx="830" cy="742" r="4" fill="#8b949e"/>
+  </g>
+
+  <!-- ===== MQ-3 ===== -->
+  <rect class="card" x="70" y="272" width="300" height="100" rx="10"/>
+  <text class="t h" x="88" y="298">MQ-3 · ALKOL</text>
+  <text class="m s" x="88" y="318">5 V · AOUT → bölücü</text>
+  <text class="m xs" x="88" y="338">VCC → 5 V · GND → ortak</text>
+  <text class="m xs" x="88" y="354">AOUT 0–5 V (3,3 V’a bölünür)</text>
+  <path class="wa" d="M370 322 H580"/>
+  <text class="lbl" x="392" y="314">AOUT</text>
+
+  <!-- ===== MQ-214 ===== -->
+  <rect class="card" x="70" y="392" width="300" height="100" rx="10"/>
+  <text class="t h" x="88" y="418">MQ-214 · METAN</text>
+  <text class="m s" x="88" y="438">5 V · AOUT → bölücü</text>
+  <text class="m xs" x="88" y="458">Yanıcı gaz / metan</text>
+  <text class="m xs" x="88" y="474">Kalibrasyonsuz → indeks</text>
+  <path class="wa" d="M370 442 H470 V392 H580"/>
+  <text class="lbl" x="392" y="434">AOUT</text>
+
+  <!-- ===== MQ-8 ===== -->
+  <rect class="card" x="70" y="512" width="300" height="100" rx="10"/>
+  <text class="t h" x="88" y="538">MQ-8 · HİDROJEN</text>
+  <text class="m s" x="88" y="558">5 V · AOUT → bölücü</text>
+  <text class="m xs" x="88" y="578">Isıtıcı ~950 mW · burn-in 24–48 s</text>
+  <path class="wa" d="M370 562 H520 V462 H580"/>
+  <text class="lbl" x="392" y="554">AOUT</text>
+
+  <!-- ===== Pulse ===== -->
+  <rect class="card" x="70" y="632" width="300" height="86" rx="10"/>
+  <text class="t h" x="88" y="658">Nabız sensörü</text>
+  <text class="m s" x="88" y="678">3,3 V · S → GPIO35</text>
+  <text class="m xs" x="88" y="696">Hobi sensörü, tıbbi cihaz değil</text>
+  <path class="wa" d="M370 675 H490 V532 H580"/>
+
+  <!-- ===== DHT22 ===== -->
+  <rect class="card" x="70" y="732" width="300" height="86" rx="10"/>
+  <text class="t h" x="88" y="758">DHT22</text>
+  <text class="m s" x="88" y="778">Sıcaklık / nem · GPIO4</text>
+  <text class="m xs" x="88" y="796">10k pull-up · 3,3 V</text>
+  <path class="wd" d="M370 775 H460 V602 H580"/>
+
+  <!-- ===== Divider inset ===== -->
+  <rect class="card2" x="70" y="94" width="470" height="140" rx="10"/>
+  <text class="t s" x="88" y="118" style="font-weight:600">MQ AOUT → 3,3 V gerilim bölücü (her MQ için ayrı)</text>
+  <text class="m xs" x="88" y="140">AOUT (0–5 V) ──[10k]──┬──[10k]── GND</text>
+  <text class="m xs" x="88" y="158">                      └── GPIO32 / 33 / 34</text>
+  <text class="m xs" x="88" y="182">Bölücü çıkışı = AOUT / 2 (5 V → 2,5 V, güvenli).</text>
+  <text class="m xs" x="88" y="200">Bölücü yoksa GPIO kalıcı zarar görür.</text>
+
+  <!-- ===== LCD ===== -->
+  <rect class="card" x="1010" y="272" width="330" height="110" rx="10"/>
+  <text class="t h" x="1028" y="298">16×2 LCD (I²C)</text>
+  <text class="m s" x="1028" y="318">SDA → GPIO21 · SCL → GPIO22</text>
+  <text class="m s" x="1028" y="338">VCC 5 V · GND</text>
+  <text class="m xs" x="1028" y="358">Adres: 0x27 / 0x3F (otomatik taranır)</text>
+  <path class="wi2c" d="M830 322 H1010"/>
+  <path class="wi2c" d="M830 392 H960 V370 H1010"/>
+  <text class="lbl" x="868" y="314">SDA</text>
+  <text class="lbl" x="868" y="384">SCL</text>
+
+  <!-- ===== I2S amp ===== -->
+  <rect class="card" x="1010" y="420" width="330" height="190" rx="10"/>
+  <text class="t h" x="1028" y="446">MAX98357A · I²S amfi</text>
+  <text class="m s" x="1028" y="466">BCK → GPIO26 · LRC → GPIO25</text>
+  <text class="m s" x="1028" y="486">DIN → GPIO27</text>
+  <text class="m s" x="1028" y="506">VIN 5 V · GND ortak</text>
+  <text class="m xs" x="1028" y="526">Hoparlör 4–8 Ω · 3 W</text>
+  <text class="m xs" x="1028" y="544">Bluetooth A2DP + HTTP MP3</text>
+  <path class="wi2s" d="M830 462 H1010"/>
+  <path class="wi2s" d="M830 532 H1010"/>
+  <path class="wi2s" d="M830 602 H935 V556 H1010"/>
+  <text class="lbl" x="868" y="454">BCK</text>
+  <text class="lbl" x="868" y="524">LRC</text>
+  <text class="lbl" x="868" y="594">DIN</text>
+
+  <!-- speaker -->
+  <rect class="card2" x="1075" y="640" width="200" height="66" rx="8"/>
+  <text class="t s" x="1175" y="666" text-anchor="middle">Hoparlör</text>
+  <text class="m xs" x="1175" y="686" text-anchor="middle">4–8 Ω · 3 W</text>
+  <path class="wi2s" d="M1175 610 V640"/>
+
+  <!-- DF1201S -->
+  <rect class="card" x="1010" y="740" width="330" height="110" rx="10" stroke-dasharray="6 5"/>
+  <text class="t h" x="1028" y="766">DF1201S MP3 (opsiyonel)</text>
+  <text class="m s" x="1028" y="786">TX → GPIO16 · RX → GPIO17</text>
+  <text class="m s" x="1028" y="806">SD’den yerel MP3: uyarı, zil, anons</text>
+  <text class="m xs" x="1028" y="826">Bluetooth müziğiyle çakışmadan çalar</text>
+  <text class="m xs" x="1028" y="844">Amfi çıkışı hoparlörle ortak kullanılmaz</text>
+
+  <!-- ===== Power ===== -->
+  <rect class="card" x="580" y="870" width="250" height="110" rx="10"/>
+  <text class="t h" x="705" y="896" text-anchor="middle">5 V / 3 A adaptör</text>
+  <text class="m s" x="705" y="918" text-anchor="middle">MQ ısıtıcı ~450 mA</text>
+  <text class="m s" x="705" y="936" text-anchor="middle">ESP32 240 mA · amfi 0,5–2 A</text>
+  <text class="m xs" x="705" y="956" text-anchor="middle">Ortak GND tek noktada</text>
+  <path class="w5" d="M705 870 V812"/>
+  <text class="lbl" x="716" y="850">5V</text>
+  <path class="wg dash" d="M830 742 H910 V940 H830"/>
+
+  <!-- ===== Notes ===== -->
+  <rect class="card2" x="70" y="870" width="470" height="110" rx="10"/>
+  <text class="t s" x="88" y="894" style="font-weight:600">Güvenlik notları</text>
+  <text class="m xs" x="88" y="914">• ESP32 ADC max 3,3 V — MQ AOUT 5 V, bölücü şart.</text>
+  <text class="m xs" x="88" y="932">• ADC2 (GPIO0–15) WiFi açıkken çalışmaz; hepsi ADC1’de.</text>
+  <text class="m xs" x="88" y="950">• MQ sensörleri 24–48 saat burn-in, her açılışta 5–10 dk ısınma.</text>
+  <text class="m xs" x="88" y="968">• Değerler ppm değil, 0–1 normalize indeks olarak sunulur.</text>
+
+  <!-- ===== Legend ===== -->
+  <g transform="translate(1010,870)">
+    <rect class="card2" x="0" y="0" width="330" height="110" rx="10"/>
+    <text class="t s" x="18" y="24" style="font-weight:600">Renkler</text>
+    <path class="w5" d="M18 40 H48"/><text class="m xs" x="56" y="44">5 V</text>
+    <path class="wg" d="M110 40 H140"/><text class="m xs" x="148" y="44">GND</text>
+    <path class="wa" d="M200 40 H230"/><text class="m xs" x="238" y="44">Analog (ADC)</text>
+    <path class="wi2c" d="M18 66 H48"/><text class="m xs" x="56" y="70">I²C</text>
+    <path class="wi2s" d="M110 66 H140"/><text class="m xs" x="148" y="70">I²S</text>
+    <path class="wd" d="M200 66 H230"/><text class="m xs" x="238" y="70">Dijital</text>
+    <text class="m xs" x="18" y="94">Blok seviyesi şema; pin dizilimini kart etiketiyle doğrula.</text>
+  </g>
+</svg>
