@@ -840,7 +840,8 @@ if STATIC_DIR.exists():
 def dashboard() -> HTMLResponse:
     index = STATIC_DIR / "index.html"
     if index.exists():
-        return HTMLResponse(index.read_text(encoding="utf-8"))
+        return HTMLResponse(index.read_text(encoding="utf-8"),
+                            headers={"Cache-Control": "no-store, max-age=0"})
     return HTMLResponse("<h1>RoboCat server</h1><p>See /docs for the API.</p>")
 
 

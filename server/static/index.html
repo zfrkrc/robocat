@@ -42,7 +42,7 @@
   <span class="pill" id="detector"></span>
   <span class="pill" id="estop-pill">e-stop: ?</span>
   <span style="flex:1"></span>
-  <input id="robot" value="robocat-1" size="12" title="robot id">
+  <select id="robot" title="cihaz seç" style="min-width:150px"></select>
 </header>
 
 <main>
@@ -161,7 +161,23 @@
 
 <script>
 const api = (p, o) => fetch(p, o).then(r => r.ok ? r.json() : r.text().then(t => { throw new Error(t) }));
-const robot = () => document.getElementById('robot').value.trim() || 'robocat-1';
+const robot = () => document.getElementById('robot').value || 'pentest-1';
+
+async function robotOptions(){
+  try{
+    const list = await api('/api/v1/devices');
+    const sel = document.getElementById('robot');
+    const cur = sel.value || localStorage.getItem('robocat.robot') || '';
+    const opts = list.map(d => `<option value="${d.id}">${d.id} · ${d.role}${d.online ? '' : ' (offline)'}</option>`);
+    if(!opts.length) opts.push('<option value="pentest-1">pentest-1</option>');
+    sel.innerHTML = opts.join('');
+    const online = list.find(d => d.online);
+    sel.value = (cur && list.some(d => d.id === cur)) ? cur : (online ? online.id : (list[0] ? list[0].id : 'pentest-1'));
+    sel.onchange = () => { localStorage.setItem('robocat.robot', sel.value); refreshAll(); };
+  }catch(e){ /* sunucu yok */ }
+}
+
+function refreshAll(){ health(); mstate(); atkStatus(); atkNearby(); finds(); }
 
 async function health(){
   try{
@@ -354,7 +370,7 @@ async function camOptions(){
   sel.innerHTML = list.map(c => `<option value="${c.id}">${c.id}</option>`).join('');
   if(cur) sel.value = cur;
 }
-health(); cams(); dets(); mstate(); camOptions(); finds(); atkStatus(); atkNearby();
+robotOptions().then(() => { health(); cams(); dets(); mstate(); camOptions(); finds(); atkStatus(); atkNearby(); });
 setInterval(health, 2000); setInterval(dets, 3000); setInterval(cams, 10000);
 setInterval(mstate, 1500); setInterval(camOptions, 15000); setInterval(finds, 4000); setInterval(atkStatus, 3000); setInterval(atkNearby, 15000);
 </script>
