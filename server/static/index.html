@@ -118,9 +118,22 @@
       <div class="kv"><span>bütçe</span><span id="atk-budget">–</span></div>
       <div class="kv"><span>aktif</span><span id="atk-active">–</span></div>
       <div class="row" style="margin-top:8px">
-        <button class="danger" onclick="atkStop()">Radyo testini durdur</button>
+        <select id="atk-sel"></select>
+        <select id="atk-mode">
+          <option>deauth</option><option>beacon</option><option>probe</option>
+          <option>rickroll</option><option>evil_twin</option>
+        </select>
+        <input id="atk-ch" placeholder="ch" size="3">
+        <input id="atk-dur" value="10" size="3" title="süre (sn)">
       </div>
-      <div class="hint">Başlatma panelde yok: yalnız <code>/attack/arm</code> + token ile. Kapsam ve süre sunucuda zorunlu.</div>
+      <div class="row">
+        <input id="atk-bssid" placeholder="aa:bb:cc:dd:ee:ff" size="19">
+        <input id="atk-note" placeholder="not" size="8">
+        <button onclick="atkAdd()">Hedef onayla</button>
+        <button class="primary" onclick="atkRun()">Silahlandır + Başlat</button>
+        <button class="danger" onclick="atkStop()">Durdur</button>
+      </div>
+      <div class="hint" id="atk-msg">Hedef yalnız buradan onaylanır; token tek kullanım, süre sunucuda sınırlı.</div>
     </div>
 
     <div class="card" style="margin-bottom:16px">
@@ -257,7 +270,37 @@ async function atkStatus(){
     document.getElementById('atk-budget').textContent = s.used_today + ' / ' + s.daily_budget;
     document.getElementById('atk-active').textContent = s.active
       ? s.active.mode + ' · ' + s.active.remaining_s + 's' : 'yok';
+    const sel = document.getElementById('atk-sel');
+    const cur = sel.value;
+    sel.innerHTML = (s.targets || []).map(t => `<option value="${t.bssid}">${t.bssid}${t.note? ' · '+t.note : ''}</option>`).join('')
+      || '<option value="">(onaylı hedef yok)</option>';
+    if(cur) sel.value = cur;
   }catch(e){ document.getElementById('atk-en').textContent = 'yok'; }
+}
+async function atkAdd(){
+  const bssid = document.getElementById('atk-bssid').value.trim().toLowerCase();
+  const note = document.getElementById('atk-note').value.trim();
+  const msg = document.getElementById('atk-msg');
+  if(!bssid){ msg.textContent = 'BSSID gir'; return; }
+  const r = await fetch(`/api/v1/robots/${robot()}/attack/targets`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({bssid, note, ttl_hours: 8})});
+  msg.textContent = r.ok ? 'hedef onaylandı: ' + bssid : 'hata: ' + (await r.text());
+  atkStatus();
+}
+async function atkRun(){
+  const msg = document.getElementById('atk-msg');
+  const bssid = document.getElementById('atk-sel').value;
+  if(!bssid){ msg.textContent = 'önce hedef onayla'; return; }
+  const arm = await api(`/api/v1/robots/${robot()}/attack/arm`, {method:'POST'});
+  const body = {mode: document.getElementById('atk-mode').value, bssid,
+                channel: parseInt(document.getElementById('atk-ch').value) || null,
+                duration_s: parseInt(document.getElementById('atk-dur').value) || 10,
+                token: arm.token};
+  const r = await fetch(`/api/v1/robots/${robot()}/attack`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  msg.textContent = r.ok ? 'başladı · ' + body.duration_s + ' sn' : 'reddedildi: ' + (await r.text());
+  atkStatus();
 }
 async function atkStop(){
   await api('/api/v1/robots/' + robot() + '/attack/stop', {method:'POST'});

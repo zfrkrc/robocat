@@ -34,9 +34,25 @@ def test_attack_disabled_by_default(client, monkeypatch):
     assert client.post("/api/v1/robots/a0/attack/arm").status_code == 403
 
 
-def test_attack_needs_allowlist(client, monkeypatch):
+def test_attack_without_targets_rejects_start(client, monkeypatch):
     monkeypatch.setenv("ROBO_ATTACK_BSSIDS", "")
-    assert client.post("/api/v1/robots/a1/attack/arm").status_code == 409
+    r = client.post("/api/v1/robots/a1/attack/arm")
+    assert r.status_code == 200 and r.json()["allowlist"] == []
+    tok = r.json()["token"]
+    assert _start(client, "a1", tok).status_code == 403
+
+
+def test_operator_can_approve_a_target(client, monkeypatch):
+    monkeypatch.setenv("ROBO_ATTACK_BSSIDS", "")
+    added = client.post("/api/v1/robots/a1b/attack/targets",
+                        json={"bssid": BSSID, "note": "test AP", "ttl_hours": 1})
+    assert added.status_code == 201, added.text
+    arm = client.post("/api/v1/robots/a1b/attack/arm")
+    assert BSSID in arm.json()["allowlist"]
+    assert _start(client, "a1b", arm.json()["token"]).status_code == 201
+    client.post("/api/v1/robots/a1b/attack/stop")
+    rm = client.delete(f"/api/v1/robots/a1b/attack/targets/{BSSID}")
+    assert rm.status_code == 200 and rm.json()["removed"] is True
 
 
 def test_attack_requires_valid_token_and_scope(client):

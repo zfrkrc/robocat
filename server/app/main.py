@@ -16,6 +16,7 @@ from __future__ import annotations
 import hmac
 import ipaddress
 import os
+import re
 import threading
 import time
 from collections import Counter, defaultdict
@@ -661,10 +662,14 @@ def mission_scan(robot_id: str, camera_id: str, window_s: float = Query(3.0, gt=
 def _require_attack_enabled() -> list[str]:
     if not ATTACK_ENABLE:
         raise HTTPException(403, "attack is disabled (set ROBO_ATTACK_ENABLE=1)")
-    allow = _attack_allowlist()
-    if not allow:
-        raise HTTPException(409, "ROBO_ATTACK_BSSIDS is empty; no target is authorised")
-    return allow
+    return _attack_allowlist()
+
+
+def _targets_for(robot_id: str) -> list[str]:
+    """Statik env listesi + operatörün onayladığı dinamik hedefler."""
+    static = _attack_allowlist()
+    dynamic = [t["bssid"] for t in db.attack_targets(robot_id)]
+    return sorted(set(static + dynamic))
 
 
 @app.post("/api/v1/robots/{robot_id}/attack/arm", response_model=AttackArmOut)
@@ -678,7 +683,7 @@ def attack_arm(robot_id: str) -> AttackArmOut:
     db.log_event("attack.arm", f"ttl={ATTACK_ARM_TTL_S}s", robot_id=robot_id)
     return AttackArmOut(robot_id=robot_id, token=token,
                         expires_at=time.time() + ATTACK_ARM_TTL_S,
-                        allowlist=allow, max_duration_s=ATTACK_MAX_S)
+                        allowlist=_targets_for(robot_id), max_duration_s=ATTACK_MAX_S)
 
 
 @app.post("/api/v1/robots/{robot_id}/attack", response_model=AttackOut, status_code=201)
@@ -686,8 +691,8 @@ def attack_start(robot_id: str, body: AttackIn) -> AttackOut:
     allow = _require_attack_enabled()
     if db.flags_get(robot_id):
         raise HTTPException(409, "emergency stop engaged")
-    if body.bssid.lower() not in allow:
-        raise HTTPException(403, f"bssid {body.bssid} is not in ROBO_ATTACK_BSSIDS")
+    if body.bssid.lower() not in _targets_for(robot_id):
+        raise HTTPException(403, f"bssid {body.bssid} is not an approved target")
     if body.duration_s > ATTACK_MAX_S:
         raise HTTPException(422, f"duration_s must be <= {ATTACK_MAX_S}")
     if not db.attack_arm_use(robot_id, body.token):
@@ -714,6 +719,32 @@ def attack_start(robot_id: str, body: AttackIn) -> AttackOut:
                      started_at=sess["started_at"], ends_at=sess["ends_at"], status=sess["status"])
 
 
+@app.post("/api/v1/robots/{robot_id}/attack/targets", status_code=201)
+def attack_target_add(robot_id: str, body: dict) -> dict:
+    """Operatör hedefi onaylar (TTL'li). Cihaz yalnız onaylı BSSID'leri seçebilir."""
+    if not ATTACK_ENABLE:
+        raise HTTPException(403, "attack is disabled")
+    bssid = str(body.get("bssid", "")).strip().lower()
+    if not re.match(r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$", bssid):
+        raise HTTPException(422, "bssid must look like aa:bb:cc:dd:ee:ff")
+    ttl_h = float(body.get("ttl_hours", 8))
+    if not (0.1 <= ttl_h <= 72):
+        raise HTTPException(422, "ttl_hours must be 0.1..72")
+    row = db.attack_target_add(robot_id, bssid, str(body.get("note") or "")[:120] or None, int(ttl_h * 3600))
+    db.log_event("attack.target_added", f"{bssid} ttl={ttl_h}h", robot_id=robot_id)
+    return row
+
+
+@app.delete("/api/v1/robots/{robot_id}/attack/targets/{bssid}")
+def attack_target_remove(robot_id: str, bssid: str) -> dict:
+    if not ATTACK_ENABLE:
+        raise HTTPException(403, "attack is disabled")
+    ok = db.attack_target_remove(robot_id, bssid)
+    if ok:
+        db.log_event("attack.target_removed", bssid, robot_id=robot_id)
+    return {"removed": ok}
+
+
 @app.post("/api/v1/robots/{robot_id}/attack/stop")
 def attack_stop(robot_id: str) -> dict:
     active = db.attack_active(robot_id)
@@ -731,7 +762,9 @@ def attack_status(robot_id: str) -> dict:
     return {
         "robot_id": robot_id,
         "enabled": ATTACK_ENABLE,
-        "allowlist": _attack_allowlist(),
+        "allowlist": _targets_for(robot_id),
+        "static_allowlist": _attack_allowlist(),
+        "targets": db.attack_targets(robot_id),
         "max_duration_s": ATTACK_MAX_S,
         "daily_budget": ATTACK_DAILY_MAX,
         "used_today": db.attack_count_since(robot_id, now - 86400),

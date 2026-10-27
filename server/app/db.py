@@ -122,6 +122,15 @@ CREATE TABLE IF NOT EXISTS findings (
 CREATE INDEX IF NOT EXISTS idx_findings_dev_ts ON findings(device_id, ts DESC);
 CREATE INDEX IF NOT EXISTS idx_findings_scan ON findings(scan_id);
 
+CREATE TABLE IF NOT EXISTS attack_targets (
+    robot_id   TEXT NOT NULL,
+    bssid      TEXT NOT NULL,
+    note       TEXT,
+    added_at   REAL NOT NULL,
+    expires_at REAL NOT NULL,
+    PRIMARY KEY (robot_id, bssid)
+);
+
 CREATE TABLE IF NOT EXISTS attack_arms (
     robot_id   TEXT PRIMARY KEY,
     token      TEXT NOT NULL,
@@ -426,6 +435,34 @@ def device_list() -> list[dict[str, Any]]:
 
 
 # ---- radyo test oturumları (kontrollü) --------------------------------
+def attack_target_add(robot_id: str, bssid: str, note: str | None, ttl_s: int) -> dict:
+    now = time.time()
+    with connect() as conn:
+        conn.execute(
+            """INSERT INTO attack_targets (robot_id, bssid, note, added_at, expires_at)
+               VALUES (?,?,?,?,?)
+               ON CONFLICT(robot_id, bssid) DO UPDATE SET note=excluded.note,
+                 added_at=excluded.added_at, expires_at=excluded.expires_at""",
+            (robot_id, bssid.lower(), note, now, now + ttl_s))
+    return {"bssid": bssid.lower(), "note": note, "added_at": now, "expires_at": now + ttl_s}
+
+
+def attack_targets(robot_id: str) -> list[dict]:
+    with connect() as conn:
+        conn.execute("DELETE FROM attack_targets WHERE expires_at < ?", (time.time(),))
+        rows = conn.execute(
+            "SELECT * FROM attack_targets WHERE robot_id=? ORDER BY added_at DESC",
+            (robot_id,)).fetchall()
+    return [dict(r) for r in rows]
+
+
+def attack_target_remove(robot_id: str, bssid: str) -> bool:
+    with connect() as conn:
+        cur = conn.execute("DELETE FROM attack_targets WHERE robot_id=? AND bssid=?",
+                           (robot_id, bssid.lower()))
+        return cur.rowcount > 0
+
+
 def attack_arm_put(robot_id: str, token: str, ttl_s: int) -> None:
     with connect() as conn:
         conn.execute(
