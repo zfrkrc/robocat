@@ -126,6 +126,11 @@
         <input id="atk-ch" placeholder="ch" size="3">
         <input id="atk-dur" value="10" size="3" title="süre (sn)">
       </div>
+      <div class="row" style="align-items:center">
+        <span class="hint" style="margin:0">Yakındaki AP'ler</span>
+        <button onclick="atkNearby()">Yenile</button>
+      </div>
+      <div id="atk-nearby" style="max-height:150px;overflow:auto;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:6px;margin-bottom:8px">—</div>
       <div class="row">
         <input id="atk-bssid" placeholder="aa:bb:cc:dd:ee:ff" size="19">
         <input id="atk-note" placeholder="not" size="8">
@@ -277,6 +282,29 @@ async function atkStatus(){
     if(cur) sel.value = cur;
   }catch(e){ document.getElementById('atk-en').textContent = 'yok'; }
 }
+async function atkNearby(){
+  const box = document.getElementById('atk-nearby');
+  try{
+    const d = await api(`/api/v1/robots/${robot()}/nearby`);
+    if(!d.aps.length){ box.textContent = 'AP bulunamadı'; return; }
+    box.innerHTML = d.aps.map(a => `<div style="display:flex;gap:8px;align-items:center;padding:2px 0">
+      <span style="width:46px;color:#8b9aa7">${a.rssi} dBm</span>
+      <span style="width:34px;color:#8b9aa7">ch${a.ch ?? '?'}</span>
+      <code style="flex:0 0 auto">${a.bssid}</code>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis">${a.ssid || '(gizli)'}</span>
+      ${a.approved
+        ? '<span class="pill ok">onaylı</span>'
+        : `<button onclick="atkApprove('${a.bssid}','${(a.ssid||'').replace(/'/g,'')}')">Onayla</button>`}
+    </div>`).join('');
+  }catch(e){ box.textContent = 'hata: ' + e.message; }
+}
+async function atkApprove(bssid, ssid){
+  const r = await fetch(`/api/v1/robots/${robot()}/attack/targets`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({bssid, note: ssid, ttl_hours: 8})});
+  document.getElementById('atk-msg').textContent = r.ok ? 'onaylandı: '+bssid : 'hata: '+(await r.text());
+  atkStatus(); atkNearby();
+}
 async function atkAdd(){
   const bssid = document.getElementById('atk-bssid').value.trim().toLowerCase();
   const note = document.getElementById('atk-note').value.trim();
@@ -326,9 +354,9 @@ async function camOptions(){
   sel.innerHTML = list.map(c => `<option value="${c.id}">${c.id}</option>`).join('');
   if(cur) sel.value = cur;
 }
-health(); cams(); dets(); mstate(); camOptions(); finds(); atkStatus();
+health(); cams(); dets(); mstate(); camOptions(); finds(); atkStatus(); atkNearby();
 setInterval(health, 2000); setInterval(dets, 3000); setInterval(cams, 10000);
-setInterval(mstate, 1500); setInterval(camOptions, 15000); setInterval(finds, 4000); setInterval(atkStatus, 3000);
+setInterval(mstate, 1500); setInterval(camOptions, 15000); setInterval(finds, 4000); setInterval(atkStatus, 3000); setInterval(atkNearby, 15000);
 </script>
 </body>
 </html>

@@ -23,7 +23,9 @@ from collections import Counter, defaultdict
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import json
 import secrets
+import urllib.request
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
@@ -320,6 +322,19 @@ ATTACK_MAX_S = int(os.environ.get("ROBO_ATTACK_MAX_S", "60"))
 ATTACK_COOLDOWN_S = int(os.environ.get("ROBO_ATTACK_COOLDOWN_S", "15"))
 ATTACK_DAILY_MAX = int(os.environ.get("ROBO_ATTACK_DAILY_MAX", "10"))
 ATTACK_ARM_TTL_S = int(os.environ.get("ROBO_ATTACK_ARM_TTL_S", "120"))
+
+
+def _device_urls() -> dict[str, str]:
+    """ROBO_DEVICE_URLS="pentest-1:http://172.16.16.221,robot-1:http://172.16.16.222" """
+    raw = os.environ.get("ROBO_DEVICE_URLS", "")
+    out: dict[str, str] = {}
+    for item in raw.split(","):
+        if ":" in item:
+            did, url = item.split(":", 1)
+            # http:// içindeki ':' nedeniyle sadece ilk ':' ayırıcıdır
+            if did.strip() and url.strip():
+                out[did.strip()] = url.strip()
+    return out
 
 
 def _attack_allowlist() -> list[str]:
@@ -717,6 +732,27 @@ def attack_start(robot_id: str, body: AttackIn) -> AttackOut:
     return AttackOut(session_id=sess["id"], robot_id=sess["robot_id"], mode=sess["mode"],
                      bssid=sess["bssid"], channel=sess["channel"], duration_s=sess["duration_s"],
                      started_at=sess["started_at"], ends_at=sess["ends_at"], status=sess["status"])
+
+
+@app.get("/api/v1/robots/{robot_id}/nearby")
+def nearby_aps(robot_id: str) -> dict:
+    """Cihazın kendi /scan çıktısını (BSSID'li) proxy'ler. URL yalnız env'den gelir."""
+    base = _device_urls().get(robot_id)
+    if not base:
+        raise HTTPException(404, f"no device URL configured for '{robot_id}' (ROBO_DEVICE_URLS)")
+    try:
+        with urllib.request.urlopen(base.rstrip("/") + "/scan", timeout=4) as r:
+            data = json.loads(r.read() or b"{}")
+    except Exception as exc:
+        raise HTTPException(502, f"device scan failed: {type(exc).__name__}: {exc}")
+    approved = set(_targets_for(robot_id))
+    aps = []
+    for ap in data.get("aps", []):
+        bssid = str(ap.get("bssid", "")).lower()
+        aps.append({"bssid": bssid, "ssid": ap.get("ssid", ""), "rssi": ap.get("rssi"),
+                    "ch": ap.get("ch"), "sec": ap.get("sec"), "approved": bssid in approved})
+    aps.sort(key=lambda a: -(a["rssi"] or -100))
+    return {"robot_id": robot_id, "source": base, "aps": aps}
 
 
 @app.post("/api/v1/robots/{robot_id}/attack/targets", status_code=201)
